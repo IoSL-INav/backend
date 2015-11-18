@@ -72,7 +72,7 @@ function start() {
     // register 'event' route
 
     // start the server TODO https only
-    var server = app.listen(config.port, config.host, function() {
+    var server = app.listen(config.port, function() {
         console.log("IoSL-INav server listening on %s:%s", server.address().address, server.address().port);
     });
 };
