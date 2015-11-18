@@ -9,6 +9,8 @@ docker run --name mongo-db -d mongo:latest
 to start the official MongoDB docker image as a daemon under the name 'mongo-db'.
 TODO: Add mounted VOLUME?
 
+If you experience space issue because MongoDB is not able to allocate enough space, run the above command with an additional `--smallfiles` at the end.
+
 Now build and start the Node.JS component that connects to the Mongo database.
 ```bash
 docker build -t iosl-inav/backend .
