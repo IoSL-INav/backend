@@ -3,9 +3,9 @@
  */
 
 module.exports = {
-    host: 'localhost' || process.env.TUB_HERE_HOST,
-    port: 8080 || process.env.TUB_HERE_PORT,
-    secret_type: 'code' || process.env.SECRET_TYPE, // code or file
-    secret: 'secret' || process.env.SECRET, // secret or file path
-    mongodb: 'mongodb://mongo-db:27017/beacons' || process.env.TUB_MONGO
+    host: process.env.TUB_HERE_HOST || 'localhost',
+    port: process.env.TUB_HERE_PORT || 8080,
+    secret_type: process.env.SECRET_TYPE || 'code', // code or file
+    secret: process.env.SECRET || 'secret', // secret or file path
+    mongodb: process.env.TUB_MONGO || 'mongodb://mongo-db:27017/beacons'
 }

@@ -3,7 +3,9 @@
  * Uses parts of TU-B-HERE server component
  */
 
-// modules ===============================================
+
+/* Imports */
+
 var express = require('express'),
     expressJwt = require('express-jwt'),
     bodyParser = require('body-parser'),
@@ -13,66 +15,84 @@ var fs = require('fs'),
     mongoose = require('mongoose'),
     config = require('./config');
 
-// models ===============================================
+
+/* Models */
+
 var User = require('./models/user'),
     Event = require('./models/event');
 
-// routes ================================================
+
+/* Routes */
+
 var register = require('./routes/register'),
     user = require('./routes/user'),
     event = require('./routes/event');
+
+
+/* Init database */
 
 var dbConnection = mongoose.createConnection(config.mongodb);
 
 dbConnection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 dbConnection.once('open', start);
 
+
+/* Core functionality */
+
 function start() {
 
     var app = express();
     var secret = null;
 
-    if(config.secret_type == 'code') {
+    /* Check for secret code */
+    if (config.secret_type === 'code') {
         secret = config.secret;
-    }
-
-    if(config.secret_type === 'file') {
+    } else if (config.secret_type === 'file') {
         secret = fs.readFileSync(config.secret);
     }
 
-    if(secret === null) {
-        throw new Error('Invalid secret type ' + config.secret_type);
+    if (secret === null) {
+        throw new Error('Invalid secret type: ' + config.secret_type);
     }
+
+    app.get('/', function(req, res) {
+        res.json({ message: 'Hi there' }).send();
+    });
+
+    var server = app.listen(config.port, config.host, function() {
+        console.log("IoSL-INav server listening on %s:%s", server.address().address, server.address().port);
+    });
 
 
     // Register middleware
+    /*
+        app.use(bodyParser.json());
 
-    app.use(bodyParser.json());
-
-    app.use(expressValidator({
-        customValidators: {
-            isTUB: function(value) {
-                var suffix = 'tu-berlin.de';
-                return typeof value === 'string' && value.indexOf(suffix, value.length - suffix.length) !== -1;
+        app.use(expressValidator({
+            customValidators: {
+                isTUB: function(value) {
+                    var suffix = 'tu-berlin.de';
+                    return typeof value === 'string' && value.indexOf(suffix, value.length - suffix.length) !== -1;
+                }
             }
-        }
-    })); // TODO errorFormatter
+        })); // TODO errorFormatter
 
-    app.use(expressJwt({
-        secret: secret
-    }).unless({
-        path: ['/register', '/login']
-    }));
+        app.use(expressJwt({
+            secret: secret
+        }).unless({
+            path: ['/register', '/login']
+        }));
 
-    // register 'register' route
-    app.use('/', register(express, secret, User));
+        // register 'register' route
+        app.use('/', register(express, secret, User));
 
-    // register 'user' route
+        // register 'user' route
 
-    // register 'event' route
+        // register 'event' route
 
-    // start the server TODO https only
-    var server = app.listen(config.port, function() {
-        console.log("IoSL-INav server listening on %s:%s", server.address().address, server.address().port);
-    });
+        // start the server TODO https only
+        var server = app.listen(config.port, function() {
+            console.log("IoSL-INav server listening on %s:%s", server.address().address, server.address().port);
+        });
+    */
 };
