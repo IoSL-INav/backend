@@ -1,7 +1,7 @@
-var nodemailer = require('nodemailer');
+var nodeMailer = require('nodemailer');
 
 function MailDelivery() {
-	this.transporter = nodemailer.createTransport();
+	this.transporter = nodeMailer.createTransport();
 };
 
 MailDelivery.prototype.deliver = function(tokenToSend, uidToSend, recipient) {
