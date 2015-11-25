@@ -15,7 +15,10 @@ controller.searchUsers = function searchUsers(req, res, next) {
 };
 
 controller.provideRequestedUser = function provideRequestedUser(req, res, next) {
-	User.findOne({ id: req.param.id }, function(err, user) {
+
+	User.findOne({
+		id: req.param.id
+	}, function(err, user) {
 		if (isErrorOrNull(err, user, res)) return;
 		req.requestedUser = user;
 		next();
@@ -23,14 +26,16 @@ controller.provideRequestedUser = function provideRequestedUser(req, res, next) 
 };
 
 controller.getUser = function getUser(req, res, next) {
+
 	var user = req.requestedUser;
+
 	user.getAccessableInfo(req.user.id, function(err, data) {
 		if (err) return res.status(500).end();
 		res.json(data);
 	});
 };
 
-controller.updateUser = function updateUser(req, res, next) {	
+controller.updateUser = function updateUser(req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
@@ -41,7 +46,7 @@ controller.deleteUser = function deleteUser(req, res, next) {
 };
 
 function getAccessableData(user, requester) {
-	
+
 }
 
 module.exports = controller;

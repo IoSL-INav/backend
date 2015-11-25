@@ -1,6 +1,6 @@
 // Representation of a PIazza user-generated event
-var mongoose = require('mongoose');
 
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
@@ -8,12 +8,14 @@ var eventSchema = new Schema({
 	createdBy: {
 		type: ObjectId,
 		ref: 'User',
-		index: true		
+		index: true
 	},
-	title: { type: String },
-	startTime: { 
+	title: {
+		type: String
+	},
+	startTime: {
 		type: Date,
-		index: true 
+		index: true
 	},
 	endTime: {
 		type: Date,
@@ -22,14 +24,18 @@ var eventSchema = new Schema({
 	location: {
 		coordinates: {
 			type: [Number],
-			index: { type: '2dsphere' }, 	// per def. [longitude, latitude]		
+			index: {
+				type: '2dsphere'
+			}, // per def. [longitude, latitude]
 		},
 		building: {
 			type: String,
 			index: true
 		},
-		floor: { type: String }
-	},	
+		floor: {
+			type: String
+		}
+	},
 });
 
 module.exports = mongoose.Model('Event', eventSchema);

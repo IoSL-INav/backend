@@ -1,9 +1,8 @@
 // PIazza user routes
-var express = require('express');
 
+var express = require('express');
 var User = require('./../models/user');
 var controller = require('./../controllers/users');
-
 var router = express();
 
 // GET /users?(name | radius)=value
@@ -13,6 +12,7 @@ var router = express();
 // DELETE /users/(me | :id)/(friends/:fid | devices/:did | location)
 
 router.param('id', function(req, res, next, id) {
+
 	if (id === 'me') {
 		req.param.id = req.user.id;
 	}
@@ -31,9 +31,9 @@ router.route('/:id')
 /*router.route('/:id/name')
 	.get(controller.getUserName)
 	.post(controller.updateUserName);
-	
+
 // router.route('/:id/:property').get(controller.getUserProperty)....
-	
+
 router.route('/:id/email')
 	.get(controller.getUserEmail);
 

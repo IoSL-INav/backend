@@ -5,23 +5,25 @@ var Schema = mongoose.Schema;
 var locationSchema = new Schema({
 	createdAt: {
 		type: Date,
-		expires: 900,			// 15 minutes in seconds
+		expires: 900, // 15 minutes in seconds
 		default: Date.now
 	},
 	coordinates: {
 		type: [Number],
-		index: { type: '2dsphere' } 	// per def. [longitude, latitude]
+		index: {
+			type: '2dsphere'
+		} // per def. [longitude, latitude]
 	},
 	building: {
 		type: String,
 		index: true
 	},
 	level: {
-		type: String 
+		type: String
 	}
 });
 
-locationSchema.virtual('info.full', function () {
+locationSchema.virtual('info.full', function() {
 	return {
 		createdAt: this.createdAt,
 		coordinates: this.coordinates,
