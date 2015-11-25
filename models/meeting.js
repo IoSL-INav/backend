@@ -16,6 +16,10 @@ var meetingSchema = new Schema({
 	},
 });
 
+// which function do we need
+// updateLocation
+
+/*
 meetingSchema.statics.searchByName = function(name, callback) {
 	// TODO
 };
@@ -31,5 +35,6 @@ meetingSchema.methods.isOnCampus = function (callback) {
 		callback(err, (user.location != null));
 	});
 };
+*/
 
 module.exports = mongoose.model('Meeting', meetingSchema);

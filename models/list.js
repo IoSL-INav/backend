@@ -21,4 +21,9 @@ var listSchema = new Schema({
 	}],
 });
 
+// which function do we need
+// addMember
+// removeMember
+// updateName
+
 module.exports = mongoose.model('List', listSchema);

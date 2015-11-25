@@ -15,7 +15,8 @@ var beaconSchema = new Schema({
 	uuid: {
 		type: String,
 		index: {
-			type: String
+			type: String,
+			unique: true
 		}
 	},
 	location: {
@@ -23,5 +24,9 @@ var beaconSchema = new Schema({
 		ref: 'Location'
 	},
 });
+
+// which function do we need
+// updateLocation
+// updateName
 
 module.exports = mongoose.model('Beacon', beaconSchema);
