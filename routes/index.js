@@ -9,6 +9,7 @@ var users = require('./users');
 var events = require('./events');
 var lists = require('./lists');
 var meetings = require('./meetings');
+var beacons = require('./beacons');
 var me = require('./me');
 
 var router = express.Router();
@@ -19,6 +20,7 @@ router.use('/users', config.jwtMiddleware, users);
 router.use('/events', config.jwtMiddleware, events);
 router.use('/lists', config.jwtMiddleware, lists);
 router.use('/meetings', config.jwtMiddleware, meetings);
+router.use('/beacons', config.jwtMiddleware, beacons);
 router.use('/me', config.jwtMiddleware, me);
 
 module.exports = router;
