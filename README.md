@@ -1,15 +1,20 @@
-# PIazza Server
+# IoSL - Indoor Navigation - backend
 
-PIazza Server component, implemented with nodejs.
+Docker is used to containerize our backend services. Make sure docker is correctly installed on the host system.
 
-## How to deploy
-1\. Clone repo and change into directory
-```shell
-npm install
+Run
+```bash
+docker run --name mongo-db -d mongo:latest
+```
+to start the official MongoDB docker image as a daemon under the name 'mongo-db'.
+TODO: Add mounted VOLUME?
 
-node app.js
+If you experience space issue because MongoDB is not able to allocate enough space, run the above command with an additional `--smallfiles` at the end.
+
+Now build and start the Node.JS component that connects to the Mongo database.
+```bash
+docker build -t iosl-inav/backend .
+docker run --name backend -d -p 33333:8080 -e "TUB_HERE_HOST=0.0.0.0" --link mongo-db:mongo-db iosl-inav/backend:latest
 ```
 
-## API Guide
-
-Coming soon...(also see wiki)
+Check `localhost:33333` in your host's browser to see if everything went fine.
