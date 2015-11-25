@@ -1,68 +1,99 @@
-/**
- * TU-B-HERE User representation
- */
-
+// Representation of a PIazza User
 var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.Types.ObjectId;
+var Location = require('./location')
 
-var privacy_levels = ['friends', 'friends_on_campus', 'nobody']
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
+var privacyLevels = [ 'friends_on_campus', 'nobody' ];
 
-var schema = mongoose.Schema({
-    name: {
-        type: String,
-        index: {
-            type: String,
-            text: true,
-            unique: true
-        }
-    },
-    email: {
-        type: String,
-        index: {
-            unique: true
-        }
-    },
-    location: {
-        coordinates: {
-            type: [Number],
-            index: {
-                type: '2dSphere'
-            }
-        },
-        building: {
-            type: String,
-            index: true
-        },
-        floor: {
-            type: String
-        }
-    },
-    friends: [{
-        type: ObjectId,
-        ref: 'User'
-    }],
-    friend_requests: [{
-        type: ObjectId,
-        ref: 'User'
-    }],
-    access_info: {
-        type: String,
-        enum: privacy_levels,
-        default: 'friends'
-    },
-    access_location: {
-        type: String,
-        enum: privacy_levels,
-        default: 'friends'
-    },
-    devices: [{
-        name: {
-            type: String
-        },
-        jti: {
-            type: String,
-        }
-    }]
+var userSchema = new Schema({
+	name: {
+		type: String,
+		index: { type: String }
+	},
+	email: {
+		type: String,
+		index: { unique: true }
+	},
+	friends: [{ 
+		type: ObjectId, 
+		ref:'User' 
+	}],
+	privacyLevel: { 
+		type: String,
+		enum: privacyLevels,
+		default: 'friends_on_campus'
+	},
+	devices: [{
+		type: ObjectId,
+		ref: 'Device'
+	}],
+	location: {
+		type: ObjectId,
+		ref: 'Location'
+	},
+	notifications: []
 });
 
-module.exports = mongoose.model('User', schema);
+userSchema.statics.searchByName = function(name, callback) {
+	// TODO
+};
+
+userSchema.methods.findAroundMe = function(range, callback) {
+	// TODO
+};
+
+userSchema.methods.isOnCampus = function (callback) {
+	this.populate('location', function(err, user) {
+		// for now we assume that no location means outside of campus
+		// because the client stops sending updates and old locations expire
+		callback(err, (user.location != null));
+	});
+};
+
+userSchema.methods.hasFriend = function(friendId) {
+	// FIXME if this proves to be too inefficient
+	return this.friends.some(function(fid) {
+		return fid.equals(friendId);
+	});
+};
+
+userSchema.methods.getAccessableInfo = function(uid, callback) {
+	if (this.id === uid) {
+		// TODO populate & return
+	} else if (this.hasFriend(uid)) {
+		if (this.privacyLevel === 'friends_on_campus') {
+			this.populate('location', function(err, user) {
+				if (err) return callback(err, null);
+				
+				var info = this.info.friends;
+				info.location = user.location.info.full;
+				callback(null, info);			
+			});
+		}
+		
+		if (this.privacyLevel === 'nobody') {
+			callback(null, this.info.friends);
+		}
+	} else {
+		// people who are not friends with me may ONLY access general information
+		return this.info.public;
+	}
+};
+
+userSchema.virtual('info.public').get(function () {
+	return {		
+		id: this.id,
+		name: this.name 
+	};
+});
+
+userSchema.virtual('info.friends').get(function () {
+	return {
+		id: this.id,
+		name: this.name,
+		friends: this.friends
+	};
+});
+ 
+module.exports = mongoose.model('User', userSchema);
