@@ -1,8 +1,10 @@
 // PIazza user routes
 
 var express = require('express');
+
 var User = require('./../models/user');
 var controller = require('./../controllers/users');
+
 var router = express();
 
 // GET /users?(name | radius)=value

@@ -1,26 +1,30 @@
 {
-  "name": "piazza-server",
+  "name": "iosl-inav-backend",
   "version": "0.0.1",
-  "description": "Server component for the piazza project",
+  "description": "Backend part of our TU Berlin course \"Internet of Services Lab - Indoor Navigation\" at the SNET department.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "tu-b-here",
-    "piazza",
-    "server"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IoSL-INav/backend.git"
+  },
   "author": "SNET",
-  "license": "ISC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/IoSL-INav/backend/issues"
+  },
+  "homepage": "https://github.com/IoSL-INav/backend#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "express-jwt": "^3.3.0",
     "jsonwebtoken": "^5.4.1",
-    "mongoose": "^4.2.6",
+    "mongoose": "^4.2.7",
+    "morgan": "^1.6.1",
     "node-uuid": "^1.4.7",
-    "nodemailer": "^1.4.0",
+    "nodemailer": "^1.10.0",
     "passwordless": "^1.1.0",
     "passwordless-memorystore": "0.0.1"
   }

@@ -1,9 +1,16 @@
-// PIazza configuration
+/**
+ * IoSL-INav configuration
+ * usign PIazza configuration
+ */
+
 var fs = require('fs');
 var expressJwt = require('express-jwt');
 var mongoose = require('mongoose');
 var passwordless = require('passwordless');
 var TokenStore = require('passwordless-memorystore');
+
+/* DEVELOPMENT ONLY */
+var morgan = require('morgan');
 
 var Delivery = require('./controllers/signup/consoledelivery');
 

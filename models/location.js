@@ -1,4 +1,5 @@
 // Representation of a User's Location in PIazza which expires after a given time (15 mins by default)
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 

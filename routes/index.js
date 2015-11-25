@@ -17,11 +17,11 @@ var router = express.Router();
 
 router.use(bodyParser.json());
 router.use('/', signup);
+//router.use('/me', config.jwtMiddleware, me);
 router.use('/users', config.jwtMiddleware, users);
 router.use('/events', config.jwtMiddleware, events);
 router.use('/lists', config.jwtMiddleware, lists);
-router.use('/meetings', config.jwtMiddleware, meetings);
-router.use('/beacons', config.jwtMiddleware, beacons);
-router.use('/me', config.jwtMiddleware, me);
+//router.use('/meetings', config.jwtMiddleware, meetings);
+//router.use('/beacons', config.jwtMiddleware, beacons);
 
 module.exports = router;

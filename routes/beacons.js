@@ -6,3 +6,5 @@ var config = require('./../config');
 var controller = require('./../controllers/beacons')
 
 var router = express.Router();
+
+module.exports = router;
