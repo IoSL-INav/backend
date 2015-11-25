@@ -1,4 +1,10 @@
-// PIazza signup & login
+/**
+ * IoSL-INav routes/signup
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Sign up specific endpoints
+ */
 
 var express = require('express');
 

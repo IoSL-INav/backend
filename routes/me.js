@@ -1,4 +1,10 @@
-// IoSL-INav me
+/**
+ * IoSL-INav routes/me
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Me specific endpoints
+ */
 
 var express = require('express');
 

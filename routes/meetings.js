@@ -1,4 +1,10 @@
-// IoSL-INav meetings
+/**
+ * IoSL-INav routes/meetings
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Meetings specific endpoints
+ */
 
 var express = require('express');
 

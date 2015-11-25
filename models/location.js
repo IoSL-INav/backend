@@ -1,4 +1,11 @@
-// Representation of a User's Location in PIazza which expires after a given time (15 mins by default)
+/**
+ * IoSL-INav models/location
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a user's location which expires
+ * after a given time (15 mins by default)
+ */
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

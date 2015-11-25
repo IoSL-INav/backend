@@ -1,4 +1,10 @@
-// Representation of a PIazza friend request
+/**
+ * IoSL-INav models/friendrequest
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a friend request
+ */
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

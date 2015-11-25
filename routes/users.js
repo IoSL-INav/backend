@@ -1,4 +1,10 @@
-// PIazza user routes
+/**
+ * IoSL-INav routes/users
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Users specific endpoints
+ */
 
 var express = require('express');
 

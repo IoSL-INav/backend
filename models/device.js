@@ -1,4 +1,10 @@
-// Representation of a PIazza user's device, automatically deleted after token expiration period
+/**
+ * IoSL-INav models/device
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a device
+ */
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

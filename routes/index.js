@@ -1,4 +1,11 @@
-// PIazza REST API routes
+/**
+ * IoSL-INav routes/index
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Index file for registering all
+ * API endpoints existing
+ */
 
 var express = require('express');
 
@@ -20,7 +27,7 @@ router.use('/', signup);
 //router.use('/me', config.jwtMiddleware, me);
 router.use('/users', config.jwtMiddleware, users);
 router.use('/events', config.jwtMiddleware, events);
-router.use('/lists', config.jwtMiddleware, lists);
+router.use('/lists', /*config.jwtMiddleware, */lists);
 //router.use('/meetings', config.jwtMiddleware, meetings);
 //router.use('/beacons', config.jwtMiddleware, beacons);
 

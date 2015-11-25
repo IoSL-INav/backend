@@ -1,4 +1,13 @@
-// PIazza user api controller
+/**
+ * IoSL-INav controllers/users/index
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Users specific controllers
+ */
+
+
+/* Variables and configurations. */
 
 var util = require('./../../util');
 var isErrorOrNull = util.isErrorOrNull;
@@ -8,6 +17,9 @@ var User = require('./../../models/user');
 var Location = require('./../../models/location');
 
 var controller = {};
+
+
+/* Controllers. */
 
 controller.searchUsers = function searchUsers(req, res, next) {
 	// TODO
@@ -48,5 +60,8 @@ controller.deleteUser = function deleteUser(req, res, next) {
 function getAccessableData(user, requester) {
 
 }
+
+
+/* Export all controllers. */
 
 module.exports = controller;

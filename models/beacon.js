@@ -1,4 +1,11 @@
-// Representation of a INav bluetooth beacon
+/**
+ * IoSL-INav models/beacon
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a bluetooth beacon
+ */
+
 var mongoose = require('mongoose');
 var Location = require('./location')
 

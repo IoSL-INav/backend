@@ -1,4 +1,10 @@
-// Representation of a PIazza user-generated event
+/**
+ * IoSL-INav models/event
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of an event
+ */
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

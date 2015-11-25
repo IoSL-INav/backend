@@ -1,4 +1,11 @@
-// Representation of a INav Meeting
+/**
+ * IoSL-INav models/meeting
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a meeting
+ */
+
 var mongoose = require('mongoose');
 var Location = require('./location')
 
@@ -6,9 +13,9 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
 var meetingSchema = new Schema({
-	creator: { 
-		type: ObjectId, 
-		ref:'User' 
+	creator: {
+		type: ObjectId,
+		ref:'User'
 	},
 	location: {
 		type: ObjectId,

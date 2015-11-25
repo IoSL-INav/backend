@@ -1,4 +1,10 @@
-// Representation of a PIazza User
+/**
+ * IoSL-INav models/user
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Representation of a user
+ */
 
 var mongoose = require('mongoose');
 var Location = require('./location')

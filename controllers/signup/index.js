@@ -1,4 +1,13 @@
-// PIazza signup & login controller
+/**
+ * IoSL-INav controllers/signup/index
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Sign up specific controllers
+ */
+
+
+/* Variables and configurations. */
 
 var Jwt = require('jsonwebtoken');
 var uuid = require('node-uuid');
@@ -9,6 +18,9 @@ var Device = require('./../../models/device');
 var isErrorOrNull = require('./../../util').isErrorOrNull;
 
 var controller = {};
+
+
+/* Controllers. */
 
 /**
  * Provides a user to passwordless for use by token request, creating the user first if necessary
@@ -107,5 +119,8 @@ function updateUserToken(user, deviceId, callback) {
 		});
 	});
 }
+
+
+/* Export all controllers. */
 
 module.exports = controller;

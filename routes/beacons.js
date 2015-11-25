@@ -1,4 +1,10 @@
-// IoSL-INav beacons
+/**
+ * IoSL-INav routes/beacons
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Beacons specific endpoints
+ */
 
 var express = require('express');
 

@@ -1,6 +1,10 @@
 /**
  * IoSL-INav configuration
- * usign PIazza configuration
+ * SNET TU Berlin
+ * using PIazza code base
+ *
+ * Holds all important configuration
+ * files and variables
  */
 
 var fs = require('fs');
@@ -9,12 +13,10 @@ var mongoose = require('mongoose');
 var passwordless = require('passwordless');
 var TokenStore = require('passwordless-memorystore');
 
-/* DEVELOPMENT ONLY */
-var morgan = require('morgan');
-
 var Delivery = require('./controllers/signup/consoledelivery');
 
 function loadSecret(path) {
+
 	if (path) {
 		return fs.readFileSync(path);
 	}
