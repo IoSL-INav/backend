@@ -1,15 +1,15 @@
-// Representation of a PIazza User
+// Representation of a INav Meeting
 var mongoose = require('mongoose');
-var Location = require('./meeting')
+var Location = require('./location')
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
 var meetingSchema = new Schema({
-	creator: [{ 
+	creator: { 
 		type: ObjectId, 
 		ref:'User' 
-	}],
+	},
 	location: {
 		type: ObjectId,
 		ref: 'Location'
