@@ -16,6 +16,14 @@ var User = require('./../../models/user');
 var controller = {};
 
 
+/* Main controller. */
+
+controller.getUserInfo = function getUserInfo(req, res, next) {
+    // TODO
+    return res.status(501).end();
+};
+
+
 /* Export all controllers. */
 
 module.exports = controller;
