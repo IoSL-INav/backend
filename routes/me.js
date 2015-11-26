@@ -14,6 +14,6 @@ var controller = require('./../controllers/me')
 var router = express.Router();
 
 router.route('/')
-    .get(controller.getUserInfo());
+    .get(controller.getUserInfo);
 
 module.exports = router;
