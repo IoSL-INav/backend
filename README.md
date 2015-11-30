@@ -18,7 +18,7 @@ If you experience space issue because MongoDB is not able to allocate enough spa
 Now build and start the Node.JS component that connects to the Mongo database.
 ```bash
 docker build -t iosl-inav/backend .
-docker run --name backend -d -p 33333:8080 -e "PIAZZA_HOST=0.0.0.0 PIAZZA_SECRET=abc" --link mongo-db:mongo-db iosl-inav/backend:latest
+docker run --name backend -d -p 33333:8080 -e "PIAZZA_HOST=0.0.0.0" -e "PIAZZA_SECRET=abc" --link mongo-db:mongo-db iosl-inav/backend:latest
 ```
 
 Check `localhost:33333` in your host's browser to see if everything went fine.
