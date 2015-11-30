@@ -20,32 +20,32 @@ var controller = {};
 
 /* Controllers. */
 
-controller.getAllMeetings = function getAllMeetings(req, res, next) {
+controller.getAllMeetings = function (req, res, next) {
   // TODO
   return res.status(501).end();
 };
 
-controller.createMeeting = function createMeeting(req, res, next) {
+controller.createMeeting = function (req, res, next) {
   // TODO
   return res.status(501).end();
 };
 
-controller.getMeetingInfo = function getMeetingInfo(req, res, next) {
+controller.getMeetingInfo = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.updateMeeting = function updateMeeting(req, res, next) {
+controller.updateMeeting = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.deleteMeeting = function deleteMeeting(req, res, next) {
+controller.deleteMeeting = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.getMeetingLocation = function getMeetingLocation(req, res, next) {
+controller.getMeetingLocation = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };

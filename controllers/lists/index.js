@@ -19,31 +19,31 @@ var controller = {};
 
 /* Controllers concerning lists. */
 
-controller.getAllLists = function getAllLists(req, res, next) {
+controller.getAllLists = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.addList = function addList(req, res, next) {
+controller.addList = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.getListInfo = function getListInfo(req, res, next) {
+controller.getListInfo = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.updateList = function updateList(req, res, next) {
+controller.updateList = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.deleteList = function deleteList(req, res, next) {
+controller.deleteList = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.addUserToList = function addUserToList(req, res, next) {
+controller.addUserToList = function (req, res, next) {
     return res.status(501).end();
 };
 
-controller.removeUserFromList = function removeUserFromList(req, res, next) {
+controller.removeUserFromList = function (req, res, next) {
     return res.status(501).end();
 };
 

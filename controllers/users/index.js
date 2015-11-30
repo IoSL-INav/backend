@@ -21,12 +21,12 @@ var controller = {};
 
 /* Controllers. */
 
-controller.searchUsers = function searchUsers(req, res, next) {
+controller.searchUsers = function (req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
 
-controller.provideRequestedUser = function provideRequestedUser(req, res, next) {
+controller.provideRequestedUser = function (req, res, next) {
 
 	User.findOne({
 		id: req.param.id
@@ -37,7 +37,7 @@ controller.provideRequestedUser = function provideRequestedUser(req, res, next) 
 	});
 };
 
-controller.getUser = function getUser(req, res, next) {
+controller.getUser = function (req, res, next) {
 
 	var user = req.requestedUser;
 
@@ -47,12 +47,12 @@ controller.getUser = function getUser(req, res, next) {
 	});
 };
 
-controller.updateUser = function updateUser(req, res, next) {
+controller.updateUser = function (req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
 
-controller.deleteUser = function deleteUser(req, res, next) {
+controller.deleteUser = function (req, res, next) {
 	// TODO
 	return res.status(501).end();
 };

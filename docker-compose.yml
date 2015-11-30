@@ -1,0 +1,12 @@
+mongo-db:
+    image: mongo:latest
+
+backend:
+    build: .
+    ports:
+        - "33333:8080"
+    environment:
+        - PIAZZA_HOST=0.0.0.0
+        - PIAZZA_SECRET=abc
+    links:
+        - mongo-db:mongo-db

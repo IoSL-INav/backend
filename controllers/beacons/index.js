@@ -18,32 +18,32 @@ var controller = {};
 
 /* Controllers. */
 
-controller.getAllBeacons = function getAllBeacons(req, res, next) {
+controller.getAllBeacons = function (req, res, next) {
   // TODO
   return res.status(501).end();
 };
 
-controller.addBeacon = function addBeacon(req, res, next) {
+controller.addBeacon = function (req, res, next) {
   // TODO
   return res.status(501).end();
 };
 
-controller.getBeaconInfo = function getBeaconInfo(req, res, next) {
+controller.getBeaconInfo = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.updateBeacon = function updateBeacon(req, res, next) {
+controller.updateBeacon = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.deleteBeacon = function deleteBeacon(req, res, next) {
+controller.deleteBeacon = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
 
-controller.getBeaconLocation = function getBeaconLocation(req, res, next) {
+controller.getBeaconLocation = function (req, res, next) {
   //TODO
   return res.status(501).end();
 };
