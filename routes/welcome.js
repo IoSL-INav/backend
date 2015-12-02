@@ -12,7 +12,7 @@
 var express = require('express');
 
 var config = require('./../config');
-var controller = require('./../controllers/lists')
+var welcomeController = require('./../controllers/welcome')
 
 var router = express.Router();
 
@@ -20,20 +20,10 @@ var router = express.Router();
 /* Routes concerning lists. */
 
 router.route('/')
-    .get(controller.getAllLists)
-    .post(controller.addList);
+    .get(/*config.keycloak.protect(), */welcomeController.welcome);
 
-router.route('/:id')
-    .get(controller.getListInfo)
-    .put(controller.updateList)
-    .delete(controller.deleteList);
-
-router.route('/:id/users')
-    .put(controller.addUserToList);
-
-router.route('/:id/users/:user-id')
-    .delete(controller.removeUserFromList);
-
+router.route('/secure')
+    .get(config.authenticate, welcomeController.welcome);
 
 /* Export router with described routes. */
 

@@ -13,6 +13,12 @@ var ObjectId = Schema.Types.ObjectId;
 var privacyLevels = ['friends_on_campus', 'nobody'];
 
 var userSchema = new Schema({
+	_id: {
+		type: String,
+		index: {
+			type: String
+		}
+	},
 	name: {
 		type: String,
 		index: {

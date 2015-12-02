@@ -15,7 +15,12 @@ var morgan = require('morgan');
 /* END DEVELOPMENT ONLY */
 
 var app = express();
+app.use(config.session);
 app.use(morgan('dev'));
+app.use(config.keycloak.middleware({
+    logout: '/logout',
+    admin: '/admin'
+}));
 app.use(routes);
 
 var server = app.listen(config.port, config.host, function() {
