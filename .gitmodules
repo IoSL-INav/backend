@@ -1,0 +1,9 @@
+[submodule "vendor/keycloak-nodejs"]
+	path = vendor/keycloak-nodejs
+	url = https://github.com/keycloak/keycloak-nodejs
+[submodule "keycloak-nodejs-mathiasslawik"]
+	path = keycloak-nodejs-mathiasslawik
+	url = https://github.com/mathiasslawik/keycloak-nodejs.git
+[submodule "vendor/keycloak-nodejs-mathiasslawik"]
+	path = vendor/keycloak-nodejs-mathiasslawik
+	url = https://github.com/mathiasslawik/keycloak-nodejs.git
