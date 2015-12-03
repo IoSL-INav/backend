@@ -28,7 +28,9 @@ var userSchema = new Schema({
 	email: {
 		type: String,
 		index: {
-			unique: true
+			unique: true,
+			// Allow multiple entries without email, as the Federation Provider currently does not return emails.
+			sparse: true
 		}
 	},
 	friends: [{
