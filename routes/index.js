@@ -12,23 +12,17 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var config = require('./../config');
 
-//var me = require('./me');
-//var signup = require('./signup');
+var login = require('./login');
 var users = require('./users');
 var events = require('./events');
-var lists = require('./lists');
-var welcome = require('./welcome');
-// var meetings = require('./meetings');
-// var beacons = require('./beacons');
+var hotspots = require('./hotspots');
 
 var router = express.Router();
 
 router.use(bodyParser.json());
-router.use('/', welcome);
+router.use('/login', login);
 router.use('/users', users);
 router.use('/events', events);
-router.use('/lists', /*config.jwtMiddleware, */lists);
-// router.use('/meetings', config.jwtMiddleware, meetings);
-// router.use('/beacons', config.jwtMiddleware, beacons);
+router.use('/hotspots', events);
 
 module.exports = router;

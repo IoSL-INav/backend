@@ -10,13 +10,11 @@
 var express = require('express');
 var config = require('./config');
 var routes = require('./routes');
-/* BEGIN DEVELOPMENT ONLY */
-var morgan = require('morgan');
-/* END DEVELOPMENT ONLY */
 
 var app = express();
+
 app.use(config.session);
-app.use(morgan('dev'));
+app.use(config.morgan('dev'));
 app.use(config.keycloak.middleware({
     logout: '/logout',
     admin: '/admin'

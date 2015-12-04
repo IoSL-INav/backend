@@ -13,8 +13,16 @@ var findOrCreateUser = function(request, response, next) {
     var userId = request.kauth.grant.id_token.content.sub;
     var name = request.kauth.grant.id_token.content.preferred_username;
 
-    User.findOneAndUpdate({_id : userId}, {$setOnInsert : {name: name}}, {upsert:true}, function(err, user) {
-        if(err) {
+    User.findOneAndUpdate({
+        _id: userId
+    }, {
+        $setOnInsert: {
+            name: name
+        }
+    }, {
+        upsert: true
+    }, function(err, user) {
+        if (err) {
             response.status(500).json(err)
         } else {
             request.user = user;

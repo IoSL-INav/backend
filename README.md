@@ -1,5 +1,9 @@
 # IoSL - Indoor Navigation - backend
 
+## Setup
+
+Clone this repository to the desired location on your system. To include submodules this project uses, use the `--recursive` flag during cloning.
+
 Docker is used to containerize our backend services. Make sure docker and MongoDB are correctly installed on the host system. Start both the docker and the MongoDB service.
 
 ## Get dockerized application running
@@ -37,3 +41,12 @@ To stop and remove all running docker instances (mind: not the images), run
 docker-compose stop
 docker-compose rm -f
 ```
+
+## Run it locally (e.g. for development)
+
+Start the application locally by invoking the node server with a few environment variables:
+```bash
+PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js
+```
+
+Also make sure to have started the MongoDB service in advance.

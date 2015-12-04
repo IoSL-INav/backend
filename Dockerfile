@@ -12,12 +12,12 @@ RUN apt-get update \
 # Create needed folders
 RUN mkdir /src
 
+# Copy application files to /src
+COPY . /src
+
 # Install Node.JS dependencies
 COPY package.json /src/package.json
 RUN cd /src && npm install
-
-# Copy application files to /src
-COPY . /src
 
 # Expose port 8080 to be passed through to host
 EXPOSE 8080

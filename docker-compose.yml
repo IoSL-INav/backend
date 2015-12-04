@@ -1,5 +1,6 @@
 mongo-db:
     image: mongo:latest
+    command: "--smallfiles"
 
 backend:
     build: .
