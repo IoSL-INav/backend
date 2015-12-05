@@ -21,31 +21,31 @@ controller.getAllHotspots = function(req, res, next) {
 
   /* TODO */
   return res.status(501).end();
-}
+};
 
 controller.getHotspot = function(req, res, next) {
 
   /* TODO */
   return res.status(501).end();
-}
+};
 
-controller.getBeaconsForHotspot = function(req, res, next) {
-
-  /* TODO */
-  return res.status(501).end();
-}
-
-controller.getBeaconForHotspot = function(req, res, next) {
+controller.getAllBeacons = function(req, res, next) {
 
   /* TODO */
   return res.status(501).end();
-}
+};
 
-controller.getFriendsAtHotspot = function(req, res, next) {
+controller.getBeacon = function(req, res, next) {
 
   /* TODO */
   return res.status(501).end();
-}
+};
+
+controller.getActiveFriends = function(req, res, next) {
+
+  /* TODO */
+  return res.status(501).end();
+};
 
 
 /* Export all controllers. */

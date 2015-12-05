@@ -21,45 +21,95 @@ var controller = {};
 
 /* Controllers. */
 
-controller.searchUsers = function (req, res, next) {
+controller.getAllUsers = function(req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
 
-controller.provideRequestedUser = function (req, res, next) {
-
-	User.findOne({
-		id: req.param.id
-	}, function(err, user) {
-		if (isErrorOrNull(err, user, res)) return;
-		req.requestedUser = user;
-		next();
-	});
-};
-
-controller.getUser = function (req, res, next) {
-
-	var user = req.requestedUser;
-
-	user.getAccessableInfo(req.user.id, function(err, data) {
-		if (err) return res.status(500).end();
-		res.json(data);
-	});
-};
-
-controller.updateUser = function (req, res, next) {
+controller.addUser = function(req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
 
-controller.deleteUser = function (req, res, next) {
+controller.getCurrentUser = function(req, res, next) {
 	// TODO
 	return res.status(501).end();
 };
 
-function getAccessableData(user, requester) {
+controller.updateCurrentUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
 
-}
+controller.deleteCurrentUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.logout = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.updateLocation = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.deleteLocation = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.getGroupsForUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.addGroupForUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.getGroupForUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.updateGroupForUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.deleteGroupForUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.addUserToGroup = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.deleteUserFromGroup = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.getUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.updateUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
+
+controller.deleteUser = function(req, res, next) {
+	// TODO
+	return res.status(501).end();
+};
 
 
 /* Export all controllers. */

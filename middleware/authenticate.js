@@ -9,9 +9,9 @@
 
 var User = require('../models/user');
 
-var findOrCreateUser = function(request, response, next) {
-    var userId = request.kauth.grant.id_token.content.sub;
-    var name = request.kauth.grant.id_token.content.preferred_username;
+var findOrCreateUser = function(req, res, next) {
+    var userId = req.kauth.grant.id_token.content.sub;
+    var name = req.kauth.grant.id_token.content.preferred_username;
 
     User.findOneAndUpdate({
         _id: userId
@@ -22,11 +22,11 @@ var findOrCreateUser = function(request, response, next) {
     }, {
         upsert: true
     }, function(err, user) {
-        if (err) {
-            response.status(500).json(err)
-        } else {
-            request.user = user;
 
+        if (err) {
+            res.status(500).json(err)
+        } else {
+            req.user = user;
             next();
         }
     });

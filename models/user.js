@@ -7,10 +7,13 @@
  */
 
 var mongoose = require('mongoose');
-var Location = require('./location')
+
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var Location = require('./location')
+
 var privacyLevels = ['friends_on_campus', 'nobody'];
+
 
 var userSchema = new Schema({
 	_id: {

@@ -6,18 +6,16 @@
  * Users specific endpoints
  */
 
+
+/* Variables and configurations. */
+
 var express = require('express');
 
 var User = require('./../models/user');
+var config = require('./../config');
 var controller = require('./../controllers/users');
 
 var router = express();
-
-// GET /users?(name | radius)=value
-// GET/POST/DELETE /users/(me | :id)
-// GET /users/(me | :id)/(name | friends | privacyLevel | devices | location | friendrequests | notifications)
-// POST /users/(me | :id)/(name | friends | privacyLevel | devices | location | notifications)
-// DELETE /users/(me | :id)/(friends/:fid | devices/:did | location)
 
 router.param('id', function(req, res, next, id) {
 
@@ -27,38 +25,55 @@ router.param('id', function(req, res, next, id) {
 	next();
 });
 
-router.route('/?')
-	.get(controller.searchUsers);
 
-router.route('/:id')
-	.all(controller.provideRequestedUser)
+/* Routes concerning everything around users. */
+
+router.route('/')
+	.all(config.authenticate)
+	.get(controller.getAllUsers)
+	.post(controller.addUser);
+
+router.route('/me')
+	.all(config.authenticate)
+	.get(controller.getCurrentUser)
+	.put(controller.updateCurrentUser)
+	.delete(controller.deleteCurrentUser);
+
+router.route('/me/logout')
+	.get(config.authenticate, controller.logout);
+
+router.route('/me/location')
+	.all(config.authenticate)
+	.put(controller.updateLocation)
+	.delete(controller.deleteLocation);
+
+router.route('/me/groups')
+	.all(config.authenticate)
+	.get(controller.getGroupsForUser)
+	.post(controller.addGroupForUser);
+
+router.route('/me/groups/:gid')
+	.all(config.authenticate)
+	.get(controller.getGroupForUser)
+	.put(controller.updateGroupForUser)
+	.delete(controller.deleteGroupForUser);
+
+router.route('/me/groups/:gid/users')
+	.put(config.authenticate, controller.addUserToGroup);
+
+router.route('/me/groups/:gid/users/:uid')
+	.delete(config.authenticate, controller.deleteUserFromGroup);
+
+router.route('/:uid')
+	.all(config.authenticate)
 	.get(controller.getUser)
-	.post(controller.updateUser)
+	.put(controller.updateUser)
 	.delete(controller.deleteUser);
 
-/*router.route('/:id/name')
-	.get(controller.getUserName)
-	.post(controller.updateUserName);
+router.route('/:uid/groups')
+	.get(config.authenticate, controller.getGroupsForUser);
 
-// router.route('/:id/:property').get(controller.getUserProperty)....
 
-router.route('/:id/email')
-	.get(controller.getUserEmail);
-
-router.route('/:id/friends')
-	.get(controller.getUserFriends);
-
-router.route('/:id/privacyLevel')
-	.get(controller.getUserPrivacyLevel)
-	.post(controller.updateUserPrivacyLevel);
-
-router.route('/:id/devices')
-	.get(controller.getUserDevices);
-
-router.route('/:id/devices/:deviceId')
-	.get(controller.getUserDevice)
-	.delete(controller.deleteUserDevice);*/
-
-// etc...
+/* Export router with described routes. */
 
 module.exports = router;

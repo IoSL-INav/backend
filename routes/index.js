@@ -23,6 +23,6 @@ router.use(bodyParser.json());
 router.use('/login', login);
 router.use('/users', users);
 router.use('/events', events);
-router.use('/hotspots', events);
+router.use('/hotspots', hotspots);
 
 module.exports = router;
