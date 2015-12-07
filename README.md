@@ -1,5 +1,22 @@
 # IoSL - Indoor Navigation - backend
 
+## for development
+
+first update git and submodules
+```bash
+git pull && git submodule init && git submodule update && git submodule status
+```
+
+install all packages for npm
+```bash
+npm install
+```
+
+run node.js
+```bash
+node app.js
+```
+
 ## Setup
 
 Clone this repository to the desired location on your system. To include submodules this project uses, use the `--recursive` flag during cloning.
