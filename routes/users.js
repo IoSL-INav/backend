@@ -17,14 +17,6 @@ var controller = require('./../controllers/users');
 
 var router = express();
 
-router.param('id', function(req, res, next, id) {
-
-	if (id === 'me') {
-		req.param.id = req.user.id;
-	}
-	next();
-});
-
 
 /* Routes concerning everything around users. */
 
@@ -59,7 +51,7 @@ router.route('/me/groups/:gid')
 	.delete(controller.deleteGroupForUser);
 
 router.route('/me/groups/:gid/users')
-	.put(config.authenticate, controller.addUserToGroup);
+	.post(config.authenticate, controller.addUserToGroup);
 
 router.route('/me/groups/:gid/users/:uid')
 	.delete(config.authenticate, controller.deleteUserFromGroup);

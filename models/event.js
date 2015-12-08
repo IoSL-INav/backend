@@ -7,8 +7,10 @@
  */
 
 var mongoose = require('mongoose');
+
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+
 
 var eventSchema = new Schema({
 	createdBy: {
@@ -43,5 +45,6 @@ var eventSchema = new Schema({
 		}
 	},
 });
+
 
 module.exports = mongoose.Model('Event', eventSchema);

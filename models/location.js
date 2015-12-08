@@ -8,7 +8,9 @@
  */
 
 var mongoose = require('mongoose');
+
 var Schema = mongoose.Schema;
+
 
 var locationSchema = new Schema({
 	createdAt: {
@@ -39,5 +41,6 @@ locationSchema.virtual('info.full', function() {
 		level: this.level
 	};
 });
+
 
 module.exports = mongoose.model('Location', locationSchema);

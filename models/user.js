@@ -36,9 +36,9 @@ var userSchema = new Schema({
 			sparse: true
 		}
 	},
-	friends: [{
-		type: ObjectId,
-		ref: 'User'
+	groups: [{
+		type: Number,
+		ref: 'Group'
 	}],
 	privacyLevel: {
 		type: String,
@@ -122,5 +122,6 @@ userSchema.virtual('info.friends').get(function() {
 		friends: this.friends
 	};
 });
+
 
 module.exports = mongoose.model('User', userSchema);

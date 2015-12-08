@@ -7,11 +7,12 @@
  */
 
 var mongoose = require('mongoose');
+
 var Schema = mongoose.Schema;
 var config = require('./../config');
 
-var deviceSchema = new Schema({
 
+var deviceSchema = new Schema({
 	createdAt: {
 		type: Date,
 		expires: config.expiresIn,
@@ -24,5 +25,6 @@ var deviceSchema = new Schema({
 		type: String
 	}
 });
+
 
 module.exports = mongoose.model('Device', deviceSchema);

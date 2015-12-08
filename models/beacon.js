@@ -37,4 +37,5 @@ var beaconSchema = new Schema({
 // updateLocation
 // updateName
 
+
 module.exports = mongoose.model('Beacon', beaconSchema);

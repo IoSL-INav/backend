@@ -7,8 +7,10 @@
  */
 
 var mongoose = require('mongoose');
+
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+
 
 var friendrequestSchema = new Schema({
     fromUser: {
@@ -18,5 +20,6 @@ var friendrequestSchema = new Schema({
         type: ObjectId
     }
 });
+
 
 module.exports = mongoose.model('Friendrequest', friendrequestSchema);
