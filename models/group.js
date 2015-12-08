@@ -13,7 +13,6 @@ var ObjectId = Schema.Types.ObjectId;
 
 
 var groupSchema = new Schema({
-	_id: Number,
 	name: String,
 	creatorID: String,
 	members: [{

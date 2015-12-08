@@ -36,10 +36,6 @@ var userSchema = new Schema({
 			sparse: true
 		}
 	},
-	groups: [{
-		type: Number,
-		ref: 'Group'
-	}],
 	privacyLevel: {
 		type: String,
 		enum: privacyLevels,

@@ -17,9 +17,9 @@ var controller = {};
 controller.login = function(req, res, next) {
 
     return res.json({
-        hello: "World",
-        username: req.user.name,
-        userId: req.user._id
+        status: "success",
+        userID: req.user._id,
+        username: req.user.name
     });
 }
 

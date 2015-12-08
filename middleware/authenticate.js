@@ -11,6 +11,15 @@ var User = require('../models/user');
 var Group = require('../models/group');
 var userController = require('../controllers/users');
 
+
+/**
+ * This function is called on login.
+ * It either creates a user and adds a default
+ * friends group (first login) or simply retrieves
+ * the user.
+ * This means: After logging in every user in our
+ * system has a default group.
+ */
 var findOrCreateUser = function(req, res, next) {
     var userID = req.kauth.grant.id_token.content.sub;
     var name = req.kauth.grant.id_token.content.preferred_username;
@@ -24,8 +33,6 @@ var findOrCreateUser = function(req, res, next) {
 
         if (!user) {
 
-            console.log("a");
-
             User.create({
                 _id: userID,
                 name: name
@@ -36,8 +43,6 @@ var findOrCreateUser = function(req, res, next) {
                 }
             });
         }
-
-        console.log("b");
 
         Group.findOneAndUpdate({
             $and: [{
@@ -55,14 +60,10 @@ var findOrCreateUser = function(req, res, next) {
             new: true
         }, function(err, group) {
 
-            console.log("c");
-
             if (err) {
                 console.log("Error while searching for the default group for user with ID: %s.", userID);
                 res.status(500).json(err);
             }
-
-            console.log("d");
 
             User.findById(userID, function(err, user) {
 
@@ -70,25 +71,6 @@ var findOrCreateUser = function(req, res, next) {
                     console.log("Error while locating model for userID: %s.", userID);
                     res.status(500).json(err);
                 }
-
-                user.update({
-                    _id: userID
-                }, {
-                    $addToSet: {
-                        // TODO
-                        groups: group._id
-                    }
-                }, function(err) {
-
-                    console.log("e");
-
-                    if (err) {
-                        console.log("Could not update user model for newly created default group");
-                        res.status(500).json(err);
-                    }
-                })
-
-                console.log("f");
 
                 req.user = user;
                 next();
