@@ -36,6 +36,14 @@ var userSchema = new Schema({
 			sparse: true
 		}
 	},
+	settings: {
+		autoPingEnabled: Boolean,
+		autoPingGroup: {
+			type: ObjectId,
+			ref: 'Group'
+		},
+		autoLocateEnabled: Boolean
+	},
 	privacyLevel: {
 		type: String,
 		enum: privacyLevels,
