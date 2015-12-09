@@ -17,7 +17,19 @@ Start the application locally by invoking the node server with a few environment
 PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js
 ```
 
-Also make sure to have started the MongoDB service in advance.
+Also make sure to have started the MongoDB service in advance
+
+### start app with initial data (insert hotspots etc.)
+
+```bash
+PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js --init
+```
+
+### start app with initial data (insert hotspots etc.) and random data for development
+
+```bash
+PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js --init --devel
+```
 
 ## Setup
 

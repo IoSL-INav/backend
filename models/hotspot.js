@@ -11,15 +11,15 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
-var Location = require('./location.js');
+var Beacon = require('./beacon');
 
 
 var hotspotSchema = new Schema({
     name: String,
-    location: {
+    beacons: [{
         type: ObjectId,
-        ref: 'Location'
-    },
+        ref: 'Beacon'
+    }],
 });
 
 
