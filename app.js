@@ -44,7 +44,7 @@ var dropDatabase = function() {
   });
 }
 
-var initDatabase = function(){
+var initDatabase = function() {
   console.log("add some real data like defined hotspots etc.");
 }
 
@@ -84,6 +84,8 @@ var initDummyDatabase = function() {
   }, function(err, hotspot) {
     if (err) {
       console.log("Could not create hotspot Mensa.");
+    } else {
+      console.log("Create hotspot Mensa.");
     }
   });
 
@@ -93,6 +95,8 @@ var initDummyDatabase = function() {
   }, function(err, hotspot) {
     if (err) {
       console.log("Could not create hotspot Library.");
+    } else {
+      console.log("Create hotspot Library.");
     }
   });
 }
@@ -107,7 +111,7 @@ var server = app.listen(config.port, config.host, function() {
     if (process.argv.indexOf("--devel") != -1) {
       console.log("add devel data to database");
       initDummyDatabase();
-    }else{
+    } else {
       initDatabase();
     }
   }
