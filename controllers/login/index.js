@@ -18,8 +18,8 @@ controller.login = function(req, res, next) {
 
     return res.json({
         status: "success",
-        userID: req.user._id,
-        userName: req.user.name
+        userID: req.userID,
+        userName: req.userName
     });
 }
 

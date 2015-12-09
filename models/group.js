@@ -13,12 +13,12 @@ var ObjectId = Schema.Types.ObjectId;
 
 
 var groupSchema = new Schema({
-	name: String,
-	creatorID: String,
-	members: [{
-		type: ObjectId,
-		ref: 'User'
-	}],
+    name: String,
+    creatorID: String,
+    members: [{
+        type: ObjectId,
+        ref: 'User'
+    }],
 });
 
 

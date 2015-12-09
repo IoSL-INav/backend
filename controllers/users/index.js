@@ -58,11 +58,11 @@ controller.addUser = function(req, res, next) {
  */
 controller.getCurrentUser = function(req, res, next) {
 
-	getCurUser(req.kauth.grant.id_token.content.sub, function(err, curUser) {
+	getCurUser(req.userID, function(err, curUser) {
 
 		if (err) {
 			console.log("getCurUser call done from getCurrentUser controller.");
-			res.status(500).json(err);
+			res.status(500).end();
 		}
 
 		res.json({
@@ -70,6 +70,7 @@ controller.getCurrentUser = function(req, res, next) {
 			userName: curUser.name,
 			userEmail: curUser.email
 		});
+		next();
 	});
 };
 
@@ -111,28 +112,79 @@ controller.deleteLocation = function(req, res, next) {
 controller.getGroupsForUser = function(req, res, next) {
 
 	Group.find({
-		creatorID: req.kauth.grant.id_token.content.sub
+		creatorID: req.userID
 	}, 'name members', function(err, groups) {
 
 		if (err) {
 			console.log("Could not get all groups for user in user controller getGroupsForUser.");
-			res.status(500).json(err);
+			res.status(500).end();
 		}
 
 		res.json(groups);
+		next();
 	});
 };
 
 
 controller.addGroupForUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var groupName = req.body.groupName;
+
+	Group.findOne({
+		$and: [{
+			name: groupName
+		}, {
+			creatorID: req.userID
+		}]
+	}, function(err, found) {
+
+		if (err) {
+			console.log("While checking for group duplicate on insert an error occured in user controller addGroupForUser.");
+			res.status(500).end();
+		}
+
+		if (found) {
+
+			console.log("Detected group duplicate on insert in user controller addGroupForUser.");
+			res.status(400).json({
+				status: "failure",
+				reason: "group exists"
+			}).end();
+		} else {
+
+			Group.create({
+				name: groupName,
+				creatorID: req.userID
+			}, function(err, addedGroup) {
+
+				if (err) {
+					console.log("Error during saving new group in user controller addGroupForUser.");
+					res.status(500).end();
+				}
+
+				res.json({
+					status: "success",
+					reason: "group added"
+				});
+				next();
+			});
+		}
+	});
 };
 
 
 controller.getGroupForUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	Group.findById(req.groupID, 'name members', function(err, groupID) {
+
+		if (err) {
+			console.log("Could not retrieve information about specific group in user controller getGroupForUser.");
+			res.status(500).end();
+		}
+
+		res.json(groupID);
+		next();
+	});
 };
 
 

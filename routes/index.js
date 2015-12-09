@@ -19,7 +19,9 @@ var hotspots = require('./hotspots');
 
 var router = express.Router();
 
+/* Support JSON bodies. */
 router.use(bodyParser.json());
+
 router.use('/login', login);
 router.use('/users', users);
 router.use('/events', events);

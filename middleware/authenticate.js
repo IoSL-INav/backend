@@ -72,7 +72,8 @@ var findOrCreateUser = function(req, res, next) {
                     res.status(500).json(err);
                 }
 
-                req.user = user;
+                req.userID = user._id;
+                req.userName = user.name;
                 next();
             });
         });

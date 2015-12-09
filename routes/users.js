@@ -12,18 +12,30 @@
 var express = require('express');
 
 var User = require('./../models/user');
+var Group = require('./../models/group');
 var config = require('./../config');
 var controller = require('./../controllers/users');
 
 var router = express();
 
 
-/* Routes concerning everything around users. */
+/* Param middleware. */
 
-router.route('/')
-	.all(config.authenticate)
-	.get(controller.getAllUsers)
-	.post(controller.addUser);
+/* If given, add group ID to request. */
+router.param('gid', function(req, res, next, gid) {
+
+	req.groupID = gid;
+});
+
+
+/* If given, add requested (other) user ID to request. */
+router.param('uid', function(req, res, next, uid) {
+
+	req.otherUserID = uid;
+});
+
+
+/* Routes concerning everything around users. */
 
 router.route('/me')
 	.all(config.authenticate)
@@ -55,15 +67,6 @@ router.route('/me/groups/:gid/users')
 
 router.route('/me/groups/:gid/users/:uid')
 	.delete(config.authenticate, controller.deleteUserFromGroup);
-
-router.route('/:uid')
-	.all(config.authenticate)
-	.get(controller.getUser)
-	.put(controller.updateUser)
-	.delete(controller.deleteUser);
-
-router.route('/:uid/groups')
-	.get(config.authenticate, controller.getGroupsForUser);
 
 
 /* Export router with described routes. */
