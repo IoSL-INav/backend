@@ -9,6 +9,7 @@
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
+
 var config = require('./../config');
 
 
@@ -18,12 +19,8 @@ var deviceSchema = new Schema({
 		expires: config.expiresIn,
 		default: Date.now
 	},
-	name: {
-		type: String
-	},
-	jti: {
-		type: String
-	}
+	name: String,
+	jti: String
 });
 
 

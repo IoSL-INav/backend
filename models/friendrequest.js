@@ -11,15 +11,19 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
+var User = require('./user');
 
-var friendrequestSchema = new Schema({
+
+var friendRequestSchema = new Schema({
     fromUser: {
         type: ObjectId
+        ref: 'User'
     },
     toUser: {
         type: ObjectId
+        ref: 'User'
     }
 });
 
 
-module.exports = mongoose.model('Friendrequest', friendrequestSchema);
+module.exports = mongoose.model('FriendRequest', friendrequestSchema);

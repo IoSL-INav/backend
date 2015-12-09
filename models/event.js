@@ -18,9 +18,7 @@ var eventSchema = new Schema({
 		ref: 'User',
 		index: true
 	},
-	title: {
-		type: String
-	},
+	title: String,
 	startTime: {
 		type: Date,
 		index: true
@@ -40,9 +38,7 @@ var eventSchema = new Schema({
 			type: String,
 			index: true
 		},
-		floor: {
-			type: String
-		}
+		floor: String
 	},
 });
 

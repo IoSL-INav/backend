@@ -33,6 +33,7 @@ var locationSchema = new Schema({
 	}
 });
 
+
 locationSchema.virtual('info.full', function() {
 	return {
 		createdAt: this.createdAt,

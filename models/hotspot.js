@@ -10,9 +10,8 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var Location = require('./location.js')
 
-var config = require('./../config');
+var Location = require('./location.js');
 
 
 var hotspotSchema = new Schema({

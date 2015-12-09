@@ -1,21 +1,23 @@
 # IoSL - Indoor Navigation - backend
 
-## for development
+## For development
 
-first update git and submodules
+First update git and submodules
 ```bash
 git pull && git submodule init && git submodule update && git submodule status
 ```
 
-install all packages for npm
+Install all packages for npm
 ```bash
 npm install
 ```
 
-run node.js
+Start the application locally by invoking the node server with a few environment variables:
 ```bash
-node app.js
+PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js
 ```
+
+Also make sure to have started the MongoDB service in advance.
 
 ## Setup
 
@@ -59,11 +61,10 @@ docker-compose stop
 docker-compose rm -f
 ```
 
-## Run it locally (e.g. for development)
+## Empty MongoDB to get a fresh environment
 
-Start the application locally by invoking the node server with a few environment variables:
+If you feel the need to flush the MongoDB in order to start fresh, you can use the following command:
+
 ```bash
-PIAZZA_DB=mongodb://localhost:27017/iosl-inav PIAZZA_SECRET=abc node app.js
+mongo iosl-inav --eval "db.dropDatabase()"
 ```
-
-Also make sure to have started the MongoDB service in advance.

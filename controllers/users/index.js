@@ -66,9 +66,9 @@ controller.getCurrentUser = function(req, res, next) {
 		}
 
 		res.json({
-			id: curUser._id,
-			name: curUser.name,
-			email: curUser.email
+			userID: curUser._id,
+			userName: curUser.name,
+			userEmail: curUser.email
 		});
 	});
 };

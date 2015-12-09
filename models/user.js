@@ -10,24 +10,14 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var Location = require('./location')
 
+var Location = require('./location');
 var privacyLevels = ['friends_on_campus', 'nobody'];
 
 
 var userSchema = new Schema({
-	_id: {
-		type: String,
-		index: {
-			type: String
-		}
-	},
-	name: {
-		type: String,
-		index: {
-			type: String
-		}
-	},
+	_id: String,
+	name: String,
 	email: {
 		type: String,
 		index: {
@@ -60,13 +50,16 @@ var userSchema = new Schema({
 	notifications: []
 });
 
+
 userSchema.statics.searchByName = function(name, callback) {
 	// TODO
 };
 
+
 userSchema.methods.findAroundMe = function(range, callback) {
 	// TODO
 };
+
 
 userSchema.methods.isOnCampus = function(callback) {
 	this.populate('location', function(err, user) {
@@ -76,6 +69,7 @@ userSchema.methods.isOnCampus = function(callback) {
 	});
 };
 
+
 userSchema.methods.hasFriend = function(friendId) {
 
 	// FIXME if this proves to be too inefficient
@@ -83,6 +77,7 @@ userSchema.methods.hasFriend = function(friendId) {
 		return fid.equals(friendId);
 	});
 };
+
 
 userSchema.methods.getAccessableInfo = function(uid, callback) {
 
@@ -110,6 +105,7 @@ userSchema.methods.getAccessableInfo = function(uid, callback) {
 	}
 };
 
+
 userSchema.virtual('info.public').get(function() {
 
 	return {
@@ -117,6 +113,7 @@ userSchema.virtual('info.public').get(function() {
 		name: this.name
 	};
 });
+
 
 userSchema.virtual('info.friends').get(function() {
 

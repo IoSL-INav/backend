@@ -8,34 +8,21 @@
 
 var mongoose = require('mongoose');
 
-var Location = require('./location')
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
+var Location = require('./location');
 
 var beaconSchema = new Schema({
-	name: String,{
-		type: String,
-		index: {
-			type: String
-		}
-	},
-	uid: {
-		type: String,
-		index: {
-			type: String,
-			unique: true
-		}
-	},
+	name: String,
+	companyUUID: String,
+	major: String,
+	minor: String,
 	location: {
 		type: ObjectId,
 		ref: 'Location'
 	},
 });
-
-// which function do we need
-// updateLocation
-// updateName
 
 
 module.exports = mongoose.model('Beacon', beaconSchema);
