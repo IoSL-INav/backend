@@ -9,12 +9,10 @@
 
 var fs = require('fs');
 var mongoose = require('mongoose');
+var morgan = require('morgan');
 var expressSession = require('express-session');
 var authenticate = require('./middleware/authenticate.js');
 
-/* BEGIN DEVELOPMENT ONLY */
-var morgan = require('morgan');
-/* END DEVELOPMENT ONLY */
 
 var Keycloak = require('connect-keycloak');
 var keycloakConfig = require('./keycloak.json')

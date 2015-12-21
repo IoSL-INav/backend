@@ -18,18 +18,21 @@
   "homepage": "https://github.com/IoSL-INav/backend#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "connect-keycloak": "file:vendor/keycloak-nodejs-mathiasslawik/connect",
     "connect-mongo": "^0.8.2",
     "express": "^4.13.3",
     "express-jwt": "^3.3.0",
     "express-session": "^1.12.1",
     "jsonwebtoken": "^5.4.1",
+    "keycloak-auth-utils": "file:vendor/keycloak-nodejs-mathiasslawik/auth-utils",
     "mongoose": "^4.2.7",
     "morgan": "^1.6.1",
     "node-uuid": "^1.4.7",
     "nodemailer": "^1.10.0",
     "passwordless": "^1.1.0",
     "passwordless-memorystore": "0.0.1",
-    "keycloak-auth-utils": "file:vendor/keycloak-nodejs-mathiasslawik/auth-utils",
-    "connect-keycloak": "file:vendor/keycloak-nodejs-mathiasslawik/connect"
+    "path-to-regexp": "^1.2.1",
+    "type-is": "^1.6.10",
+    "validator": "^4.4.0"
   }
 }

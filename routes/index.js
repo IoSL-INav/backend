@@ -27,4 +27,7 @@ router.use('/users', users);
 router.use('/events', events);
 router.use('/hotspots', hotspots);
 
+/* Do we want to redirect all left requests to authentication? */
+router.use(config.authenticate);
+
 module.exports = router;

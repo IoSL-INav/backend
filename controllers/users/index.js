@@ -13,6 +13,7 @@ var util = require('./../../util');
 var isErrorOrNull = util.isErrorOrNull;
 
 var config = require('./../../config');
+var validator = require('validator');
 var User = require('./../../models/user');
 var Group = require('./../../models/group');
 var Location = require('./../../models/location');
@@ -22,16 +23,16 @@ var controller = {};
 
 /* Helpers. */
 
-var getCurUser = function(userID, callback) {
+var getupdUser = function(userID, callback) {
 
-	User.findById(userID, function(err, curUser) {
+	User.findById(userID, function(err, updUser) {
 
 		if (err) {
-			console.log("user controller error: getCurUser query yielded error.");
+			console.log("user controller error: getupdUser query yielded error.");
 			callback(err);
 		}
 
-		callback(null, curUser);
+		callback(null, updUser);
 	});
 };
 
@@ -40,35 +41,26 @@ var getCurUser = function(userID, callback) {
 /* Controllers. */
 
 
-controller.getAllUsers = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
-controller.addUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
 /**
  * This function returns the user data of
  * the currently logged in user.
  */
 controller.getCurrentUser = function(req, res, next) {
 
-	getCurUser(req.userID, function(err, curUser) {
+	getupdUser(req.userID, function(err, updUser) {
 
 		if (err) {
-			console.log("getCurUser call done from getCurrentUser controller.");
+			console.log("getupdUser call done from getCurrentUser controller.");
 			res.status(500).end();
 		}
 
 		res.json({
-			userID: curUser._id,
-			userName: curUser.name,
-			userEmail: curUser.email
+			userID: updUser._id,
+			userName: updUser.name,
+			userEmail: updUser.email,
+			userAutoPing: updUser.autoPingEnabled,
+			userAutoGroup: updUser.autoPingGroup,
+			userAutoLocate: updUser.autoLocateEnabled
 		});
 		next();
 	});
@@ -76,8 +68,93 @@ controller.getCurrentUser = function(req, res, next) {
 
 
 controller.updateCurrentUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var newUserName = req.body.userName;
+	var newUserAutoPing = req.body.userAutoPing;
+	var newUserAutoGroup = req.body.userAutoGroup;
+	var newUserAutoLocate = req.body.userAutoLocate;
+	var updateQuery = {};
+	var noError = true;
+
+	if (newUserName != undefined) {
+		newUserName = validator.stripLow(validator.trim(newUserName));
+
+		if (validator.isAlphanumeric(newUserName)) {
+			updateQuery.name = newUserName;
+		} else {
+			noError = false;
+			res.status(400).json({
+				status: "failure",
+				reason: "User name contains unallowed characters (only alphanumeric ones allowed)."
+			}).end();
+		}
+	}
+
+	if (newUserAutoPing != undefined) {
+		newUserAutoPing = validator.stripLow(validator.trim(newUserAutoPing));
+
+		if (validator.isBoolean(newUserAutoPing)) {
+			updateQuery.autoPingEnabled = newUserAutoPing;
+		} else {
+			noError = false;
+			res.status(400).json({
+				status: "failure",
+				reason: "Received auto ping indicator was no boolean."
+			}).end();
+		}
+	}
+
+	if (newUserAutoGroup != undefined) {
+		newUserAutoGroup = validator.stripLow(validator.trim(newUserAutoGroup));
+
+		if (validator.isAlphanumeric(newUserAutoGroup)) {
+			updateQuery.autoPingGroup = newUserAutoGroup;
+		} else {
+			noError = false;
+			res.status(400).json({
+				status: "failure",
+				reason: "Auto ping group contained other than alphanumeric characters."
+			}).end();
+		}
+	}
+
+	if (newUserAutoLocate != undefined) {
+		newUserAutoLocate = validator.stripLow(validator.trim(newUserAutoLocate));
+
+		if (validator.isBoolean(newUserAutoLocate)) {
+			updateQuery.autoLocateEnabled = newUserAutoLocate;
+		} else {
+			noError = false;
+			res.status(400).json({
+				status: "failure",
+				reason: "Received auto locate indicator was no boolean."
+			}).end();
+		}
+	}
+
+	if (noError) {
+
+		User.findByIdAndUpdate(req.userID, updateQuery, {
+			new: true
+		}, function(err, updUser) {
+
+			if (err) {
+				console.log("\n\nUpdating modified user went wrong.\nError:", err, "\n\n");
+				res.status(500).json(err.message).end();
+				return next();
+			}
+
+			res.json({
+				userID: updUser._id,
+				userName: updUser.name,
+				userEmail: updUser.email,
+				userAutoPing: updUser.autoPingEnabled,
+				userAutoGroup: updUser.autoPingGroup,
+				userAutoLocate: updUser.autoLocateEnabled
+			});
+			next();
+		});
+	}
 };
 
 
@@ -164,7 +241,8 @@ controller.addGroupForUser = function(req, res, next) {
 
 				res.json({
 					status: "success",
-					reason: "group added"
+					reason: "group added",
+					groupID: addedGroup._id
 				});
 				next();
 			});
@@ -207,24 +285,6 @@ controller.addUserToGroup = function(req, res, next) {
 
 
 controller.deleteUserFromGroup = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
-controller.getUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
-controller.updateUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
-controller.deleteUser = function(req, res, next) {
 	// TODO
 	return res.status(501).end();
 };

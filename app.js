@@ -22,11 +22,13 @@ app.use(config.keycloak.middleware({
 app.use(routes);
 
 var dropDatabase = function() {
+
   var User = require('./models/user');
   var Group = require('./models/group');
   var Hotspot = require('./models/hotspot');
   var Beacon = require('./models/beacon');
   var Location = require('./models/location');
+
   User.remove({}, function(err) {
     console.log('User collection removed');
   });
@@ -49,6 +51,7 @@ var initDatabase = function() {
 }
 
 var initDummyDatabase = function() {
+
   var Location = require('./models/location');
   var Beacon = require('./models/beacon');
   var Hotspot = require('./models/hotspot');
@@ -103,11 +106,14 @@ var initDummyDatabase = function() {
 
 
 var server = app.listen(config.port, config.host, function() {
+
   var address = server.address();
   console.log('IoSL-INav server listening on host %s at port %s.', address.address, address.port);
+
   if (process.argv.indexOf("--init") != -1) {
     console.log("init database with initial data");
     dropDatabase();
+
     if (process.argv.indexOf("--devel") != -1) {
       console.log("add devel data to database");
       initDummyDatabase();
@@ -115,5 +121,4 @@ var server = app.listen(config.port, config.host, function() {
       initDatabase();
     }
   }
-
 });
