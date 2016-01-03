@@ -67,6 +67,14 @@ controller.getCurrentUser = function(req, res, next) {
 };
 
 
+/**
+ * Updates a user.
+ * Possible attributes:
+ * - userName: alphanumeric,
+ * - userAutoPing: boolean,
+ * - userAutoGroup: alphanumeric,
+ * - userAutoLocate: boolean
+ */
 controller.updateCurrentUser = function(req, res, next) {
 
 	var newUserName = req.body.userName;
@@ -158,9 +166,38 @@ controller.updateCurrentUser = function(req, res, next) {
 };
 
 
+/**
+ * Completely erases a user from database.
+ * Also deletes all created groups.
+ */
 controller.deleteCurrentUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	/* First remove all groups. */
+	Group.remove({
+		creatorID: req.userID
+	}, function(err) {
+
+		if(err) {
+			console.log("Error while removing all groups associated with an user.");
+			res.status(500).end();
+		}
+
+		/* Now remove the user itself. */
+		User.findByIdAndRemove(req.userID, function(err, rmUser) {
+
+			if(err) {
+				console.log("Error while removing the user itself.");
+				res.status(500).end();
+			}
+
+			res.json({
+				status: "success",
+				reason: "user deleted",
+				userID: rmUser._id
+			});
+			return next();
+		});
+	});
 };
 
 
