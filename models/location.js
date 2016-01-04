@@ -28,9 +28,7 @@ var locationSchema = new Schema({
 		type: String,
 		index: true
 	},
-	level: {
-		type: String
-	}
+	floor: String
 });
 
 
@@ -39,7 +37,7 @@ locationSchema.virtual('info.full', function() {
 		createdAt: this.createdAt,
 		coordinates: this.coordinates,
 		building: this.building,
-		level: this.level
+		floor: this.floor
 	};
 });
 

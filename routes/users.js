@@ -41,9 +41,6 @@ router.route('/me')
 	.put(controller.updateCurrentUser)
 	.delete(controller.deleteCurrentUser);
 
-router.route('/me/logout')
-	.get(config.authenticate, controller.logout);
-
 router.route('/me/location')
 	.all(config.authenticate)
 	.put(controller.updateLocation)

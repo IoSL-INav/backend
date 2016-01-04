@@ -21,22 +21,6 @@ var Location = require('./../../models/location');
 var controller = {};
 
 
-/* Helpers. */
-
-var getupdUser = function(userID, callback) {
-
-	User.findById(userID, function(err, updUser) {
-
-		if (err) {
-			console.log("user controller error: getupdUser query yielded error.");
-			callback(err);
-		}
-
-		callback(null, updUser);
-	});
-};
-
-
 
 /* Controllers. */
 
@@ -47,23 +31,15 @@ var getupdUser = function(userID, callback) {
  */
 controller.getCurrentUser = function(req, res, next) {
 
-	getupdUser(req.userID, function(err, updUser) {
-
-		if (err) {
-			console.log("getupdUser call done from getCurrentUser controller.");
-			res.status(500).end();
-		}
-
-		res.json({
-			userID: updUser._id,
-			userName: updUser.name,
-			userEmail: updUser.email,
-			userAutoPing: updUser.autoPingEnabled,
-			userAutoGroup: updUser.autoPingGroup,
-			userAutoLocate: updUser.autoLocateEnabled
-		});
-		next();
+	res.json({
+		userID: req.user._id,
+		userName: req.user.name,
+		userEmail: req.user.email,
+		userAutoPing: req.user.autoPingEnabled,
+		userAutoGroup: req.user.autoPingGroup,
+		userAutoLocate: req.user.autoLocateEnabled
 	});
+	next();
 };
 
 
@@ -142,7 +118,7 @@ controller.updateCurrentUser = function(req, res, next) {
 
 	if (noError) {
 
-		User.findByIdAndUpdate(req.userID, updateQuery, {
+		User.findByIdAndUpdate(req.user._id, updateQuery, {
 			new: true
 		}, function(err, updUser) {
 
@@ -174,42 +150,54 @@ controller.deleteCurrentUser = function(req, res, next) {
 
 	/* First remove all groups. */
 	Group.remove({
-		creatorID: req.userID
+		creatorID: req.user._id
 	}, function(err) {
 
-		if(err) {
+		if (err) {
 			console.log("Error while removing all groups associated with an user.");
 			res.status(500).end();
 		}
 
 		/* Now remove the user itself. */
-		User.findByIdAndRemove(req.userID, function(err, rmUser) {
+		User.findByIdAndRemove(req.user._id, function(err, rmUser) {
 
-			if(err) {
+			if (err) {
 				console.log("Error while removing the user itself.");
 				res.status(500).end();
 			}
 
-			res.json({
-				status: "success",
-				reason: "user deleted",
-				userID: rmUser._id
-			});
-			return next();
+			/* Log out users via "See other" redirect to /logout. */
+			res.status(303).location('/logout').end();
 		});
 	});
 };
 
 
-controller.logout = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
-};
-
-
 controller.updateLocation = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var lat = req.body.userLat;
+	var lon = req.body.userLon;
+	var building = req.body.userBuilding;
+	var floor = req.body.userFloor;
+
+
+	/* TODO: Validate input! */
+
+
+	Location.create({
+		coordinates: [lon, lat],
+		building: building,
+		floor: floor
+	}, function(err, loc) {
+
+		if (err) {
+			console.log("Could not insert new location for user.");
+			res.status(500).end();
+		}
+
+		res.json(loc);
+		next();
+	});
 };
 
 
@@ -226,7 +214,7 @@ controller.deleteLocation = function(req, res, next) {
 controller.getGroupsForUser = function(req, res, next) {
 
 	Group.find({
-		creatorID: req.userID
+		creatorID: req.user._id
 	}, 'name members', function(err, groups) {
 
 		if (err) {
@@ -244,11 +232,15 @@ controller.addGroupForUser = function(req, res, next) {
 
 	var groupName = req.body.groupName;
 
+
+	/* TODO: Validate input! */
+
+
 	Group.findOne({
 		$and: [{
 			name: groupName
 		}, {
-			creatorID: req.userID
+			creatorID: req.user._id
 		}]
 	}, function(err, found) {
 
@@ -268,7 +260,7 @@ controller.addGroupForUser = function(req, res, next) {
 
 			Group.create({
 				name: groupName,
-				creatorID: req.userID
+				creatorID: req.user._id
 			}, function(err, addedGroup) {
 
 				if (err) {

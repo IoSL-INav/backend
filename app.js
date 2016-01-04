@@ -59,7 +59,7 @@ var initDummyDatabase = function() {
   var dummyLoc = new Location({
     coordinates: [0, 0],
     building: "Mensa",
-    level: "0.OG",
+    floor: "0.OG",
   });
   dummyLoc.save();
 
