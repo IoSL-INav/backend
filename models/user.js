@@ -14,6 +14,14 @@ var ObjectId = Schema.Types.ObjectId;
 var Location = require('./location');
 var privacyLevels = ['friends_on_campus', 'nobody'];
 
+var groupSchema = new Schema({
+    name: String,
+    creatorID: String,
+    members: [{
+        type: ObjectId,
+        ref: 'User'
+    }],
+});
 
 var userSchema = new Schema({
 	_id: String,
@@ -27,10 +35,7 @@ var userSchema = new Schema({
 		}
 	},
 	autoPingEnabled: Boolean,
-	autoPingGroup: {
-		type: ObjectId,
-		ref: 'Group'
-	},
+	autoPingGroup: groupSchema,
 	autoLocateEnabled: Boolean,
 	privacyLevel: {
 		type: String,
@@ -45,7 +50,8 @@ var userSchema = new Schema({
 		type: ObjectId,
 		ref: 'Location'
 	},
-	notifications: []
+	notifications: [],
+	groups:[groupSchema]
 });
 
 

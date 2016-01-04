@@ -8,7 +8,6 @@
  */
 
 var User = require('../models/user');
-var Group = require('../models/group');
 var userController = require('../controllers/users');
 
 
@@ -29,21 +28,23 @@ var findOrCreateUser = function(req, res, next) {
         if (err) {
             console.log("Error while locating model for userID: %s.", userID);
             res.status(500).json(err);
-        }
-
-        if (!user) {
+        }else if (!user) {
 
             User.create({
                 _id: userID,
-                name: name
+                name: name,
+                groups:[{name:'All friends',members:[]}]
             }, function(err) {
                 if (err) {
                     console.log("Could not login user with ID: %s.", userID);
                     res.status(500).json(err);
                 }
             });
+        }else{
+          req.user = user;
+          next();
         }
-
+/*
         Group.findOneAndUpdate({
             $and: [{
                 name: 'All friends'
@@ -76,6 +77,7 @@ var findOrCreateUser = function(req, res, next) {
                 next();
             });
         });
+*/
     });
 };
 

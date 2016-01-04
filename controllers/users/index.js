@@ -15,7 +15,6 @@ var isErrorOrNull = util.isErrorOrNull;
 var config = require('./../../config');
 var validator = require('validator');
 var User = require('./../../models/user');
-var Group = require('./../../models/group');
 var Location = require('./../../models/location');
 
 var controller = {};
@@ -212,19 +211,8 @@ controller.deleteLocation = function(req, res, next) {
  * associated to the currently logged in user ID.
  */
 controller.getGroupsForUser = function(req, res, next) {
-
-	Group.find({
-		creatorID: req.user._id
-	}, 'name members', function(err, groups) {
-
-		if (err) {
-			console.log("Could not get all groups for user in user controller getGroupsForUser.");
-			res.status(500).end();
-		}
-
-		res.json(groups);
+		res.json(res.user.groups);
 		next();
-	});
 };
 
 
@@ -232,10 +220,11 @@ controller.addGroupForUser = function(req, res, next) {
 
 	var groupName = req.body.groupName;
 
-
+	console.log('TODO: addGroupForUser');
+	next();
 	/* TODO: Validate input! */
 
-
+/*
 	Group.findOne({
 		$and: [{
 			name: groupName
@@ -277,11 +266,14 @@ controller.addGroupForUser = function(req, res, next) {
 			});
 		}
 	});
+	*/
 };
 
 
 controller.getGroupForUser = function(req, res, next) {
-
+	console.log('TODO: getGroupForUser');
+	next();
+	/*
 	Group.findById(req.groupID, 'name members', function(err, groupID) {
 
 		if (err) {
@@ -292,6 +284,7 @@ controller.getGroupForUser = function(req, res, next) {
 		res.json(groupID);
 		next();
 	});
+	*/
 };
 
 

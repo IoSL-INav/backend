@@ -11,7 +11,6 @@
 
 var config = require('./../../config');
 var Hotspot = require('./../../models/hotspot');
-var Beacon = require('./../../models/beacon');
 
 var controller = {};
 

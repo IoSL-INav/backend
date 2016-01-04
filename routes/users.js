@@ -12,7 +12,6 @@
 var express = require('express');
 
 var User = require('./../models/user');
-var Group = require('./../models/group');
 var config = require('./../config');
 var controller = require('./../controllers/users');
 
