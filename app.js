@@ -25,16 +25,12 @@ var dropDatabase = function() {
 
   var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
-  var Location = require('./models/location');
 
   User.remove({}, function(err) {
     console.log('User collection removed');
   });
   Hotspot.remove({}, function(err) {
     console.log('Hotspot collection removed');
-  });
-  Location.remove({}, function(err) {
-    console.log('Location collection removed');
   });
 }
 
@@ -44,15 +40,13 @@ var initDatabase = function() {
 
 var initDummyDatabase = function() {
 
-  var Location = require('./models/location');
   var Hotspot = require('./models/hotspot');
 
-  var dummyLoc = new Location({
+  var dummyLoc = {
     coordinates: [0, 0],
     building: "Mensa",
-    floor: "0.OG",
-  });
-  dummyLoc.save();
+    floor: "0. OG",
+  };
 
   var dummyBeacon01 = {
     name: "beacon01",

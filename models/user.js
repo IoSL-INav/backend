@@ -10,9 +10,8 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-
-var Location = require('./location');
 var privacyLevels = ['friends_on_campus', 'nobody'];
+
 
 var groupSchema = new Schema({
 	name: String,
@@ -20,6 +19,25 @@ var groupSchema = new Schema({
 		type: ObjectId,
 		ref: 'User'
 	}],
+});
+
+var locationSchema = new Schema({
+	createdAt: {
+		type: Date,
+		expires: 900, // 15 minutes in seconds
+		default: Date.now
+	},
+	coordinates: {
+		type: [Number],
+		index: {
+			type: '2dsphere' // per def. [longitude, latitude]
+		}
+	},
+	building: {
+		type: String,
+		index: true
+	},
+	floor: String
 });
 
 var userSchema = new Schema({
@@ -45,10 +63,7 @@ var userSchema = new Schema({
 		type: ObjectId,
 		ref: 'Device'
 	}],
-	location: {
-		type: ObjectId,
-		ref: 'Location'
-	},
+	location: locationSchema,
 	notifications: [],
 	groups: [groupSchema]
 });

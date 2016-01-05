@@ -15,7 +15,6 @@ var isErrorOrNull = util.isErrorOrNull;
 var config = require('./../../config');
 var validator = require('validator');
 var User = require('./../../models/user');
-var Location = require('./../../models/location');
 
 var controller = {};
 
@@ -167,46 +166,81 @@ controller.updateLocation = function(req, res, next) {
 	var lon = req.body.userLon;
 	var building = req.body.userBuilding;
 	var floor = req.body.userFloor;
+	var newLoc = {};
+	var noError = true;
 
+	if ((lat != undefined) && (lon == undefined)) {
 
-	/* TODO: Validate input! */
+		noError = false;
+		res.status(400).json({
+			status: "failure",
+			reason: "longitude missing"
+		});
+	}
 
+	if ((lat == undefined) && (lon != undefined)) {
 
-	Location.create({
-		coordinates: [lon, lat],
-		building: building,
-		floor: floor
-	}, function(err, loc) {
+		noError = false;
+		res.status(400).json({
+			status: "failure",
+			reason: "latitude missing"
+		});
+	}
 
-		if (err) {
+	if ((building == undefined) || (floor == undefined)) {
+
+		noError = false;
+		res.status(400).json({
+			status: "failure",
+			reason: "building and/or floor information missing"
+		});
+	}
+
+	if (noError) {
+
+		if ((lat != undefined) && (lon != undefined)) {
+			lat = validator.toFloat(validator.trim(lat));
+			lon = validator.toFloat(validator.trim(lon));
+
+			newLoc.coordinates = [lon, lat];
+		}
+
+		building = validator.stripLow(validator.trim(building));
+		floor = validator.stripLow(validator.trim(floor));
+
+		newLoc.building = building;
+		newLoc.floor = floor;
+
+		req.user.location = newLoc;
+		req.user.save();
+
+		if (req.user.location.building == building) {
+			res.json(newLoc);
+		} else {
 			console.log("Could not insert new location for user.");
 			res.status(500).end();
 		}
+	}
 
-		res.json(loc);
-		next();
-	});
+	next();
 };
 
 
 controller.deleteLocation = function(req, res, next) {
 
-	User.update({
-		_id: req.user._id
-	}, {
-		location: null
-	}, function(err) {
+	req.user.location = null;
+	req.user.save();
 
-		if (err) {
-			console.log("Error during deleting a location from user.");
-			res.status(500).end();
-		}
-
+	if (req.user.location == null) {
 		res.json({
 			status: "success"
 		});
-		next();
-	});
+	} else {
+		console.log("Error during deleting a location from user.");
+		res.status(500).end();
+	}
+
+	next();
 };
 
 
@@ -222,14 +256,20 @@ controller.getGroupsForUser = function(req, res, next) {
 
 controller.addGroupForUser = function(req, res, next) {
 
-	var groupName = req.body.groupName;
-
-
-	/* TODO: Validate input! */
-
-
 	var i;
+	var groupName = req.body.groupName;
 	var foundGroup = false;
+
+	groupName = validator.stripLow(validator.trim(groupName));
+
+	if (!validator.isAlphanumeric(groupName)) {
+
+		res.status(400).json({
+			status: "failure",
+			reason: "group name contains unallowed characters (only alphanumeric ones allowed)"
+		});
+	}
+
 	var newGroup = {
 		name: groupName,
 		members: []
@@ -251,7 +291,7 @@ controller.addGroupForUser = function(req, res, next) {
 		}
 	}
 
-	if(!foundGroup) {
+	if (!foundGroup) {
 
 		req.user.groups.push(newGroup);
 		req.user.save();
