@@ -190,8 +190,23 @@ controller.updateLocation = function(req, res, next) {
 
 
 controller.deleteLocation = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	User.update({
+		_id: req.user._id
+	}, {
+		location: null
+	}, function(err) {
+
+		if (err) {
+			console.log("Error during deleting a location from user.");
+			res.status(500).end();
+		}
+
+		res.json({
+			status: "success"
+		});
+		next();
+	});
 };
 
 
