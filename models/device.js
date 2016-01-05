@@ -14,13 +14,13 @@ var config = require('./../config');
 
 
 var deviceSchema = new Schema({
-	createdAt: {
-		type: Date,
-		expires: config.expiresIn,
-		default: Date.now
-	},
-	name: String,
-	jti: String
+    createdAt: {
+        type: Date,
+        expires: config.expiresIn,
+        default: Date.now
+    },
+    name: String,
+    jti: String
 });
 
 

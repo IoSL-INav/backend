@@ -24,22 +24,14 @@ app.use(routes);
 var dropDatabase = function() {
 
   var User = require('./models/user');
-  var Group = require('./models/group');
   var Hotspot = require('./models/hotspot');
-  var Beacon = require('./models/beacon');
   var Location = require('./models/location');
 
   User.remove({}, function(err) {
     console.log('User collection removed');
   });
-  Group.remove({}, function(err) {
-    console.log('Group collection removed');
-  });
   Hotspot.remove({}, function(err) {
     console.log('Hotspot collection removed');
-  });
-  Beacon.remove({}, function(err) {
-    console.log('Beacon collection removed');
   });
   Location.remove({}, function(err) {
     console.log('Location collection removed');
@@ -53,7 +45,6 @@ var initDatabase = function() {
 var initDummyDatabase = function() {
 
   var Location = require('./models/location');
-  var Beacon = require('./models/beacon');
   var Hotspot = require('./models/hotspot');
 
   var dummyLoc = new Location({
@@ -63,28 +54,27 @@ var initDummyDatabase = function() {
   });
   dummyLoc.save();
 
-  var dummyBeacon01 = new Beacon({
+  var dummyBeacon01 = {
     name: "beacon01",
     companyUUID: "somerandomUUID",
     major: "major9383",
     minor: "minor84372",
     location: dummyLoc,
-  });
-  dummyBeacon01.save();
+  };
 
-  var dummyBeacon02 = new Beacon({
+  var dummyBeacon02 = {
     name: "beacon02",
     companyUUID: "somerandomUUID",
     major: "major87283",
     minor: "minor1234",
     location: dummyLoc,
-  });
-  dummyBeacon02.save();
+  };
 
   Hotspot.create({
     name: "Mensa",
     beacons: [dummyBeacon01, dummyBeacon02],
   }, function(err, hotspot) {
+
     if (err) {
       console.log("Could not create hotspot Mensa.");
     } else {
@@ -96,6 +86,7 @@ var initDummyDatabase = function() {
     name: "Library",
     beacons: [dummyBeacon02, dummyBeacon01],
   }, function(err, hotspot) {
+
     if (err) {
       console.log("Could not create hotspot Library.");
     } else {

@@ -23,12 +23,14 @@ var router = express();
 /* If given, add group ID to request. */
 router.param('gid', function(req, res, next, gid) {
 	req.groupID = gid;
+	next();
 });
 
 
 /* If given, add requested (other) user ID to request. */
 router.param('uid', function(req, res, next, uid) {
 	req.otherUserID = uid;
+	next();
 });
 
 
