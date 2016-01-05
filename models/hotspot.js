@@ -41,7 +41,7 @@ var beaconSchema = new Schema({
 
 var hotspotSchema = new Schema({
 	name: String,
-	beacons: [beaconSchema],
+	beacons: [beaconSchema]
 });
 
 

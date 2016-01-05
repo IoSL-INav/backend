@@ -43,9 +43,9 @@ var initDummyDatabase = function() {
   var Hotspot = require('./models/hotspot');
 
   var dummyLoc = {
-    coordinates: [0, 0],
+    coordinates: [1.5, 2.5],
     building: "Mensa",
-    floor: "0. OG",
+    floor: "1st",
   };
 
   var dummyBeacon01 = {

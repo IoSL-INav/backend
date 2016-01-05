@@ -25,19 +25,12 @@ controller.getAllHotspots = function(req, res, next) {
       console.log("Could not get all hotspots controller getAllHotspots.");
       console.log(err);
       res.status(500).json(err);
-      next();
+      return next();
     }
 
     res.json(hotspots);
     next();
-  }).populate({
-    path: 'beacons',
-    // Get location of beacons - populate the 'location' array for every beacon
-    populate: {
-      path: 'location'
-    }
   });
-
 };
 
 controller.getHotspot = function(req, res, next) {
@@ -48,21 +41,17 @@ controller.getHotspot = function(req, res, next) {
 
     if (err) {
       console.log("hotspot controller error: getHotspot query yielded error.");
+      console.log(err);
       res.status(500).json(err);
+      return next();
     }
 
     res.json(hotspot);
-  }).populate({
-    path: 'beacons',
-    populate: {
-      path: 'location'
-    }
+    next();
   });
-
-  next();
 };
 
-// get all beacons of a given hotspot
+/* Get all beacons of a given hotspot. */
 controller.getAllBeacons = function(req, res, next) {
 
   var hid = req.params.hid;
@@ -71,21 +60,16 @@ controller.getAllBeacons = function(req, res, next) {
 
     if (err) {
       console.log("hotspot controller error: getAllBeacons query yielded error.");
+      console.log(err);
       res.status(500).json(err);
     }
 
     res.json(hotspot.beacons);
-  }).populate({
-    path: 'beacons',
-    populate: {
-      path: 'location'
-    }
+    next();
   });
-
-  next();
 };
 
-//get a single beacon of a given hotspot
+/* Get a single beacon of a given hotspot. */
 controller.getBeacon = function(req, res, next) {
 
   var hid = req.params.hid;
@@ -93,14 +77,17 @@ controller.getBeacon = function(req, res, next) {
 
   Hotspot.findById(hid, function(err, hotspot) {
 
+    var index;
     var beacon = null;
 
     if (err) {
       console.log("hotspot controller error: getHotspot query yielded error.");
+      console.log(err);
       res.status(500).json(err);
+      return next();
     }
 
-    for (var index in hotspot.beacons) {
+    for (index in hotspot.beacons) {
 
       if (hotspot.beacons[index]._id == bid) {
         beacon = hotspot.beacons[index];
@@ -108,14 +95,8 @@ controller.getBeacon = function(req, res, next) {
     }
 
     res.json(beacon);
-  }).populate({
-    path: 'beacons',
-    populate: {
-      path: 'location'
-    }
+    next();
   });
-
-  next();
 };
 
 controller.getActiveFriends = function(req, res, next) {
