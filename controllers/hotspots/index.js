@@ -25,9 +25,11 @@ controller.getAllHotspots = function(req, res, next) {
       console.log("Could not get all hotspots controller getAllHotspots.");
       console.log(err);
       res.status(500).json(err);
+      next();
     }
 
     res.json(hotspots);
+    next();
   }).populate({
     path: 'beacons',
     // Get location of beacons - populate the 'location' array for every beacon
@@ -36,7 +38,6 @@ controller.getAllHotspots = function(req, res, next) {
     }
   });
 
-  next();
 };
 
 controller.getHotspot = function(req, res, next) {
