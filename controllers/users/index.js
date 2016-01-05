@@ -250,6 +250,16 @@ controller.addGroupForUser = function(req, res, next) {
 
 controller.getGroupForUser = function(req, res, next) {
   console.log('TODO: getGroupForUser');
+  var foundGroup = -1;
+  for (var i = 0; i < req.user.groups.length && foundGroup == -1; i++) {
+    if (req.user.groups[i].id == req.params.gid) {
+      foundGroup = req.user.groups[i].id;
+      res.json(req.user.groups[i]);
+    }
+  }
+  if (foundGroup == -1) {
+    res.status(500).end();
+  }
   next();
   /*
   Group.findById(req.groupID, 'name members', function(err, groupID) {

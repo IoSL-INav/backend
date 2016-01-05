@@ -47,40 +47,6 @@ var findOrCreateUser = function(req, res, next) {
       req.user = user;
       next();
     }
-    /*
-            Group.findOneAndUpdate({
-                $and: [{
-                    name: 'All friends'
-                }, {
-                    creatorID: userID
-                }]
-            }, {
-                $setOnInsert: {
-                    name: 'All friends',
-                    creatorID: userID
-                }
-            }, {
-                upsert: true,
-                new: true
-            }, function(err, group) {
-
-                if (err) {
-                    console.log("Error while searching for the default group for user with ID: %s.", userID);
-                    res.status(500).json(err);
-                }
-
-                User.findById(userID, function(err, user) {
-
-                    if (err) {
-                        console.log("Error while locating model for userID: %s.", userID);
-                        res.status(500).json(err);
-                    }
-
-                    req.user = user;
-                    next();
-                });
-            });
-    */
   });
 };
 
