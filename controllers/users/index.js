@@ -147,16 +147,6 @@ controller.updateCurrentUser = function(req, res, next) {
  */
 controller.deleteCurrentUser = function(req, res, next) {
 
-	/* First remove all groups. */
-	Group.remove({
-		creatorID: req.user._id
-	}, function(err) {
-
-		if (err) {
-			console.log("Error while removing all groups associated with an user.");
-			res.status(500).end();
-		}
-
 		/* Now remove the user itself. */
 		User.findByIdAndRemove(req.user._id, function(err, rmUser) {
 
@@ -168,7 +158,6 @@ controller.deleteCurrentUser = function(req, res, next) {
 			/* Log out users via "See other" redirect to /logout. */
 			res.status(303).location('/logout').end();
 		});
-	});
 };
 
 
@@ -211,7 +200,7 @@ controller.deleteLocation = function(req, res, next) {
  * associated to the currently logged in user ID.
  */
 controller.getGroupsForUser = function(req, res, next) {
-		res.json(res.user.groups);
+		res.json(req.user.groups);
 		next();
 };
 
@@ -221,6 +210,30 @@ controller.addGroupForUser = function(req, res, next) {
 	var groupName = req.body.groupName;
 
 	console.log('TODO: addGroupForUser');
+	var reason='group added';
+	var newGroup = {name:groupName,members:[]};
+	var foundGroup = -1;
+	for (var i = 0; i < req.user.groups.length && foundGroup == -1; i++) {
+		if(req.user.groups[i].name == groupName){
+			foundGroup = req.user.groups[i].id;
+			reason='group already exists';
+		}
+	}
+
+	if (foundGroup == -1) {
+		req.user.groups.push(newGroup);
+		req.user.save();
+		for (var i = 0; i < req.user.groups.length && foundGroup == -1; i++) {
+			if(req.user.groups[i].name == groupName){
+				foundGroup = req.user.groups[i].id;
+			}
+		}
+	}
+	res.json({
+		status: "success",
+		reason: reason,
+		groupID: foundGroup
+	});
 	next();
 	/* TODO: Validate input! */
 

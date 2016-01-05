@@ -16,7 +16,6 @@ var privacyLevels = ['friends_on_campus', 'nobody'];
 
 var groupSchema = new Schema({
     name: String,
-    creatorID: String,
     members: [{
         type: ObjectId,
         ref: 'User'
