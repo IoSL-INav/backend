@@ -20,70 +20,73 @@ var userController = require('../controllers/users');
  * system has a default group.
  */
 var findOrCreateUser = function(req, res, next) {
-    var userID = req.kauth.grant.id_token.content.sub;
-    var name = req.kauth.grant.id_token.content.preferred_username;
+  var userID = req.kauth.grant.id_token.content.sub;
+  var name = req.kauth.grant.id_token.content.preferred_username;
 
-    User.findById(userID, function(err, user) {
+  User.findById(userID, function(err, user) {
 
+    if (err) {
+      console.log("Error while locating model for userID: %s.", userID);
+      res.status(500).json(err);
+    } else if (!user) {
+
+      User.create({
+        _id: userID,
+        name: name,
+        groups: [{
+          name: 'All friends',
+          members: []
+        }]
+      }, function(err) {
         if (err) {
-            console.log("Error while locating model for userID: %s.", userID);
-            res.status(500).json(err);
-        }else if (!user) {
-
-            User.create({
-                _id: userID,
-                name: name,
-                groups:[{name:'All friends',members:[]}]
-            }, function(err) {
-                if (err) {
-                    console.log("Could not login user with ID: %s.", userID);
-                    res.status(500).json(err);
-                }
-            });
-        }else{
-          req.user = user;
-          next();
+          console.log("Could not login user with ID: %s.", userID);
+          res.status(500).json(err);
         }
-/*
-        Group.findOneAndUpdate({
-            $and: [{
-                name: 'All friends'
+      });
+    } else {
+      req.user = user;
+      next();
+    }
+    /*
+            Group.findOneAndUpdate({
+                $and: [{
+                    name: 'All friends'
+                }, {
+                    creatorID: userID
+                }]
             }, {
-                creatorID: userID
-            }]
-        }, {
-            $setOnInsert: {
-                name: 'All friends',
-                creatorID: userID
-            }
-        }, {
-            upsert: true,
-            new: true
-        }, function(err, group) {
-
-            if (err) {
-                console.log("Error while searching for the default group for user with ID: %s.", userID);
-                res.status(500).json(err);
-            }
-
-            User.findById(userID, function(err, user) {
+                $setOnInsert: {
+                    name: 'All friends',
+                    creatorID: userID
+                }
+            }, {
+                upsert: true,
+                new: true
+            }, function(err, group) {
 
                 if (err) {
-                    console.log("Error while locating model for userID: %s.", userID);
+                    console.log("Error while searching for the default group for user with ID: %s.", userID);
                     res.status(500).json(err);
                 }
 
-                req.user = user;
-                next();
+                User.findById(userID, function(err, user) {
+
+                    if (err) {
+                        console.log("Error while locating model for userID: %s.", userID);
+                        res.status(500).json(err);
+                    }
+
+                    req.user = user;
+                    next();
+                });
             });
-        });
-*/
-    });
+    */
+  });
 };
 
 module.exports = function(keycloak) {
-    return [
-        keycloak.protect(),
-        findOrCreateUser
-    ]
+  return [
+    keycloak.protect(),
+    findOrCreateUser
+  ]
 };
