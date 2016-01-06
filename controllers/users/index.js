@@ -69,6 +69,7 @@ controller.updateCurrentUser = function(req, res, next) {
 				status: "failure",
 				reason: "User name contains unallowed characters (only alphanumeric ones allowed)."
 			});
+			return next();
 		}
 	}
 
@@ -83,6 +84,7 @@ controller.updateCurrentUser = function(req, res, next) {
 				status: "failure",
 				reason: "Received auto ping indicator was no boolean."
 			});
+			return next();
 		}
 	}
 
@@ -97,6 +99,7 @@ controller.updateCurrentUser = function(req, res, next) {
 				status: "failure",
 				reason: "Auto ping group contained other than alphanumeric characters."
 			});
+			return next();
 		}
 	}
 
@@ -111,6 +114,7 @@ controller.updateCurrentUser = function(req, res, next) {
 				status: "failure",
 				reason: "Received auto locate indicator was no boolean."
 			});
+			return next();
 		}
 	}
 
@@ -152,10 +156,12 @@ controller.deleteCurrentUser = function(req, res, next) {
 		if (err) {
 			console.log("Error while removing the user itself.");
 			res.status(500).end();
+			return next();
 		}
 
 		/* Log out users via "See other" redirect to /logout. */
 		res.status(303).location('/logout').end();
+		next();
 	});
 };
 
@@ -176,6 +182,7 @@ controller.updateLocation = function(req, res, next) {
 			status: "failure",
 			reason: "longitude missing"
 		});
+		return next();
 	}
 
 	if ((lat == undefined) && (lon != undefined)) {
@@ -185,6 +192,7 @@ controller.updateLocation = function(req, res, next) {
 			status: "failure",
 			reason: "latitude missing"
 		});
+		return next();
 	}
 
 	if ((building == undefined) || (floor == undefined)) {
@@ -194,6 +202,7 @@ controller.updateLocation = function(req, res, next) {
 			status: "failure",
 			reason: "building and/or floor information missing"
 		});
+		return next();
 	}
 
 	if (noError) {
@@ -260,6 +269,15 @@ controller.addGroupForUser = function(req, res, next) {
 	var groupName = req.body.groupName;
 	var foundGroup = false;
 
+	if(groupName == undefined) {
+
+		res.status(400).json({
+			status: "failure",
+			reason: "no groupName specified"
+		});
+		return next();
+	}
+
 	groupName = validator.stripLow(validator.trim(groupName));
 
 	if (!validator.isAlphanumeric(groupName)) {
@@ -268,6 +286,7 @@ controller.addGroupForUser = function(req, res, next) {
 			status: "failure",
 			reason: "group name contains unallowed characters (only alphanumeric ones allowed)"
 		});
+		return next();
 	}
 
 	var newGroup = {
@@ -318,38 +337,114 @@ controller.addGroupForUser = function(req, res, next) {
 controller.getGroupForUser = function(req, res, next) {
 
 	var i;
-	var foundGroup = false;
+	var foundGroup = req.user.groups.id(req.groupID);
 
-	for (i = 0; i < req.user.groups.length; i++) {
-
-		if (req.user.groups[i].id == req.groupID) {
-			foundGroup = true;
-			res.json(req.user.groups[i]);
-			break;
-		}
-	}
-
-	if (!foundGroup) {
+	if (foundGroup == null) {
 
 		res.status(404).json({
 			status: "failure",
 			reason: "group not found"
 		});
+		return next();
 	}
 
+	res.json(foundGroup);
 	next();
 };
 
 
 controller.updateGroupForUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var foundGroup = req.user.groups.id(req.groupID);
+	var newGroupName = req.body.newGroupName;
+
+	if(foundGroup == null) {
+
+		res.status(404).json({
+			status: "failure",
+			reason: "group not found"
+		});
+		return next();
+	}
+
+	if(newGroupName == undefined) {
+
+		res.status(400).json({
+			status: "failure",
+			reason: "no newGroupName specified"
+		});
+		return next();
+	}
+
+	newGroupName = validator.stripLow(validator.trim(newGroupName));
+
+	if (!validator.isAlphanumeric(newGroupName)) {
+
+		res.status(400).json({
+			status: "failure",
+			reason: "group name contains unallowed characters (only alphanumeric ones allowed)"
+		});
+		return next();
+	}
+
+	if(foundGroup.name == "All friends") {
+
+		res.status(400).json({
+			status: "failure",
+			reason: "attempt to rename default group (not possible)"
+		});
+		return next();
+	}
+
+	foundGroup.name = newGroupName;
+	req.user.save(function(err) {
+
+		if (err) {
+			console.log("Error during updating group of user.");
+			console.log(err);
+			res.status(500).end();
+			return next();
+		}
+
+		res.json({
+			status: "success",
+			reason: "group updated",
+			group: req.user.groups.id(req.groupID)
+		});
+		next();
+	});
 };
 
 
 controller.deleteGroupForUser = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var foundGroup = req.user.groups.id(req.groupID);
+
+	if (foundGroup == null) {
+
+		res.status(404).json({
+			status: "failure",
+			reason: "group not found"
+		});
+		return next();
+	}
+
+	foundGroup.remove();
+	req.user.save(function(err) {
+
+		if(err) {
+			console.log("Error during removing group from user.");
+			console.log(err);
+			res.status(500).end();
+			return next();
+		}
+
+		res.json({
+			status: "success",
+			reason: "group removed"
+		});
+		next();
+	});
 };
 
 

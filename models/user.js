@@ -13,14 +13,6 @@ var ObjectId = Schema.Types.ObjectId;
 var privacyLevels = ['friends_on_campus', 'nobody'];
 
 
-var groupSchema = new Schema({
-	name: String,
-	members: [{
-		type: ObjectId,
-		ref: 'User'
-	}],
-});
-
 var locationSchema = new Schema({
 	createdAt: {
 		type: Date,
@@ -38,6 +30,14 @@ var locationSchema = new Schema({
 		index: true
 	},
 	floor: String
+});
+
+var groupSchema = new Schema({
+	name: String,
+	members: [{
+		type: ObjectId,
+		ref: 'User'
+	}],
 });
 
 var userSchema = new Schema({
