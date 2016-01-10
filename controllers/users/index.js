@@ -449,6 +449,17 @@ controller.deleteGroupForUser = function(req, res, next) {
 
 
 controller.addUserToGroup = function(req, res, next) {
+
+	/**
+	 * At this point, assume:
+	 * Friend approval done - both parties have accepted each other
+	 * so that both parties are in the corresponding 'All friends' list.
+	 *
+	 * Query logged in user's 'All friends' list for submitted user
+	 * if found: add to submitted other group
+	 * if not found: deny request
+	 */
+
 	// TODO
 	return res.status(501).end();
 };

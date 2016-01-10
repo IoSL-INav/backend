@@ -7,6 +7,7 @@
  * after a given time (15 mins by default)
  */
 
+
 var locationSchema = {
 	createdAt: {
 		type: Date,
@@ -25,5 +26,6 @@ var locationSchema = {
 	},
 	floor: String
 };
+
 
 module.exports = locationSchema;

@@ -12,6 +12,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 var locationSchema = require('./location.js');
 
+
 var beaconSchema = new Schema({
 	name: String,
 	companyUUID: String,

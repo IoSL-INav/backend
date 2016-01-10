@@ -13,6 +13,7 @@ var ObjectId = Schema.Types.ObjectId;
 var privacyLevels = ['friends_on_campus', 'nobody'];
 var locationSchema = require('./location.js');
 
+
 var groupSchema = new Schema({
 	name: String,
 	members: [{
