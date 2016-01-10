@@ -153,15 +153,11 @@ var server = app.listen(config.port, config.host, function() {
   var address = server.address();
   console.log('IoSL-INav server listening on host %s at port %s.', address.address, address.port);
 
-  if (process.argv.indexOf("--init") != -1) {
-    console.log("init database with initial data");
-    dropDatabase();
-
-    if (process.argv.indexOf("--devel") != -1) {
-      console.log("add devel data to database");
-      initDummyDatabase();
-    } else {
-      initDatabase();
-    }
-  }
+  /* DEV ONLY BEGIN */
+  /* Start with some default data. */
+  console.log("Init database with initial data...");
+  dropDatabase();
+  console.log("Add dummy data to database...");
+  initDummyDatabase();
+  /* DEV ONLY END */
 });
