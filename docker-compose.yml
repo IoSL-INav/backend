@@ -1,5 +1,7 @@
 mongo-db:
     image: mongo:latest
+    volumes:
+        - /data/db
     command: "--smallfiles"
 
 backend:
