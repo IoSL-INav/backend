@@ -155,9 +155,9 @@ var server = app.listen(config.port, config.host, function() {
 
   /* DEV ONLY BEGIN */
   /* Start with some default data. */
-  console.log("Init database with initial data...");
+  /* console.log("Init database with initial data...");
   dropDatabase();
   console.log("Add dummy data to database...");
-  initDummyDatabase();
+  initDummyDatabase(); */
   /* DEV ONLY END */
 });
