@@ -42,6 +42,76 @@ var initDummyDatabase = function() {
 
   var Hotspot = require('./models/hotspot');
 
+  var backRightCorner = {
+    coordinates: [52.509646, 13.326402],
+    building: "Mensa",
+    floor: "1st",
+  };
+
+  var backLeftCorner = {
+    coordinates: [52.509851, 13.325760],
+    building: "Mensa",
+    floor: "1st",
+  };
+
+  var frontLeftCorner = {
+    coordinates: [52.509693, 13.325618],
+    building: "Mensa",
+    floor: "1st",
+  };
+
+  var frontRightCorner = {
+    coordinates: [52.509489, 13.326261],
+    building: "Mensa",
+    floor: "1st",
+  };
+
+  var backRightCornerBeacon = {
+    name: "backRightCorner",
+    companyUUID: "somerandomUUID",
+    major: "major1",
+    minor: "minor1",
+    location: backRightCorner,
+  };
+
+  var backLeftCornerBeacon = {
+    name: "backLeftCorner",
+    companyUUID: "somerandomUUID",
+    major: "major2",
+    minor: "minor2",
+    location: backLeftCorner,
+  };
+
+  var frontLeftCornerBeacon = {
+    name: "frontLeftCorner",
+    companyUUID: "somerandomUUID",
+    major: "major3",
+    minor: "minor3",
+    location: frontLeftCorner,
+  };
+
+  var frontRightCornerBeacon = {
+    name: "frontRightCorner",
+    companyUUID: "somerandomUUID",
+    major: "major4",
+    minor: "minor4",
+    location: frontRightCorner,
+  };
+
+  Hotspot.create({
+    name: "Mensa",
+    beacons: [backRightCornerBeacon, backLeftCornerBeacon,frontLeftCornerBeacon,frontRightCornerBeacon],
+  }, function(err, hotspot) {
+
+    if (err) {
+      console.log("Could not create hotspot Mensa.");
+    } else {
+      console.log("Create hotspot Mensa.");
+    }
+  });
+
+
+
   var dummyLoc = {
     coordinates: [1.5, 2.5],
     building: "Mensa",
@@ -63,18 +133,6 @@ var initDummyDatabase = function() {
     minor: "minor1234",
     location: dummyLoc,
   };
-
-  Hotspot.create({
-    name: "Mensa",
-    beacons: [dummyBeacon01, dummyBeacon02],
-  }, function(err, hotspot) {
-
-    if (err) {
-      console.log("Could not create hotspot Mensa.");
-    } else {
-      console.log("Create hotspot Mensa.");
-    }
-  });
 
   Hotspot.create({
     name: "Library",
