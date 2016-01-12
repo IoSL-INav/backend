@@ -98,19 +98,21 @@ var initDummyDatabase = function() {
     location: frontRightCorner,
   };
 
-  Hotspot.create({
+  var hot1 = {
     name: "Mensa",
     beacons: [backRightCornerBeacon, backLeftCornerBeacon,frontLeftCornerBeacon,frontRightCornerBeacon],
-  }, function(err, hotspot) {
+  };
 
-    if (err) {
-      console.log("Could not create hotspot Mensa.");
-    } else {
-      console.log("Create hotspot Mensa.");
+  Hotspot.update(
+    {name: hot1.name},
+    {$setOnInsert: hot1},
+    {upsert: true},
+    function(err, numAffected) {
+      if(typeof numAffected.upserted !== 'undefined'){
+        console.log('add mensa as hotspot');
+      }
     }
-  });
-
-
+);
 
   var dummyLoc = {
     coordinates: [1.5, 2.5],
@@ -134,17 +136,21 @@ var initDummyDatabase = function() {
     location: dummyLoc,
   };
 
-  Hotspot.create({
+  var hot2 = {
     name: "Library",
-    beacons: [dummyBeacon02, dummyBeacon01],
-  }, function(err, hotspot) {
+    beacons: [dummyBeacon02, dummyBeacon01]
+  };
 
-    if (err) {
-      console.log("Could not create hotspot Library.");
-    } else {
-      console.log("Create hotspot Library.");
+  Hotspot.update(
+    {name: hot2.name},
+    {$setOnInsert: hot2},
+    {upsert: true},
+    function(err, numAffected) {
+      if(typeof numAffected.upserted !== 'undefined'){
+        console.log('add library as hotspot');
+      }
     }
-  });
+);
 }
 
 
@@ -155,9 +161,9 @@ var server = app.listen(config.port, config.host, function() {
 
   /* DEV ONLY BEGIN */
   /* Start with some default data. */
-  /* console.log("Init database with initial data...");
+  console.log("Init database with initial data...");
   dropDatabase();
   console.log("Add dummy data to database...");
-  initDummyDatabase(); */
+  initDummyDatabase();
   /* DEV ONLY END */
 });
