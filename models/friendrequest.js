@@ -16,14 +16,18 @@ var User = require('./user');
 
 var friendRequestSchema = new Schema({
     fromUser: {
-        type: ObjectId
+        type: ObjectId,
         ref: 'User'
     },
     toUser: {
-        type: ObjectId
+        type: ObjectId,
         ref: 'User'
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'accepted', 'denied']
     }
 });
 
 
-module.exports = mongoose.model('FriendRequest', friendrequestSchema);
+module.exports = mongoose.model('FriendRequest', friendRequestSchema);
