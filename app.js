@@ -25,12 +25,16 @@ var dropDatabase = function() {
 
   var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
+  var Friendrequest = require('./models/friendrequest');
 
   User.remove({}, function(err) {
     console.log('User collection removed');
   });
   Hotspot.remove({}, function(err) {
     console.log('Hotspot collection removed');
+  });
+  Friendrequest.remove({},function(err){
+    console.log('FriendRequest collection removed');
   });
 }
 
@@ -164,6 +168,6 @@ var server = app.listen(config.port, config.host, function() {
   console.log("Init database with initial data...");
   dropDatabase();
   console.log("Add dummy data to database...");
-  initDummyDatabase();
+  //initDummyDatabase();
   /* DEV ONLY END */
 });

@@ -11,9 +11,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
-var User = require('./user');
-
-
 var friendRequestSchema = new Schema({
     fromUser: {
         type: ObjectId,
@@ -29,5 +26,4 @@ var friendRequestSchema = new Schema({
     }
 });
 
-
-module.exports = mongoose.model('FriendRequest', friendRequestSchema);
+module.exports = mongoose.model('Friendrequest', friendRequestSchema);

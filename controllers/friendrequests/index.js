@@ -16,17 +16,18 @@ var controller = {};
 
 controller.getPendingFriendRequests = function(req, res, next) {
   // TODO
-  Friendrequest.find({toUser:req.user}, function(err, friendrequests) {
+  Friendrequest.find({toUser:req.user._id}, function(err, friendrequests) {
 		if (err) {
       console.log(err);
 			console.log("Error while get friendrequests.");
 			res.status(500).end();
 			return next();
 		}else{
+      console.log(friendrequests);
       res.json(friendrequests);
     }
 		return next();
-	}).populate('toUser');
+	});
   next();
 	return res.status(501).end();
 };
