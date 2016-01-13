@@ -27,6 +27,7 @@ router.param('fid', function(req, res, next, fid) {
 
 router.route('/')
     .all(config.authenticate)
+    .post(controller.createFriendRequest)
     .get(controller.getPendingFriendRequests);
 
 router.route('/:fid')
