@@ -16,7 +16,7 @@ var login = require('./login');
 var users = require('./users');
 var events = require('./events');
 var hotspots = require('./hotspots');
-var friendrequests = require('./friendrequests');
+var compreqs = require('./compreqs');
 
 var router = express.Router();
 
@@ -27,7 +27,7 @@ router.use('/login', login);
 router.use('/users', users);
 router.use('/events', events);
 router.use('/hotspots', hotspots);
-router.use('/friendrequests', friendrequests);
+router.use('/compreqs', compreqs);
 
 /* Do we want to redirect all left requests to authentication? */
 router.use(config.authenticate);

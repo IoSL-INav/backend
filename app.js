@@ -25,7 +25,7 @@ var dropDatabase = function() {
 
   var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
-  var Friendrequest = require('./models/friendrequest');
+  var CompReq = require('./models/compreq');
 
   User.remove({}, function(err) {
     console.log('User collection removed');
@@ -33,8 +33,8 @@ var dropDatabase = function() {
   Hotspot.remove({}, function(err) {
     console.log('Hotspot collection removed');
   });
-  Friendrequest.remove({},function(err){
-    console.log('FriendRequest collection removed');
+  CompReq.remove({}, function(err) {
+    console.log('Companion requests collection removed');
   });
 }
 
@@ -104,19 +104,22 @@ var initDummyDatabase = function() {
 
   var hot1 = {
     name: "Mensa",
-    beacons: [backRightCornerBeacon, backLeftCornerBeacon,frontLeftCornerBeacon,frontRightCornerBeacon],
+    beacons: [backRightCornerBeacon, backLeftCornerBeacon, frontLeftCornerBeacon, frontRightCornerBeacon],
   };
 
-  Hotspot.update(
-    {name: hot1.name},
-    {$setOnInsert: hot1},
-    {upsert: true},
+  Hotspot.update({
+      name: hot1.name
+    }, {
+      $setOnInsert: hot1
+    }, {
+      upsert: true
+    },
     function(err, numAffected) {
-      if(typeof numAffected.upserted !== 'undefined'){
+      if (typeof numAffected.upserted !== 'undefined') {
         console.log('add mensa as hotspot');
       }
     }
-);
+  );
 
   var dummyLoc = {
     coordinates: [1.5, 2.5],
@@ -145,16 +148,19 @@ var initDummyDatabase = function() {
     beacons: [dummyBeacon02, dummyBeacon01]
   };
 
-  Hotspot.update(
-    {name: hot2.name},
-    {$setOnInsert: hot2},
-    {upsert: true},
+  Hotspot.update({
+      name: hot2.name
+    }, {
+      $setOnInsert: hot2
+    }, {
+      upsert: true
+    },
     function(err, numAffected) {
-      if(typeof numAffected.upserted !== 'undefined'){
+      if (typeof numAffected.upserted !== 'undefined') {
         console.log('add library as hotspot');
       }
     }
-);
+  );
 }
 
 
