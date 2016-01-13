@@ -21,7 +21,18 @@ var controller = {};
 
 
 controller.getPendingRequests = function(req, res, next) {
-    return res.status(501).end();
+    CompReq.find({to:req.user._id},function(err,allPendingRequest){
+      if (err) {
+          console.log("Error during looking for already companion request.");
+          console.log(err);
+
+          res.status(500).end();
+          return next();
+      }else{
+        res.json(allPendingRequest);
+        return next();
+      }
+    });
 };
 
 
