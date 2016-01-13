@@ -10,7 +10,7 @@
 /* Variables and configurations. */
 
 var config = require('./../../config');
-var CompReq = require('./../../models/compreq');
+var CompanionRequest = require('./../../models/compreq');
 var User = require('./../../models/user');
 
 var controller = {};
@@ -21,7 +21,7 @@ var controller = {};
 
 
 controller.getPendingRequests = function(req, res, next) {
-    CompReq.find({to:req.user._id},function(err,allPendingRequest){
+    CompanionRequest.find({to:req.user._id},function(err,allPendingRequest){
       if (err) {
           console.log("Error during looking for already companion request.");
           console.log(err);
@@ -36,20 +36,20 @@ controller.getPendingRequests = function(req, res, next) {
 };
 
 
-controller.addCompRequest = function(req, res, next) {
+controller.createCompanionRequest = function(req, res, next) {
 
-    var addCompID = req.body.userID;
+    var companionID = req.body.userID;
 
-    CompReq.findOne({
+    CompanionRequest.findOne({
         $or: [{
             $and: [{
                 from: req.user._id
             }, {
-                to: addCompID
+                to: companionID
             }]
         }, {
             $and: [{
-                from: addCompID
+                from: companionID
             }, {
                 to: req.user._id
             }]
@@ -64,38 +64,48 @@ controller.addCompRequest = function(req, res, next) {
             return next();
         }
 
-        User.findById(addCompID, function(err, foundUser) {
+        if(foundReq){
+
+          res.status(200).json({
+            status: "success",
+            reason: "companion request already exists",
+            CompanionRequestID: foundReq._id
+          }).end();
+          return next();
+        }else{
+          User.findById(companionID, function(err, foundUser) {
 
             if (err) {
-                console.log("During a companion request, the other user could not be found.");
+              console.log("During a companion request, the other user could not be found.");
+              console.log(err);
+
+              res.status(500).end();
+              return next();
+            }
+
+            CompanionRequest.create({
+              from: req.user._id,
+              to: companionID,
+              status: 'pending'
+            }, function(err, addedCompanionRequest) {
+
+              if (err) {
+                console.log("Error during adding a new companion request.");
                 console.log(err);
 
                 res.status(500).end();
                 return next();
-            }
+              }
 
-            CompReq.create({
-                from: req.user._id,
-                to: addCompID,
-                status: 'pending'
-            }, function(err, addedCompReq) {
-
-                if (err) {
-                    console.log("Error during adding a new companion request.");
-                    console.log(err);
-
-                    res.status(500).end();
-                    return next();
-                }
-
-                res.json({
-                    status: "success",
-                    reason: "companion request sent",
-                    compReqID: addedCompReq._id
-                });
-                return next();
+              res.json({
+                status: "success",
+                reason: "companion request sent",
+                CompanionRequestID: addedCompanionRequest._id
+              });
+              return next();
             });
-        });
+          });
+        }
     });
 };
 

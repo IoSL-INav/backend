@@ -21,7 +21,7 @@ var router = express();
 
 /* If given, add companion request ID to request. */
 router.param('cid', function(req, res, next, cid) {
-    req.compReqID = cid;
+    req.companionRequestID = cid;
     next();
 });
 
@@ -31,7 +31,7 @@ router.param('cid', function(req, res, next, cid) {
 router.route('/')
     .all(config.authenticate)
     .get(controller.getPendingRequests)
-    .post(controller.addCompRequest);
+    .post(controller.createCompanionRequest);
 
 
 /* Export router with described routes. */
