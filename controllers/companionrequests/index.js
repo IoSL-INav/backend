@@ -175,6 +175,7 @@ controller.updateCompanionRequest = function(req, res, next) {
             }
             req.user.save();
             fromUser.save();
+            companionRequest.remove();
             return next();
           });
           res.json({
