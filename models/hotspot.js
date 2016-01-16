@@ -16,8 +16,8 @@ var locationSchema = require('./location.js');
 var beaconSchema = new Schema({
 	name: String,
 	companyUUID: String,
-	major: String,
-	minor: String,
+	major: Number,
+	minor: Number,
 	location: locationSchema
 });
 

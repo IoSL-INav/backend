@@ -14,7 +14,9 @@ var isErrorOrNull = util.isErrorOrNull;
 
 var config = require('./../../config');
 var validator = require('validator');
+var async = require('async');
 var User = require('./../../models/user');
+var Hotspot = require('./../../models/hotspot');
 
 var controller = {};
 
@@ -168,70 +170,201 @@ controller.deleteCurrentUser = function(req, res, next) {
 
 controller.updateLocation = function(req, res, next) {
 
-	var lat = req.body.userLat;
-	var lon = req.body.userLon;
+	/**
+	 * Pairs of location information.
+	 * Backend accepts either combination.
+	 */
 	var building = req.body.userBuilding;
 	var floor = req.body.userFloor;
+	var major = req.body.userMajor;
+	var minor = req.body.userMinor;
+	var lat = req.body.userLat;
+	var lon = req.body.userLon;
+
 	var newLoc = {};
+	var accuracyIndicator = -1;
 	var noError = true;
 
-	if ((lat != undefined) && (lon == undefined)) {
+	console.log("lat:", lat);
+	console.log("lon:", lon);
+	console.log("major:", major);
+	console.log("minor:", minor);
+	console.log("building:", building);
+	console.log("floor:", floor);
 
-		noError = false;
-		res.status(400).json({
-			status: "failure",
-			reason: "longitude missing"
-		});
-		return next();
-	}
 
-	if ((lat == undefined) && (lon != undefined)) {
+	/* Sanity and incompleteness checks. */
 
-		noError = false;
-		res.status(400).json({
-			status: "failure",
-			reason: "latitude missing"
-		});
-		return next();
-	}
+	async.series([
 
-	if ((building == undefined) || (floor == undefined)) {
+		function(callback) {
 
-		noError = false;
-		res.status(400).json({
-			status: "failure",
-			reason: "building and/or floor information missing"
-		});
-		return next();
-	}
+			/* Building and floor. */
+			if ((building != undefined) && (floor != undefined)) {
 
-	if (noError) {
+				building = validator.stripLow(validator.trim(building));
+				floor = validator.stripLow(validator.trim(floor));
 
-		if ((lat != undefined) && (lon != undefined)) {
-			lat = validator.toFloat(validator.trim(lat));
-			lon = validator.toFloat(validator.trim(lon));
+				newLoc.building = building;
+				newLoc.floor = floor;
 
-			newLoc.coordinates = [lon, lat];
+				accuracyIndicator = 0;
+			} else if ((building != undefined) && (floor == undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "floor missing"
+				});
+				return next();
+			} else if ((building == undefined) && (floor != undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "building missing"
+				});
+				return next();
+			}
+
+			callback(null);
+		},
+		function(callback) {
+
+			/* Major & minor (beacons). */
+			if ((major != undefined) && (minor != undefined)) {
+
+				major = validator.toInt(validator.trim(major));
+				minor = validator.toInt(validator.trim(minor));
+
+				Hotspot.aggregate([{
+					$match: {
+						$and: [{
+							'beacons.major': major
+						}, {
+							'beacons.minor': minor
+						}]
+					}
+				}, {
+					$unwind: '$beacons'
+				}, {
+					$match: {
+						$and: [{
+							'beacons.major': major
+						}, {
+							'beacons.minor': minor
+						}]
+					}
+				}, {
+					$project: {
+						name: '$beacons.name',
+						companyUUID: '$beacons.companyUUID',
+						major: '$beacons.major',
+						minor: '$beacons.minor',
+						location: '$beacons.location'
+					}
+				}], function(err, beacons) {
+
+					if (err) {
+						console.log("Error during retrieving matching beacons for supplied major and minor on updateLocation.");
+						console.log(err);
+						res.status(500).end();
+						return next();
+						callback(null);
+					}
+
+					newLoc.coordinates = beacons[0].location.coordinates;
+					accuracyIndicator = 1;
+
+					console.log(newLoc);
+					console.log(accuracyIndicator);
+					callback(null);
+				});
+			} else if ((major != undefined) && (minor == undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "minor missing"
+				});
+				return next();
+				callback(null);
+			} else if ((major == undefined) && (minor != undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "major missing"
+				});
+				return next();
+				callback(null);
+			} else {
+				callback(null);
+			}
+		},
+		function(callback) {
+
+			/* Latitude & longitude. */
+			if ((lat != undefined) && (lon != undefined)) {
+
+				lat = validator.toFloat(validator.trim(lat));
+				lon = validator.toFloat(validator.trim(lon));
+
+				newLoc.coordinates = [lon, lat];
+				accuracyIndicator = 2;
+			} else if ((lat != undefined) && (lon == undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "longitude missing"
+				});
+				return next();
+			} else if ((lat == undefined) && (lon != undefined)) {
+
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "latitude missing"
+				});
+				return next();
+			}
+
+			callback(null);
 		}
+	], function(err, results) {
 
-		building = validator.stripLow(validator.trim(building));
-		floor = validator.stripLow(validator.trim(floor));
-
-		newLoc.building = building;
-		newLoc.floor = floor;
-
-		req.user.location = newLoc;
-		req.user.save();
-
-		if (req.user.location.building == building) {
-			res.json(newLoc);
-		} else {
-			console.log("Could not insert new location for user.");
+		if (err) {
+			console.log("Error during async series in updateLocation.");
+			console.log(err);
 			res.status(500).end();
+			return next();
 		}
-	}
 
-	next();
+		/* Check for no data. */
+		if(accuracyIndicator == -1) {
+
+			res.status(400).json({
+				status: "failure",
+				reason: "no data submitted"
+			});
+			return next();
+		}
+
+		if (noError) {
+
+			req.user.location = newLoc;
+			req.user.save(function(err) {
+				if(err) {
+					console.log(err);
+				}
+				console.log(req.user.location.coordinates);
+			});
+			res.json(newLoc);
+		}
+
+		next();
+	});
 };
 
 
@@ -269,7 +402,7 @@ controller.addGroupForUser = function(req, res, next) {
 	var groupName = req.body.groupName;
 	var foundGroup = false;
 
-	if(groupName == undefined) {
+	if (groupName == undefined) {
 
 		res.status(400).json({
 			status: "failure",
@@ -358,7 +491,7 @@ controller.updateGroupForUser = function(req, res, next) {
 	var foundGroup = req.user.groups.id(req.groupID);
 	var newGroupName = req.body.newGroupName;
 
-	if(foundGroup == null) {
+	if (foundGroup == null) {
 
 		res.status(404).json({
 			status: "failure",
@@ -367,7 +500,7 @@ controller.updateGroupForUser = function(req, res, next) {
 		return next();
 	}
 
-	if(newGroupName == undefined) {
+	if (newGroupName == undefined) {
 
 		res.status(400).json({
 			status: "failure",
@@ -387,7 +520,7 @@ controller.updateGroupForUser = function(req, res, next) {
 		return next();
 	}
 
-	if(foundGroup.name == "All friends") {
+	if (foundGroup.name == "All friends") {
 
 		res.status(400).json({
 			status: "failure",
@@ -432,7 +565,7 @@ controller.deleteGroupForUser = function(req, res, next) {
 	foundGroup.remove();
 	req.user.save(function(err) {
 
-		if(err) {
+		if (err) {
 			console.log("Error during removing group from user.");
 			console.log(err);
 			res.status(500).end();

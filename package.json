@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/IoSL-INav/backend#readme",
   "dependencies": {
+    "async": "^1.5.2",
     "body-parser": "^1.14.1",
     "connect-keycloak": "file:vendor/keycloak-nodejs-mathiasslawik/connect",
     "connect-mongo": "^0.8.2",

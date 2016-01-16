@@ -70,41 +70,57 @@ var initDummyDatabase = function() {
     floor: "1st",
   };
 
-  var backRightCornerBeacon = {
-    name: "backRightCorner",
-    companyUUID: "somerandomUUID",
-    major: "major1",
-    minor: "minor1",
+  var beaconShoe = {
+    name: "shoe",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF44C51822F",
+    major: 9386,
+    minor: 56215,
     location: backRightCorner,
   };
 
-  var backLeftCornerBeacon = {
-    name: "backLeftCorner",
-    companyUUID: "somerandomUUID",
-    major: "major2",
-    minor: "minor2",
+  var beaconCar = {
+    name: "car",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF41DFC866B",
+    major: 62242,
+    minor: 28193,
+    location: backRightCorner,
+  };
+
+  var beaconFridge = {
+    name: "fridge",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF4BC5AD3C5",
+    major: 62245,
+    minor: 37267,
     location: backLeftCorner,
   };
 
-  var frontLeftCornerBeacon = {
-    name: "frontLeftCorner",
-    companyUUID: "somerandomUUID",
-    major: "major3",
-    minor: "minor3",
+  var beaconDoor = {
+    name: "door",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF4BB14CA82",
+    major: 42882,
+    minor: 54653,
+    location: backLeftCorner,
+  };
+
+  var beaconBed = {
+    name: "door",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF4BE96DEFD",
+    major: 8694,
+    minor: 32552,
     location: frontLeftCorner,
   };
 
-  var frontRightCornerBeacon = {
-    name: "frontRightCorner",
-    companyUUID: "somerandomUUID",
-    major: "major4",
-    minor: "minor4",
+  var beaconBike = {
+    name: "bike",
+    companyUUID: "D0D3FA86-CA76-45EC-9BD9-6AF47D021D49",
+    major: 37519,
+    minor: 56552,
     location: frontRightCorner,
   };
 
   var hot1 = {
     name: "Mensa",
-    beacons: [backRightCornerBeacon, backLeftCornerBeacon, frontLeftCornerBeacon, frontRightCornerBeacon],
+    beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor],
   };
 
   Hotspot.update({
@@ -121,31 +137,9 @@ var initDummyDatabase = function() {
     }
   );
 
-  var dummyLoc = {
-    coordinates: [1.5, 2.5],
-    building: "Mensa",
-    floor: "1st",
-  };
-
-  var dummyBeacon01 = {
-    name: "beacon01",
-    companyUUID: "somerandomUUID",
-    major: "major9383",
-    minor: "minor84372",
-    location: dummyLoc,
-  };
-
-  var dummyBeacon02 = {
-    name: "beacon02",
-    companyUUID: "somerandomUUID",
-    major: "major87283",
-    minor: "minor1234",
-    location: dummyLoc,
-  };
-
   var hot2 = {
     name: "Library",
-    beacons: [dummyBeacon02, dummyBeacon01]
+    beacons: [beaconBed, beaconBike]
   };
 
   Hotspot.update({
@@ -172,8 +166,8 @@ var server = app.listen(config.port, config.host, function() {
   /* DEV ONLY BEGIN */
   /* Start with some default data. */
   console.log("Init database with initial data...");
-  //dropDatabase();
+  dropDatabase();
   console.log("Add dummy data to database...");
-  //initDummyDatabase();
+  initDummyDatabase();
   /* DEV ONLY END */
 });
