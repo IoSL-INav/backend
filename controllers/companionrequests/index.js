@@ -145,13 +145,6 @@ controller.updateCompanionRequest = function(req, res, next) {
           });
         }else if(req.body.accept){
           companionRequest.status='accepted';
-          /*
-          req.user.groups.find({name:'All friends'},function(err,group){
-            group.push(fromUser);
-            return next();
-          });
-          */
-          //TODO add users to there friendlists
           User.findById(companionRequest.from, function(err, fromUser) {
             if (err) {
               console.log("Error while locating group of companionrequest");
@@ -201,8 +194,18 @@ controller.updateCompanionRequest = function(req, res, next) {
 
 
 controller.deleteCompanionRequest = function(req, res, next) {
-  /* TODO */
-  return res.status(501).end();
+  CompanionRequest.findByIdAndRemove(req.companionRequestID, function(err, companionRequest) {
+    if (err) {
+			console.log("Error while removing companion request.");
+			res.status(500).end();
+			return next();
+		}
+    res.status(200).json({
+      status: "success",
+      reason: "companion request deleted"
+    });
+    return next();
+  });
 };
 
 /* Export all controllers. */
