@@ -12,7 +12,7 @@
 var express = require('express');
 
 var config = require('./../config');
-var controller = require('./../controllers/compreqs');
+var controller = require('./../controllers/companionrequests');
 
 var router = express();
 
@@ -33,6 +33,11 @@ router.route('/')
     .get(controller.getPendingRequests)
     .post(controller.createCompanionRequest);
 
+router.route('/:cid')
+    .all(config.authenticate)
+    .get(controller.getCompanionRequest)
+    .put(controller.updateCompanionRequest)
+    .delete(controller.deleteCompanionRequest);
 
 /* Export router with described routes. */
 

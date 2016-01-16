@@ -32,3 +32,4 @@ NodeServer-Doku-TUB-Here.pdf
 
 # Do not commit ./data directory
 data
+startDevel.sh

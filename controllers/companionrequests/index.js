@@ -10,7 +10,7 @@
 /* Variables and configurations. */
 
 var config = require('./../../config');
-var CompanionRequest = require('./../../models/compreq');
+var CompanionRequest = require('./../../models/companionrequest');
 var User = require('./../../models/user');
 
 var controller = {};
@@ -110,6 +110,28 @@ controller.createCompanionRequest = function(req, res, next) {
 };
 
 
+controller.getCompanionRequest = function(req, res, next) {
+  CompanionRequest.findById(req.companionRequestID,function(err,companienRequest){
+    if (err) {
+        console.log("Error during looking for a companion request.");
+        console.log(err);
+
+        res.status(500).end();
+        return next();
+    }else{
+      res.json(companienRequest);
+      return next();
+    }
+  });
+};
+controller.updateCompanionRequest = function(req, res, next) {
+  /* TODO */
+  return res.status(501).end();
+};
+controller.deleteCompanionRequest = function(req, res, next) {
+  /* TODO */
+  return res.status(501).end();
+};
 
 /* Export all controllers. */
 

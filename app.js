@@ -25,7 +25,7 @@ var dropDatabase = function() {
 
   var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
-  var CompReq = require('./models/compreq');
+  var CompReq = require('./models/companionrequest');
 
   User.remove({}, function(err) {
     console.log('User collection removed');
