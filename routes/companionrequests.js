@@ -34,10 +34,10 @@ router.route('/')
     .post(controller.createCompanionRequest);
 
 router.route('/:cid')
-    .all(config.authenticate)
-    .get(controller.getCompanionRequest)
-    .put(controller.updateCompanionRequest)
-    .delete(controller.deleteCompanionRequest);
+  .all(config.authenticate)
+  .get(controller.getCompanionRequest)
+  .put(controller.updateCompanionRequest)
+  .delete(controller.deleteCompanionRequest);
 
 /* Export router with described routes. */
 
