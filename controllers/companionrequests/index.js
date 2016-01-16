@@ -72,7 +72,7 @@ controller.createCompanionRequest = function(req, res, next) {
       res.status(200).json({
         status: "success",
         reason: "companion request already exists",
-        CompanionRequestID: foundReq._id
+        companionRequestID: foundReq._id
       }).end();
       return next();
     } else {
@@ -103,7 +103,7 @@ controller.createCompanionRequest = function(req, res, next) {
           res.json({
             status: "success",
             reason: "companion request sent",
-            CompanionRequestID: addedCompanionRequest._id
+            companionRequestID: addedCompanionRequest._id
           });
           return next();
         });
@@ -114,9 +114,7 @@ controller.createCompanionRequest = function(req, res, next) {
 
 
 controller.getCompanionRequest = function(req, res, next) {
-
   CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
-
     if (err) {
       console.log("Error during looking for a companion request.");
       console.log(err);
@@ -131,8 +129,76 @@ controller.getCompanionRequest = function(req, res, next) {
 
 
 controller.updateCompanionRequest = function(req, res, next) {
-  /* TODO */
-  return res.status(501).end();
+  console.log('update');
+  console.log(req.body.accept);
+  if(req.body.accept || req.body.deny){
+    CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
+      if (err) {
+        console.log("Error during looking for a companion request.");
+        console.log(err);
+        res.status(500).end();
+        return next();
+      } else {
+        if(req.body.deny){
+          companionRequest.status='denied';
+          res.json({
+            status: "success",
+            reason: "companion request denied"
+          });
+        }else if(req.body.accept){
+          companionRequest.status='accepted';
+          /*
+          req.user.groups.find({name:'All friends'},function(err,group){
+            group.push(fromUser);
+            return next();
+          });
+          */
+          //TODO add users to there friendlists
+          User.findById(companionRequest.from, function(err, fromUser) {
+            if (err) {
+              console.log("Error while locating group of companionrequest");
+              console.log(err);
+              res.status(500).json();
+              return next();
+            }
+            for(var g in fromUser.groups){
+              if(fromUser.groups[g].name=='All friends'){
+                if(fromUser.groups[g].members.length<=0){
+                  var data=[req.user];
+                  fromUser.groups[g].members=data;
+                }else{
+                  fromUser.groups[g].members.push(req.user);
+                }
+              }
+            }
+            for(var g in req.user.groups){
+              if(req.user.groups[g].name=='All friends'){
+                if(req.user.groups[g].members.length<=0){
+                  var data=[fromUser];
+                  req.user.groups[g].members=data;
+                }else{
+                  req.user.groups[g].members.push(fromUser);
+                }
+              }
+            }
+            req.user.save();
+            fromUser.save();
+            res.status(200).json();
+            return next();
+          });
+          res.json({
+            status: "success",
+            reason: "companion request accepted"
+          });
+        }
+        companionRequest.save();
+        return next();
+      }
+    });
+  }else{
+    res.status(400).end();
+    return next();
+  }
 };
 
 
