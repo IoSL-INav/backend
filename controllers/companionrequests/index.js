@@ -114,14 +114,14 @@ controller.createCompanionRequest = function(req, res, next) {
 
 
 controller.getCompanionRequest = function(req, res, next) {
-  CompanionRequest.findById(req.companionRequestID,function(err,companienRequest){
+  CompanionRequest.findById(req.companionRequestID, function(err, companienRequest) {
     if (err) {
-        console.log("Error during looking for a companion request.");
-        console.log(err);
+      console.log("Error during looking for a companion request.");
+      console.log(err);
 
-        res.status(500).end();
-        return next();
-    }else{
+      res.status(500).end();
+      return next();
+    } else {
       res.json(companienRequest);
       return next();
     }

@@ -34,8 +34,6 @@ var findOrCreateUser = function(req, res, next) {
 
     if (user == null) {
 
-      console.log("user null.");
-
       User.create({
         _id: userID,
         name: name,
@@ -44,8 +42,6 @@ var findOrCreateUser = function(req, res, next) {
           members: []
         }]
       }, function(err, user) {
-
-        console.log("user created.");
 
         if (err) {
           console.log("Could not login user with ID: %s.", userID);
