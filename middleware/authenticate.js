@@ -27,8 +27,14 @@ var findOrCreateUser = function(req, res, next) {
 
     if (err) {
       console.log("Error while locating model for userID: %s.", userID);
-      res.status(500).json(err);
-    } else if (!user) {
+      console.log(err);
+      res.status(500).json();
+      return next();
+    }
+
+    if (user == null) {
+
+      console.log("user null.");
 
       User.create({
         _id: userID,
@@ -37,15 +43,23 @@ var findOrCreateUser = function(req, res, next) {
           name: 'All friends',
           members: []
         }]
-      }, function(err) {
+      }, function(err, user) {
+
+        console.log("user created.");
+
         if (err) {
           console.log("Could not login user with ID: %s.", userID);
-          res.status(500).json(err);
+          console.log(err);
+          res.status(500).json();
+          return next();
         }
+
+        req.user = user;
+        return next();
       });
     } else {
       req.user = user;
-      next();
+      return next();
     }
   });
 };

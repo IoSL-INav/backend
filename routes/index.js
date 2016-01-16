@@ -16,7 +16,8 @@ var login = require('./login');
 var users = require('./users');
 var events = require('./events');
 var hotspots = require('./hotspots');
-var compreqs = require('./companionrequests');
+// var compreqs = require('./companionrequests');
+var compreqs = require('./compreqs');
 
 var router = express.Router();
 
