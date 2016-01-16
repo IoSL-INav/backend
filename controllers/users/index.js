@@ -582,7 +582,7 @@ controller.deleteGroupForUser = function(req, res, next) {
 
 
 controller.addUserToGroup = function(req, res, next) {
-
+	var companionID = req.body.userID;
 	/**
 	 * At this point, assume:
 	 * Friend approval done - both parties have accepted each other
@@ -592,9 +592,37 @@ controller.addUserToGroup = function(req, res, next) {
 	 * if found: add to submitted other group
 	 * if not found: deny request
 	 */
-
-	// TODO
-	return res.status(501).end();
+	 var group = req.user.groups.id(req.groupID);
+	 var added = false;
+	 for(var g in req.user.groups){
+		 if(req.user.groups[g].name=='All friends'){
+				 if(req.user.groups[g].members.length>0 ){
+					 for(var mem in req.user.groups[g].members){
+						 if(req.user.groups[g].members[mem].id==companionID){
+							 if(group.members.length<=0){
+								 var data=[companionID];
+								 group.members=data;
+							 }else{
+								 group.members.push(companionID);
+							 }
+							 req.user.save();
+							 added=true;
+							 res.json({
+								 status: "success",
+								 reason: "user added to group"
+							 });
+							 return next();
+						 }
+					 }
+				 }
+		 }
+	 }
+	 //TODO: better error handling
+	 res.json({
+	 	status: "error",
+	 	reason: "user not added to group"
+	 });
+	 return next();
 };
 
 
