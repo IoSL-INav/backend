@@ -114,23 +114,28 @@ controller.createCompanionRequest = function(req, res, next) {
 
 
 controller.getCompanionRequest = function(req, res, next) {
-  CompanionRequest.findById(req.companionRequestID, function(err, companienRequest) {
+
+  CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
+
     if (err) {
       console.log("Error during looking for a companion request.");
       console.log(err);
-
       res.status(500).end();
       return next();
     } else {
-      res.json(companienRequest);
+      res.json(companionRequest);
       return next();
     }
   });
 };
+
+
 controller.updateCompanionRequest = function(req, res, next) {
   /* TODO */
   return res.status(501).end();
 };
+
+
 controller.deleteCompanionRequest = function(req, res, next) {
   /* TODO */
   return res.status(501).end();
