@@ -129,8 +129,6 @@ controller.getCompanionRequest = function(req, res, next) {
 
 
 controller.updateCompanionRequest = function(req, res, next) {
-  console.log('update');
-  console.log(req.body.accept);
   if(req.body.accept || req.body.deny){
     CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
       if (err) {
@@ -161,6 +159,7 @@ controller.updateCompanionRequest = function(req, res, next) {
               res.status(500).json();
               return next();
             }
+            //TODO: check if already in that group
             for(var g in fromUser.groups){
               if(fromUser.groups[g].name=='All friends'){
                 if(fromUser.groups[g].members.length<=0){
@@ -183,7 +182,6 @@ controller.updateCompanionRequest = function(req, res, next) {
             }
             req.user.save();
             fromUser.save();
-            res.status(200).json();
             return next();
           });
           res.json({
