@@ -20,11 +20,9 @@ var locationSchema = {
 			type: '2dsphere'
 		} // per def. [longitude, latitude]
 	},
-	building: {
-		type: String,
-		index: true
-	},
-	floor: String
+	building: String,
+	floor: String,
+	accuracyIndicator: Number
 };
 
 

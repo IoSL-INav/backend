@@ -185,13 +185,6 @@ controller.updateLocation = function(req, res, next) {
 	var accuracyIndicator = -1;
 	var noError = true;
 
-	console.log("lat:", lat);
-	console.log("lon:", lon);
-	console.log("major:", major);
-	console.log("minor:", minor);
-	console.log("building:", building);
-	console.log("floor:", floor);
-
 
 	/* Sanity and incompleteness checks. */
 
@@ -202,8 +195,33 @@ controller.updateLocation = function(req, res, next) {
 			/* Building and floor. */
 			if ((building != undefined) && (floor != undefined)) {
 
-				building = validator.stripLow(validator.trim(building));
-				floor = validator.stripLow(validator.trim(floor));
+				building = validator.trim(building);
+				floor = validator.trim(floor);
+
+				/* Check for empty. */
+
+				if (building.length === 0) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "building missing"
+					});
+					return next();
+				}
+
+				if (floor.length === 0) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "floor missing"
+					});
+					return next();
+				}
+
+				/* Everything fine. Save. */
+
+				building = validator.stripLow(building);
+				floor = validator.stripLow(floor);
 
 				newLoc.building = building;
 				newLoc.floor = floor;
@@ -273,12 +291,19 @@ controller.updateLocation = function(req, res, next) {
 						callback(null);
 					}
 
-					newLoc.coordinates = beacons[0].location.coordinates;
-					accuracyIndicator = 1;
-
-					console.log(newLoc);
-					console.log(accuracyIndicator);
-					callback(null);
+					if (beacons.length > 0) {
+						newLoc.coordinates = beacons[0].location.coordinates;
+						accuracyIndicator = 1;
+						callback(null);
+					} else {
+						noError = false;
+						res.status(400).json({
+							status: "failure",
+							reason: "no beacon found for supplied major and minor"
+						});
+						return next();
+						callback(null);
+					}
 				});
 			} else if ((major != undefined) && (minor == undefined)) {
 
@@ -307,8 +332,53 @@ controller.updateLocation = function(req, res, next) {
 			/* Latitude & longitude. */
 			if ((lat != undefined) && (lon != undefined)) {
 
-				lat = validator.toFloat(validator.trim(lat));
-				lon = validator.toFloat(validator.trim(lon));
+				lat = validator.trim(lat);
+				lon = validator.trim(lon);
+
+				/* Check for empty. */
+
+				if (lat.length === 0) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "latitude missing"
+					});
+					return next();
+				}
+
+				if (lon.length === 0) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "longitude missing"
+					});
+					return next();
+				}
+
+				/* Check for out of bounds. */
+
+				if(!validator.isFloat(lat, { min: 0.0, max: 90.0 })) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "latitude out of bounds"
+					});
+					return next();
+				}
+
+				if(!validator.isFloat(lon, { min: 0.0, max: 180.0 })) {
+					noError = false;
+					res.status(400).json({
+						status: "failure",
+						reason: "longitude out of bounds"
+					});
+					return next();
+				}
+
+				/* Everything fine. Save. */
+
+				lat = validator.toFloat(lat);
+				lon = validator.toFloat(lon);
 
 				newLoc.coordinates = [lon, lat];
 				accuracyIndicator = 2;
@@ -342,7 +412,7 @@ controller.updateLocation = function(req, res, next) {
 		}
 
 		/* Check for no data. */
-		if(accuracyIndicator == -1) {
+		if (accuracyIndicator == -1) {
 
 			res.status(400).json({
 				status: "failure",
@@ -353,14 +423,20 @@ controller.updateLocation = function(req, res, next) {
 
 		if (noError) {
 
+			newLoc.accuracyIndicator = accuracyIndicator;
 			req.user.location = newLoc;
+
 			req.user.save(function(err) {
-				if(err) {
+
+				if (err) {
+					console.log("Error during updating the location of a user.");
 					console.log(err);
+					res.status(500).end();
+					return next();
 				}
-				console.log(req.user.location.coordinates);
+
+				res.json(newLoc);
 			});
-			res.json(newLoc);
 		}
 
 		next();
@@ -592,37 +668,37 @@ controller.addUserToGroup = function(req, res, next) {
 	 * if found: add to submitted other group
 	 * if not found: deny request
 	 */
-	 var group = req.user.groups.id(req.groupID);
-	 var added = false;
-	 for(var g in req.user.groups){
-		 if(req.user.groups[g].name=='All friends'){
-				 if(req.user.groups[g].members.length>0 ){
-					 for(var mem in req.user.groups[g].members){
-						 if(req.user.groups[g].members[mem].id==companionID){
-							 if(group.members.length<=0){
-								 var data=[companionID];
-								 group.members=data;
-							 }else{
-								 group.members.push(companionID);
-							 }
-							 req.user.save();
-							 added=true;
-							 res.json({
-								 status: "success",
-								 reason: "user added to group"
-							 });
-							 return next();
-						 }
-					 }
-				 }
-		 }
-	 }
-	 //TODO: better error handling
-	 res.json({
-	 	status: "error",
-	 	reason: "user not added to group"
-	 });
-	 return next();
+	var group = req.user.groups.id(req.groupID);
+	var added = false;
+	for (var g in req.user.groups) {
+		if (req.user.groups[g].name == 'All friends') {
+			if (req.user.groups[g].members.length > 0) {
+				for (var mem in req.user.groups[g].members) {
+					if (req.user.groups[g].members[mem].id == companionID) {
+						if (group.members.length <= 0) {
+							var data = [companionID];
+							group.members = data;
+						} else {
+							group.members.push(companionID);
+						}
+						req.user.save();
+						added = true;
+						res.json({
+							status: "success",
+							reason: "user added to group"
+						});
+						return next();
+					}
+				}
+			}
+		}
+	}
+	//TODO: better error handling
+	res.json({
+		status: "error",
+		reason: "user not added to group"
+	});
+	return next();
 };
 
 
