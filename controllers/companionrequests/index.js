@@ -82,7 +82,7 @@ controller.createCompanionRequest = function(req, res, next) {
           console.log("During a companion request, the other user could not be found.");
           console.log(err);
 
-          res.status(500).end();
+          res.status(404).end();
           return next();
         }
 
