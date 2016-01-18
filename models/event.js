@@ -32,14 +32,11 @@ var eventSchema = new Schema({
 			type: [Number],
 			index: {
 				type: '2dsphere'
-			}, // per def. [longitude, latitude]
+			} // per def. [longitude, latitude]
 		},
-		building: {
-			type: String,
-			index: true
-		},
+		building: String,
 		floor: String
-	},
+	}
 });
 
 

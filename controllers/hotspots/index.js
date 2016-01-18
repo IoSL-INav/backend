@@ -11,6 +11,8 @@
 
 var config = require('./../../config');
 var Hotspot = require('./../../models/hotspot');
+var User = require('./../../models/user');
+var Location = require('./../../models/location');
 
 var controller = {};
 
@@ -100,6 +102,60 @@ controller.getBeacon = function(req, res, next) {
 };
 
 controller.getActiveFriends = function(req, res, next) {
+
+  /* Look through all friends of user. */
+
+  var i;
+  var allFriends;
+
+  Location.findOne({
+    owner: req.user._id
+  }, function(err, ownLoc) {
+
+    if (err) {
+      console.log("Could not retrieve user's location. Not updated?");
+      console.log(err);
+      res.status(500).end();
+      return next();
+    }
+
+    console.log(ownLoc);
+
+    for (i = 0; i < req.user.groups.length; i++) {
+      if (req.user.groups[i].name == "All friends") {
+        allFriends = req.user.groups[i].members;
+      }
+    }
+
+    Location.find({
+      $and: [{
+        owner: {
+          $in: allFriends
+        }
+      }, {
+        $or: [{
+          coordinates: ownLoc.coordinates
+        }, /*{
+          coordinates: {
+            $geoWithin: {
+              $geometry:
+            }
+          }
+        }, */{
+          building: ownLoc.building
+        }]
+      }]
+    }, function(err, found) {
+      console.log(found);
+    });
+
+    //.populate('owner').exec(function(err, ));
+
+    /* Select all friends who have shared their location and are in the same area as the user. */
+
+    /* Return those friends. */
+  });
+
 
   /* TODO */
   return res.status(501).end();

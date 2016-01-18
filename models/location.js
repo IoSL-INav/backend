@@ -7,23 +7,30 @@
  * after a given time (15 mins by default)
  */
 
+var mongoose = require('mongoose');
 
-var locationSchema = {
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
+
+
+var locationSchema = new Schema({
 	createdAt: {
 		type: Date,
-		expires: 900, // 15 minutes in seconds
+		expires: 900, // Remove entry after 15 minutes
 		default: Date.now
+	},
+	owner: {
+		type: String,
+		ref: 'User'
 	},
 	coordinates: {
 		type: [Number],
-		index: {
-			type: '2dsphere'
-		} // per def. [longitude, latitude]
+		index: '2dsphere' // Order: [longitude, latitude]
 	},
 	building: String,
 	floor: String,
 	accuracyIndicator: Number
-};
+});
 
 
-module.exports = locationSchema;
+module.exports = mongoose.model('Location', locationSchema);

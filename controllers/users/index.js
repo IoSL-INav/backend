@@ -17,6 +17,7 @@ var validator = require('validator');
 var async = require('async');
 var User = require('./../../models/user');
 var Hotspot = require('./../../models/hotspot');
+var Location = require('./../../models/location');
 
 var controller = {};
 
@@ -181,7 +182,7 @@ controller.updateLocation = function(req, res, next) {
 	var lat = req.body.userLat;
 	var lon = req.body.userLon;
 
-	var newLoc = {};
+	var newLoc = new Location();
 	var accuracyIndicator = -1;
 	var noError = true;
 
@@ -357,7 +358,10 @@ controller.updateLocation = function(req, res, next) {
 
 				/* Check for out of bounds. */
 
-				if(!validator.isFloat(lat, { min: 0.0, max: 90.0 })) {
+				if (!validator.isFloat(lat, {
+						min: 0.0,
+						max: 90.0
+					})) {
 					noError = false;
 					res.status(400).json({
 						status: "failure",
@@ -366,7 +370,10 @@ controller.updateLocation = function(req, res, next) {
 					return next();
 				}
 
-				if(!validator.isFloat(lon, { min: 0.0, max: 180.0 })) {
+				if (!validator.isFloat(lon, {
+						min: 0.0,
+						max: 180.0
+					})) {
 					noError = false;
 					res.status(400).json({
 						status: "failure",
@@ -424,9 +431,13 @@ controller.updateLocation = function(req, res, next) {
 		if (noError) {
 
 			newLoc.accuracyIndicator = accuracyIndicator;
-			req.user.location = newLoc;
 
-			req.user.save(function(err) {
+			Location.findOneAndUpdate({
+				owner: req.user._id
+			}, newLoc, {
+				new: true,
+				upsert: true
+			}, function(err, updLoc) {
 
 				if (err) {
 					console.log("Error during updating the location of a user.");
@@ -435,7 +446,7 @@ controller.updateLocation = function(req, res, next) {
 					return next();
 				}
 
-				res.json(newLoc);
+				res.json(updLoc);
 			});
 		}
 
@@ -446,17 +457,21 @@ controller.updateLocation = function(req, res, next) {
 
 controller.deleteLocation = function(req, res, next) {
 
-	req.user.location = null;
-	req.user.save();
+	Location.findOneAndRemove({
+		owner: req.user._id
+	}, function(err) {
 
-	if (req.user.location == null) {
+		if (err) {
+			console.log("Error during deleting the location of a user.");
+			console.log(err);
+			res.status(500).end();
+			return next();
+		}
+
 		res.json({
 			status: "success"
 		});
-	} else {
-		console.log("Error during deleting a location from user.");
-		res.status(500).end();
-	}
+	});
 
 	next();
 };

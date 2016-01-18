@@ -10,20 +10,30 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var locationSchema = require('./location.js');
 
 
 var beaconSchema = new Schema({
-	name: String,
-	companyUUID: String,
-	major: Number,
-	minor: Number,
-	location: locationSchema
+    name: String,
+    companyUUID: String,
+    major: Number,
+    minor: Number,
+    location: {
+        coordinates: {
+            type: [Number],
+            index: '2dsphere' // Order: [longitude, latitude]
+        },
+        building: String,
+        floor: String
+    }
 });
 
 var hotspotSchema = new Schema({
-	name: String,
-	beacons: [beaconSchema]
+    name: String,
+    geoFence: {
+        type: [Number],
+        index: '2dsphere' // Order: [longitude, latitude]
+    },
+    beacons: [beaconSchema]
 });
 
 
