@@ -53,6 +53,7 @@ controller.getHotspot = function(req, res, next) {
   });
 };
 
+
 /* Get all beacons of a given hotspot. */
 controller.getAllBeacons = function(req, res, next) {
 
@@ -70,6 +71,7 @@ controller.getAllBeacons = function(req, res, next) {
     next();
   });
 };
+
 
 /* Get a single beacon of a given hotspot. */
 controller.getBeacon = function(req, res, next) {
@@ -101,9 +103,8 @@ controller.getBeacon = function(req, res, next) {
   });
 };
 
-controller.getActiveFriends = function(req, res, next) {
 
-  /* Look through all friends of user. */
+controller.getActiveFriends = function(req, res, next) {
 
   var i;
   var allFriends;
@@ -113,13 +114,19 @@ controller.getActiveFriends = function(req, res, next) {
   }, function(err, ownLoc) {
 
     if (err) {
-      console.log("Could not retrieve user's location. Not updated?");
+      console.log("Error during retrieving user's location.");
       console.log(err);
       res.status(500).end();
       return next();
     }
 
-    console.log(ownLoc);
+    if (ownLoc == null) {
+      res.status(400).json({
+        status: "failure",
+        reason: "retrieving friends in area not possible when location not shared"
+      });
+      return next();
+    }
 
     for (i = 0; i < req.user.groups.length; i++) {
       if (req.user.groups[i].name == "All friends") {
@@ -128,37 +135,61 @@ controller.getActiveFriends = function(req, res, next) {
     }
 
     Location.find({
-      $and: [{
-        owner: {
-          $in: allFriends
-        }
-      }, {
-        $or: [{
-          coordinates: ownLoc.coordinates
-        }, /*{
-          coordinates: {
-            $geoWithin: {
-              $geometry:
-            }
+        $and: [{
+          owner: {
+            $in: allFriends
           }
-        }, */{
-          building: ownLoc.building
+        }, {
+          $or: [{
+            coordinates: ownLoc.coordinates
+          }, { // TODO: GEO FENCING MISSING!
+            building: ownLoc.building
+          }]
         }]
-      }]
-    }, function(err, found) {
-      console.log(found);
-    });
+      }, 'owner coordinates building floor accuracyIndicator')
+      .populate('owner')
+      .lean()
+      .exec(function(err, foundFriends) {
 
-    //.populate('owner').exec(function(err, ));
+        if (err) {
+          console.log("Error during collectiong friends at same hotspot.");
+          console.log(err);
+          res.status(500).end();
+          return next();
+        }
 
-    /* Select all friends who have shared their location and are in the same area as the user. */
+        if (foundFriends.length === 0) {
+          res.json({
+            message: "no friends in area"
+          });
+          return next();
+        }
 
-    /* Return those friends. */
+        var u;
+        var resFriends = {
+          friends: []
+        };
+
+        for (u = 0; u < foundFriends.length; u++) {
+
+          var friend = {
+            id: foundFriends[u].owner._id,
+            name: foundFriends[u].owner.name,
+            location: {
+              coordinates: foundFriends[u].coordinates,
+              building: foundFriends[u].building,
+              floor: foundFriends[u].floor,
+              accuracyIndicator: foundFriends[u].accuracyIndicator
+            }
+          };
+
+          resFriends.friends.push(friend);
+        }
+
+        res.json(resFriends);
+        next();
+      });
   });
-
-
-  /* TODO */
-  return res.status(501).end();
 };
 
 
