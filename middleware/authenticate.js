@@ -22,6 +22,7 @@ var userController = require('../controllers/users');
 var findOrCreateUser = function(req, res, next) {
   var userID = req.kauth.grant.id_token.content.sub;
   var name = req.kauth.grant.id_token.content.preferred_username;
+  var email = req.kauth.grant.id_token.content.email;
 
   User.findById(userID, function(err, user) {
 
@@ -37,6 +38,7 @@ var findOrCreateUser = function(req, res, next) {
       User.create({
         _id: userID,
         name: name,
+        email: email,
         groups: [{
           name: 'All friends',
           members: []

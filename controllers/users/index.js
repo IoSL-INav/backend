@@ -430,27 +430,34 @@ controller.updateLocation = function(req, res, next) {
 
 		if (noError) {
 
+			newLoc.owner = req.user._id;
 			newLoc.accuracyIndicator = accuracyIndicator;
 
-			Location.findOneAndUpdate({
+			Location.findOneAndRemove({
 				owner: req.user._id
-			}, newLoc, {
-				new: true,
-				upsert: true
-			}, function(err, updLoc) {
+			}, function(err) {
 
 				if (err) {
-					console.log("Error during updating the location of a user.");
+					console.log("Error during deleting the old location of a user.");
 					console.log(err);
 					res.status(500).end();
 					return next();
 				}
 
-				res.json(updLoc);
+				newLoc.save(function(err) {
+
+					if (err) {
+						console.log("Error during inserting the new location of a user.");
+						console.log(err);
+						res.status(500).end();
+						return next();
+					}
+
+					res.json(newLoc);
+					next();
+				});
 			});
 		}
-
-		next();
 	});
 };
 
