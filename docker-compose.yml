@@ -10,6 +10,6 @@ backend:
         - "80:8080"
     environment:
         - PIAZZA_HOST=0.0.0.0
-        - PIAZZA_SECRET=abc
+        - PIAZZA_SECRET=kFjJDFtc73gc87TD73gi8z29DZ
     links:
         - mongo-db:mongo-db

@@ -164,10 +164,16 @@ var server = app.listen(config.port, config.host, function() {
   console.log('IoSL-INav server listening on host %s at port %s.', address.address, address.port);
 
   /* DEV ONLY BEGIN */
+
   /* Start with some default data. */
   console.log("Init database with initial data...");
   dropDatabase();
   console.log("Add dummy data to database...");
   initDummyDatabase();
+
   /* DEV ONLY END */
 });
+
+
+/* Enable testing. */
+module.exports = server;
