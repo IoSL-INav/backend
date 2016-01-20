@@ -20,6 +20,7 @@ var companionrequests = require('./companionrequests');
 
 var router = express.Router();
 
+
 /* Support JSON bodies. */
 router.use(bodyParser.json());
 
@@ -31,5 +32,6 @@ router.use('/companionrequests', companionrequests);
 
 /* Do we want to redirect all left requests to authentication? */
 router.use(config.authenticate);
+
 
 module.exports = router;

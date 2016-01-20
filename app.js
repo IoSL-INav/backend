@@ -21,25 +21,29 @@ app.use(config.keycloak.middleware({
 }));
 app.use(routes);
 
+
 var dropDatabase = function() {
 
   var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
   var CompReq = require('./models/companionrequest');
+  var Location = require('./models/location');
 
   User.remove({}, function(err) {
-    console.log('User collection removed');
+    console.log('User collection removed.');
   });
-  Hotspot.remove({}, function(err) {
-    console.log('Hotspot collection removed');
-  });
-  CompReq.remove({}, function(err) {
-    console.log('Companion requests collection removed');
-  });
-}
 
-var initDatabase = function() {
-  console.log("add some real data like defined hotspots etc.");
+  Hotspot.remove({}, function(err) {
+    console.log('Hotspot collection removed.');
+  });
+
+  CompReq.remove({}, function(err) {
+    console.log('Companion requests collection removed.');
+  });
+
+  Location.remove({}, function(err) {
+    console.log('Location collection removed.');
+  });
 }
 
 var initDummyDatabase = function() {
