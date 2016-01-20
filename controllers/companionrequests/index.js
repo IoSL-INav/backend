@@ -41,7 +41,8 @@ controller.getPendingRequests = function(req, res, next) {
 
 controller.createCompanionRequest = function(req, res, next) {
 
-  var companionID = req.body.userID;
+  var companionID = req.body.userID?req.body.userID:'';
+  var companionEmail = req.body.userEmail?req.body.userEmail:'';
 
   CompanionRequest.findOne({
     $or: [{
@@ -76,7 +77,14 @@ controller.createCompanionRequest = function(req, res, next) {
       }).end();
       return next();
     } else {
-      User.findById(companionID, function(err, foundUser) {
+      //User.findById(companionID, function(err, foundUser) {
+      User.findOne({
+        $or: [{
+          id: companionID
+        }, {
+          email: companionEmail
+        }]
+      }, function(err, foundUser) {
 
         if (err) {
           console.log("During a companion request, the other user could not be found.");
