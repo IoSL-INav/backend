@@ -41,80 +41,93 @@ controller.getPendingRequests = function(req, res, next) {
 
 controller.createCompanionRequest = function(req, res, next) {
 
-  var companionID = req.body.userID?req.body.userID:'';
-  var companionEmail = req.body.userEmail?req.body.userEmail:'';
+  /* Save mail address from request body. */
+  var companionEmail = req.body.userEmail ? req.body.userEmail : '';
 
-  CompanionRequest.findOne({
-    $or: [{
-      $and: [{
-        from: req.user._id
-      }, {
-        to: companionID
-      }]
-    }, {
-      $and: [{
-        from: companionID
-      }, {
-        to: req.user._id
-      }]
-    }]
-  }, function(err, foundReq) {
+  /* Check if supplied mail address matches a user in the system. */
+  User.findOne({
+    email: companionEmail
+  }, function(err, foundUser) {
 
     if (err) {
-      console.log("Error during looking for already existing companion request.");
+      console.log("Error during checking if supplied mail matches a user in the system.");
       console.log(err);
 
       res.status(500).end();
       return next();
     }
 
-    if (foundReq) {
+    /* If there is no matching user, send back a useful message. */
+    if(foundUser == null) {
 
-      res.status(200).json({
-        status: "success",
-        reason: "companion request already exists",
-        companionRequestID: foundReq._id
+      res.status(400).json({
+        status: "failure",
+        reason: "no matching user for supplied mail address"
       }).end();
       return next();
     } else {
-      //User.findById(companionID, function(err, foundUser) {
-      User.findOne({
+
+      /* Check if a companion request has already been made. */
+      CompanionRequest.findOne({
         $or: [{
-          id: companionID
+          $and: [{
+            from: req.user._id
+          }, {
+            to: foundUser._id
+          }]
         }, {
-          email: companionEmail
+          $and: [{
+            from: foundUser._id
+          }, {
+            to: req.user._id
+          }]
         }]
-      }, function(err, foundUser) {
+      }, function(err, foundReq) {
 
         if (err) {
-          console.log("During a companion request, the other user could not be found.");
+          console.log("Error during looking for already existing companion request.");
           console.log(err);
 
-          res.status(404).end();
+          res.status(500).end();
           return next();
         }
 
-        CompanionRequest.create({
-          from: req.user._id,
-          to: companionID,
-          status: 'pending'
-        }, function(err, addedCompanionRequest) {
+        /* A companion request for these both users exists, send success message. */
+        if (foundReq) {
 
-          if (err) {
-            console.log("Error during adding a new companion request.");
-            console.log(err);
-
-            res.status(500).end();
-            return next();
-          }
-
-          res.json({
+          res.status(200).json({
             status: "success",
-            reason: "companion request sent",
-            companionRequestID: addedCompanionRequest._id
-          });
+            reason: "companion request already exists",
+            companionRequestID: foundReq._id
+          }).end();
           return next();
-        });
+
+        } else {
+
+          /* No companion request existed - create one. */
+          CompanionRequest.create({
+            from: req.user._id,
+            to: foundUser._id,
+            status: 'pending'
+          }, function(err, addedCompanionRequest) {
+
+            if (err) {
+              console.log("Error during adding a new companion request.");
+              console.log(err);
+
+              res.status(500).end();
+              return next();
+            }
+
+            /* Send back created request with request ID. */
+            res.json({
+              status: "success",
+              reason: "companion request sent",
+              companionRequestID: addedCompanionRequest._id
+            });
+            return next();
+          });
+        }
       });
     }
   });
@@ -122,7 +135,9 @@ controller.createCompanionRequest = function(req, res, next) {
 
 
 controller.getCompanionRequest = function(req, res, next) {
+
   CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
+
     if (err) {
       console.log("Error during looking for a companion request.");
       console.log(err);
@@ -137,31 +152,41 @@ controller.getCompanionRequest = function(req, res, next) {
 
 
 controller.updateCompanionRequest = function(req, res, next) {
+
   if (req.body.accept || req.body.deny) {
+
     CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
+
       if (err) {
         console.log("Error during looking for a companion request.");
         console.log(err);
         res.status(500).end();
         return next();
       } else {
+
         if (req.body.deny) {
+
           companionRequest.status = 'denied';
           res.json({
             status: "success",
             reason: "companion request denied"
           });
         } else if (req.body.accept) {
+
           companionRequest.status = 'accepted';
+
           User.findById(companionRequest.from, function(err, fromUser) {
+
             if (err) {
               console.log("Error while locating group of companionrequest");
               console.log(err);
               res.status(500).json();
               return next();
             }
+
             //TODO: check if already in that group
             for (var g in fromUser.groups) {
+
               if (fromUser.groups[g].name == 'All friends') {
                 if (fromUser.groups[g].members.length <= 0) {
                   var data = [req.user];
@@ -171,7 +196,9 @@ controller.updateCompanionRequest = function(req, res, next) {
                 }
               }
             }
+
             for (var g in req.user.groups) {
+
               if (req.user.groups[g].name == 'All friends') {
                 if (req.user.groups[g].members.length <= 0) {
                   var data = [fromUser];
@@ -181,11 +208,13 @@ controller.updateCompanionRequest = function(req, res, next) {
                 }
               }
             }
+
             req.user.save();
             fromUser.save();
             companionRequest.remove();
             return next();
           });
+
           res.json({
             status: "success",
             reason: "companion request accepted"
@@ -203,7 +232,9 @@ controller.updateCompanionRequest = function(req, res, next) {
 
 
 controller.deleteCompanionRequest = function(req, res, next) {
+
   CompanionRequest.findByIdAndRemove(req.companionRequestID, function(err, companionRequest) {
+
     if (err) {
       console.log("Error while removing companion request.");
       res.status(500).end();
@@ -216,6 +247,7 @@ controller.deleteCompanionRequest = function(req, res, next) {
     return next();
   });
 };
+
 
 /* Export all controllers. */
 
