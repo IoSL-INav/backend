@@ -11,14 +11,20 @@ var fs = require('fs');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var expressSession = require('express-session');
-var authenticate = require('./middleware/authenticate.js');
 
+if(process.env.TEST_MODE) {
+	var authenticate = require('./middleware/authenticate-test.js');
+	console.log("Uses dummy authenticator for testing purposes.");
+} else {
+	var authenticate = require('./middleware/authenticate.js');
+	console.log("Uses real authenticator.");
+}
 
 var Keycloak = require('connect-keycloak');
 var keycloakConfig = require('./keycloak.json')
 
-function loadSecret(path) {
 
+function loadSecret(path) {
 	if (path) {
 		return fs.readFileSync(path);
 	}

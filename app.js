@@ -29,26 +29,30 @@ var dropDatabase = function() {
   var CompReq = require('./models/companionrequest');
   var Location = require('./models/location');
 
+  console.log("Remove all relevant data from collections.");
+
   User.remove({}, function(err) {
-    console.log('User collection removed.');
+    console.log("User collection removed.");
   });
 
   Hotspot.remove({}, function(err) {
-    console.log('Hotspot collection removed.');
+    console.log("Hotspot collection removed.");
   });
 
   CompReq.remove({}, function(err) {
-    console.log('Companion requests collection removed.');
+    console.log("Companion requests collection removed.");
   });
 
   Location.remove({}, function(err) {
-    console.log('Location collection removed.');
+    console.log("Location collection removed.");
   });
 }
 
 var initDummyDatabase = function() {
 
   var Hotspot = require('./models/hotspot');
+
+  console.log("Adding some dummy data sets to database.");
 
   var backRightCorner = {
     coordinates: [52.509646, 13.326402],
@@ -127,38 +131,26 @@ var initDummyDatabase = function() {
     beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor],
   };
 
-  Hotspot.update({
-      name: hot1.name
-    }, {
-      $setOnInsert: hot1
-    }, {
-      upsert: true
-    },
-    function(err, numAffected) {
-      if (typeof numAffected.upserted !== 'undefined') {
-        console.log('add mensa as hotspot');
-      }
-    }
-  );
-
   var hot2 = {
     name: "Library",
     beacons: [beaconBed, beaconBike]
   };
 
   Hotspot.update({
-      name: hot2.name
-    }, {
-      $setOnInsert: hot2
-    }, {
-      upsert: true
-    },
-    function(err, numAffected) {
-      if (typeof numAffected.upserted !== 'undefined') {
-        console.log('add library as hotspot');
-      }
-    }
-  );
+    name: hot1.name
+  }, {
+    $setOnInsert: hot1
+  }, {
+    upsert: true
+  }).exec();
+
+  Hotspot.update({
+    name: hot2.name
+  }, {
+    $setOnInsert: hot2
+  }, {
+    upsert: true
+  });
 }
 
 
@@ -170,9 +162,7 @@ var server = app.listen(config.port, config.host, function() {
   /* DEV ONLY BEGIN */
 
   /* Start with some default data. */
-  console.log("Init database with initial data...");
   dropDatabase();
-  console.log("Add dummy data to database...");
   initDummyDatabase();
 
   /* DEV ONLY END */
