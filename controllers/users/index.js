@@ -679,48 +679,105 @@ controller.deleteGroupForUser = function(req, res, next) {
 };
 
 
+/**
+ * Add a friend to a group other than 'All friends'.
+ * The friend already has to be in the logged in
+ * user's 'All friends' list.
+ *
+ * Parameters:
+ * - req.body.userID: ID of user to add to group
+ * - req.groupID: ID of group to add user to
+ */
 controller.addUserToGroup = function(req, res, next) {
-	var companionID = req.body.userID;
+
 	/**
-	 * At this point, assume:
+	 * At this point, we assume:
 	 * Friend approval done - both parties have accepted each other
 	 * so that both parties are in the corresponding 'All friends' list.
 	 *
 	 * Query logged in user's 'All friends' list for submitted user
-	 * if found: add to submitted other group
-	 * if not found: deny request
+	 * - if found and not already in other group: add to submitted other group
+	 * - if not found or already in other group: deny request
 	 */
+
+	var companionID = req.body.userID;
 	var group = req.user.groups.id(req.groupID);
-	var added = false;
+
+	if (group == null) {
+		res.status(400).json({
+			status: "error",
+			reason: "no group found for supplied groupID"
+		});
+		return next();
+	}
+
 	for (var g in req.user.groups) {
+
 		if (req.user.groups[g].name == 'All friends') {
+
+			/* Prevents adding friend to 'All friends' a second time. */
+			if (req.user.groups[g]._id == req.groupID) {
+				res.status(400).json({
+					status: "error",
+					reason: "supplied user already in 'All friends' list"
+				});
+				return next();
+			}
+
+			/* Check for at least one member in 'All friends' list. */
 			if (req.user.groups[g].members.length > 0) {
+
 				for (var mem in req.user.groups[g].members) {
-					if (req.user.groups[g].members[mem].id == companionID) {
-						if (group.members.length <= 0) {
-							var data = [companionID];
-							group.members = data;
-						} else {
-							group.members.push(companionID);
+
+					/* We found the supplied companionID in 'All friends'. */
+					if (req.user.groups[g].members[mem]._id == companionID) {
+
+						for (var memNew in group.members) {
+
+							/* Check if user already is in supplied group. */
+							if (group.members[memNew]._id == companionID) {
+								res.status(400).json({
+									status: "error",
+									reason: "supplied user already in supplied group"
+								});
+								return next();
+							} else {
+
+								/* Add user to group. */
+								if (group.members.length <= 0) {
+									var friends = [companionID];
+									group.members = friends;
+								} else {
+									group.members.push(companionID);
+								}
+
+								/* And save modified user object. */
+								req.user.save();
+
+								res.json({
+									status: "success",
+									reason: "user added to group"
+								});
+								return next();
+							}
 						}
-						req.user.save();
-						added = true;
-						res.json({
-							status: "success",
-							reason: "user added to group"
+					} else {
+						res.status(400).json({
+							status: "error",
+							reason: "supplied user not found in 'All friends' list"
 						});
 						return next();
 					}
 				}
+			} else {
+				res.status(400).json({
+					status: "error",
+					reason: "supplied user not found in 'All friends' list"
+				});
+				return next();
 			}
 		}
 	}
-	//TODO: better error handling
-	res.json({
-		status: "error",
-		reason: "user not added to group"
-	});
-	return next();
 };
 
 
