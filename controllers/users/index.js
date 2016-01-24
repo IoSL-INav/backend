@@ -703,6 +703,7 @@ controller.addUserToGroup = function(req, res, next) {
 	var companionID = req.body.userID;
 	var group = req.user.groups.id(req.groupID);
 
+	/* Check if group exists. */
 	if (group == null) {
 		res.status(400).json({
 			status: "error",
@@ -781,9 +782,62 @@ controller.addUserToGroup = function(req, res, next) {
 };
 
 
+/**
+ * Remove a user from a group.
+ *
+ * Parameters:
+ * - req.otherUserID: ID of user to remove from group
+ * - req.groupID: ID of group to remove user from
+ */
 controller.deleteUserFromGroup = function(req, res, next) {
-	// TODO
-	return res.status(501).end();
+
+	var companionID = req.otherUserID;
+	var group = req.user.groups.id(req.groupID);
+	var found = false;
+
+	/* Check if group exists. */
+	if (group == null) {
+		res.status(400).json({
+			status: "error",
+			reason: "no group found matching supplied groupID"
+		});
+		return next();
+	}
+
+	/**
+	 * Filter group's members array and only include users
+	 * that do not have the companionID as _id.
+	 * Set found to true if the supplied user was found.
+	 */
+	var rmdMember = group.members.filter(function(mem) {
+
+		var inc = (mem._id !== companionID) ? true : false;
+
+		if (!inc) {
+			found = true;
+		}
+
+		return inc;
+	});
+
+	/* If the supplied user was not found, return an error. */
+	if (!found) {
+		res.status(400).json({
+			status: "error",
+			reason: "no user found matching supplied userID"
+		});
+		return next();
+	}
+
+	/* Otherwise update the user object. */
+	group.members = rmdMember;
+	req.user.save();
+
+	res.json({
+		status: "success",
+		reason: "user removed from group"
+	});
+	return next();
 };
 
 

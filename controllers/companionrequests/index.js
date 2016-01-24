@@ -58,7 +58,7 @@ controller.createCompanionRequest = function(req, res, next) {
     }
 
     /* If there is no matching user, send back a useful message. */
-    if(foundUser == null) {
+    if (foundUser == null) {
 
       res.status(400).json({
         status: "failure",
