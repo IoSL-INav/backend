@@ -9,6 +9,7 @@
 
 var mongoose = require('mongoose');
 var morgan = require('morgan');
+var stream = require('logrotate-stream');
 var expressSession = require('express-session');
 var keycloak = require('connect-keycloak');
 var authenticate = (process.env.TEST_MODE === "true") ? require('./middleware/authenticate-test.js') : require('./middleware/authenticate.js');
@@ -27,7 +28,16 @@ var host = process.env.PIAZZA_HOST || '0.0.0.0';
 var port = process.env.PIAZZA_PORT || 8080;
 var dbPath = process.env.PIAZZA_DB || 'mongodb://mongo-db:27017/iosl-inav';
 var secret = process.env.PIAZZA_SECRET || "BEWARE! Please change this to something different than this in production mode.";
+var logFileLocation = process.env.PIAZZA_LOG_FILE || "/logs/iosl-inav-backend-access.log";
 var useMongoSessionStore = (process.env.PIAZZA_USE_MONGODB_SESSION_STORE === "true") ? true : false;
+
+
+/* Define log file rotation every 100k, keeping the last 28 logs. */
+var logFile = stream({
+	file: logFileLocation,
+	size: '100k',
+	keep: 28
+});
 
 
 /* Set database option and connect to it. */
@@ -83,6 +93,7 @@ module.exports = {
 	host: host,
 	port: port,
 	morgan: morgan,
+	logFile: logFile,
 	session: session,
 	keycloak: keycloak,
 	authenticate: authenticate(keycloak)

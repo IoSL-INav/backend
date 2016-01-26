@@ -15,7 +15,9 @@ var routes = require('./routes');
 /* Initial express routing object. */
 var app = express();
 
-app.use(config.morgan('dev'));
+app.use(config.morgan('combined', {
+  stream: config.logFile
+}));
 app.use(config.session);
 app.use(config.keycloak.middleware({
   logout: '/logout',
@@ -198,7 +200,8 @@ var initDummyDatabase = function() {
 var server = app.listen(config.port, config.host, function() {
 
   var address = server.address();
-  console.log('IoSL-INav server listening on host %s at port %s.', address.address, address.port);
+  console.log("IoSL-INav server listening on host %s at port %s.", address.address, address.port);
+  console.log("Logging into file: %s.\n", config.logFile.file);
 
   /* DEV ONLY BEGIN */
 

@@ -20,6 +20,7 @@ Create an environment file to provide the correct values according to your (deve
 process.env.PIAZZA_HOST = 'localhost';
 process.env.PIAZZA_DB = 'mongodb://localhost:27017/iosl-inav';
 process.env.PIAZZA_SECRET = "Think of a very long sentence and maybe even include some 13375p34k and $%&";
+process.env.PIAZZA_LOG_FILE = "./test-logging.log";
 process.env.PIAZZA_USE_MONGODB_SESSION_STORE = true;
 process.env.TEST_MODE = false;
 ```
@@ -95,6 +96,7 @@ In order to run the provided API tests, you have to set some environment variabl
 process.env.PIAZZA_HOST = 'localhost';
 process.env.PIAZZA_DB = 'mongodb://localhost:27017/iosl-inav';
 process.env.PIAZZA_SECRET = "Think of a very long sentence and maybe even include some 13375p34k and $%&";
+process.env.PIAZZA_LOG_FILE = "./test-logging.log";
 process.env.PIAZZA_USE_MONGODB_SESSION_STORE = true;
 process.env.TEST_MODE = true;
 ```
