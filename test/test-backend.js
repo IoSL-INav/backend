@@ -8,14 +8,9 @@
  */
 
 
-/* Variables and configurations. */
-
-process.env.PIAZZA_DB = 'mongodb://localhost:27017/iosl-inav';
-process.env.PIAZZA_SECRET = 'zINC729vbn29F9zf9Z';
-process.env.TEST_MODE = true;
-
 var supertest = require('supertest');
 var expect = require('chai').expect;
+var envFile = require('../.env.test');
 var backend = require('../app');
 
 

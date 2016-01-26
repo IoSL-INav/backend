@@ -11,10 +11,12 @@ var express = require('express');
 var config = require('./config');
 var routes = require('./routes');
 
+
+/* Initial express routing object. */
 var app = express();
 
-app.use(config.session);
 app.use(config.morgan('dev'));
+app.use(config.session);
 app.use(config.keycloak.middleware({
   logout: '/logout',
   admin: '/admin'
@@ -22,6 +24,10 @@ app.use(config.keycloak.middleware({
 app.use(routes);
 
 
+/**
+ * DEV function
+ * Completely empty all collections we're using.
+ */
 var dropDatabase = function() {
 
   var User = require('./models/user');
@@ -48,6 +54,11 @@ var dropDatabase = function() {
   });
 }
 
+
+/**
+ * DEV function
+ * Initially push some data into the database.
+ */
 var initDummyDatabase = function() {
 
   var Hotspot = require('./models/hotspot');
@@ -126,9 +137,33 @@ var initDummyDatabase = function() {
     location: frontRightCorner,
   };
 
+  var purpleBeacon = {
+    name: "purpleDoor",
+    companyUUID: "d0d3fa86-ca76-45ec-9bd9-6af401c6e22d",
+    major: 49816,
+    minor: 55395,
+    location: backRightCorner,
+  }
+
+  var blueBeacon = {
+    name: "blueBeacon",
+    companyUUID: "b9407f30-f5f8-466e-aff9-25556b57fe6d",
+    major: 1000,
+    minor: 20010,
+    location: frontRightCorner,
+  }
+
+  var greenBeacon = {
+    name: "greenBeacon",
+    companyUUID: "b9407f30-f5f8-466e-aff9-25556b57fe6d",
+    major: 1002,
+    minor: 3090,
+    location: frontLeftCorner,
+  }
+
   var hot1 = {
     name: "Mensa",
-    beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor],
+    beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor, purpleBeacon, blueBeacon, greenBeacon],
   };
 
   var hot2 = {
@@ -154,6 +189,12 @@ var initDummyDatabase = function() {
 }
 
 
+/**
+ * MAIN
+ * Start our backend application.
+ * Use port and host configuration taken from
+ * environment file. Log where server is running.
+ */
 var server = app.listen(config.port, config.host, function() {
 
   var address = server.address();
@@ -169,5 +210,5 @@ var server = app.listen(config.port, config.host, function() {
 });
 
 
-/* Enable testing. */
+/* Export server in order to enable testing. */
 module.exports = server;

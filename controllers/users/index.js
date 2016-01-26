@@ -9,9 +9,6 @@
 
 /* Variables and configurations. */
 
-var util = require('./../../util');
-var isErrorOrNull = util.isErrorOrNull;
-
 var config = require('./../../config');
 var validator = require('validator');
 var async = require('async');

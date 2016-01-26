@@ -7,38 +7,30 @@
  * files and variables
  */
 
-var fs = require('fs');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var expressSession = require('express-session');
+var keycloak = require('connect-keycloak');
+var authenticate = (process.env.TEST_MODE === "true") ? require('./middleware/authenticate-test.js') : require('./middleware/authenticate.js');
 
-if(process.env.TEST_MODE) {
-	var authenticate = require('./middleware/authenticate-test.js');
-	console.log("Uses dummy authenticator for testing purposes.");
-} else {
-	var authenticate = require('./middleware/authenticate.js');
-	console.log("Uses real authenticator.");
-}
-
-var Keycloak = require('connect-keycloak');
-var keycloakConfig = require('./keycloak.json')
+/* Load config files. */
+var envFile = require('./.env');
+var keycloakConfig = require('./keycloak.json');
+var sessionStore = new expressSession.MemoryStore();
 
 
-function loadSecret(path) {
-	if (path) {
-		return fs.readFileSync(path);
-	}
-}
-
-var host = process.env.PIAZZA_HOST || 'localhost';
+/**
+ * Load environment variables from .env file or
+ * fall back to default (production safe) values.
+ */
+var host = process.env.PIAZZA_HOST || '0.0.0.0';
 var port = process.env.PIAZZA_PORT || 8080;
 var dbPath = process.env.PIAZZA_DB || 'mongodb://mongo-db:27017/iosl-inav';
-var sessionSecret = process.env.PIAZZA_SESSION_SECRET || 'This secret should be replaced in production';
-var useMongoSessionStore = !!(process.env.PIAZZA_USE_MONGODB_SESSION_STORE);
-var sessionStore;
+var secret = process.env.PIAZZA_SECRET || "BEWARE! Please change this to something different than this in production mode.";
+var useMongoSessionStore = (process.env.PIAZZA_USE_MONGODB_SESSION_STORE === "true") ? true : false;
 
 
-/* Connect to database */
+/* Set database option and connect to it. */
 
 var options = {
 	server: {},
@@ -52,10 +44,14 @@ options.server.socketOptions = options.replset.socketOptions = {
 mongoose.connect(dbPath, options);
 
 
-/* Initialize keycloak */
+/* Initialize keycloak. */
 
 if (useMongoSessionStore) {
+	console.log("useMongoSessionStore");
 	var MongoStore = require('connect-mongo')(expressSession);
+
+	/* Reset to set to new value. */
+	sessionStore = {};
 
 	/* Setup Keycloak and MongoDB session */
 	sessionStore = new MongoStore({
@@ -67,16 +63,16 @@ if (useMongoSessionStore) {
 		touchAfter: 24 * 3600,
 		stringify: false
 	})
-} else {
-	sessionStore = new expressSession.MemoryStore()
 }
 
-var keycloak = new Keycloak({
+var keycloak = new keycloak({
 	store: sessionStore
 }, keycloakConfig);
 
-var session = expressSession({
-	secret: sessionSecret,
+
+/* Initialize an express session with loaded secret. */
+var session = new expressSession({
+	secret: secret,
 	resave: false,
 	saveUninitialized: true,
 	store: sessionStore
@@ -84,7 +80,6 @@ var session = expressSession({
 
 
 /* Export all funcationality */
-
 module.exports = {
 	host: host,
 	port: port,
