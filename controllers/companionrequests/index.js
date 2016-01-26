@@ -104,29 +104,62 @@ controller.createCompanionRequest = function(req, res, next) {
 
         } else {
 
-          /* No companion request existed - create one. */
-          CompanionRequest.create({
-            from: req.user._id,
-            to: foundUser._id,
-            status: 'pending'
-          }, function(err, addedCompanionRequest) {
+          /* Check if user is already in 'All friends list'. */
+          var found = false;
+          var g;
 
-            if (err) {
-              console.log("Error during adding a new companion request.");
-              console.log(err);
+          for (g = 0; g < req.user.groups.length; g++) {
 
-              res.status(500).end();
-              return next();
+            if (req.user.groups[g].name == 'All friends') {
+
+              var mem;
+
+              for (mem = 0; mem < req.user.groups[g].members.length; mem++) {
+
+                if (req.user.groups[g].members[mem]._id == foundUser._id) {
+                  found = true;
+                  break;
+                }
+              }
             }
+          }
 
-            /* Send back created request with request ID. */
-            res.json({
+          if (found) {
+            res.status(200).json({
               status: "success",
-              reason: "companion request sent",
-              companionRequestID: addedCompanionRequest._id
-            });
+              reason: "user is already your companion"
+            }).end();
             return next();
-          });
+          } else {
+
+            /**
+             * No companion request exists and
+             * other user is not already a companion.
+             * Create a companion request!
+             */
+            CompanionRequest.create({
+              from: req.user._id,
+              to: foundUser._id,
+              status: 'pending'
+            }, function(err, addedCompanionRequest) {
+
+              if (err) {
+                console.log("Error during adding a new companion request.");
+                console.log(err);
+
+                res.status(500).end();
+                return next();
+              }
+
+              /* Send back created request with request ID. */
+              res.json({
+                status: "success",
+                reason: "companion request sent",
+                companionRequestID: addedCompanionRequest._id
+              });
+              return next();
+            });
+          }
         }
       });
     }
@@ -184,8 +217,10 @@ controller.updateCompanionRequest = function(req, res, next) {
               return next();
             }
 
+            var g;
+
             //TODO: check if already in that group
-            for (var g in fromUser.groups) {
+            for (g = 0; g < fromUser.groups.length; g++) {
 
               if (fromUser.groups[g].name == 'All friends') {
                 if (fromUser.groups[g].members.length <= 0) {
@@ -197,7 +232,7 @@ controller.updateCompanionRequest = function(req, res, next) {
               }
             }
 
-            for (var g in req.user.groups) {
+            for (g = 0; g < req.user.groups.length; g++) {
 
               if (req.user.groups[g].name == 'All friends') {
                 if (req.user.groups[g].members.length <= 0) {

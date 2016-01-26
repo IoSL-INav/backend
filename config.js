@@ -47,11 +47,10 @@ mongoose.connect(dbPath, options);
 /* Initialize keycloak. */
 
 if (useMongoSessionStore) {
-	console.log("useMongoSessionStore");
-	var MongoStore = require('connect-mongo')(expressSession);
 
-	/* Reset to set to new value. */
+	/* Reset to set to mongo store. */
 	sessionStore = {};
+	var MongoStore = require('connect-mongo')(expressSession);
 
 	/* Setup Keycloak and MongoDB session */
 	sessionStore = new MongoStore({

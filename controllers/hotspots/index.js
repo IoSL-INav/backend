@@ -91,7 +91,7 @@ controller.getBeacon = function(req, res, next) {
       return next();
     }
 
-    for (index in hotspot.beacons) {
+    for (index = 0; index < hotspot.beacons.length; index++) {
 
       if (hotspot.beacons[index]._id == bid) {
         beacon = hotspot.beacons[index];

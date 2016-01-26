@@ -697,6 +697,7 @@ controller.addUserToGroup = function(req, res, next) {
 	 * - if not found or already in other group: deny request
 	 */
 
+	var g;
 	var companionID = req.body.userID;
 	var group = req.user.groups.id(req.groupID);
 
@@ -709,7 +710,7 @@ controller.addUserToGroup = function(req, res, next) {
 		return next();
 	}
 
-	for (var g in req.user.groups) {
+	for (g = 0; g < req.user.groups.length; g++) {
 
 		if (req.user.groups[g].name == 'All friends') {
 
@@ -725,12 +726,16 @@ controller.addUserToGroup = function(req, res, next) {
 			/* Check for at least one member in 'All friends' list. */
 			if (req.user.groups[g].members.length > 0) {
 
-				for (var mem in req.user.groups[g].members) {
+				var mem;
+
+				for (mem = 0; mem < req.user.groups[g].members.length; mem++) {
 
 					/* We found the supplied companionID in 'All friends'. */
 					if (req.user.groups[g].members[mem]._id == companionID) {
 
-						for (var memNew in group.members) {
+						var memNew;
+
+						for (memNew = 0; memNew < group.members.length; memNew++) {
 
 							/* Check if user already is in supplied group. */
 							if (group.members[memNew]._id == companionID) {
