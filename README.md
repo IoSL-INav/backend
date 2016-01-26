@@ -73,6 +73,7 @@ docker-compose rm -f
 To simply update the backend docker to a just committed change, run the following commands inside the git folder:
 ```bash
 docker stop <backend process>
+docker rm <backend process>
 git pull
 docker-compose build
 docker-compose up -d
