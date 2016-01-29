@@ -44,8 +44,6 @@ describe('Backend', function() {
                 expect(res.body).to.have.property("groupID");
                 //console.log(res.body.groupID);
                 gID=res.body.groupID;
-
-
                 done();
             });
     });
@@ -56,9 +54,13 @@ describe('Backend', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .end(function(err, res) {
-                expect(res.body).to.have.property("name");
-                expect(res.body).to.have.property("members");
-                done();
+              expect(res.body).to.have.property("_id");
+              expect(res.body).to.have.property("name");
+              expect(res.body).to.have.property("members");
+              if(res.body._id!=gID){
+                throw new Error("given groupID is not the same which is given back");
+              }
+              done();
             });
     });
 
