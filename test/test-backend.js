@@ -42,7 +42,6 @@ describe('Backend', function() {
                 expect(res.body).to.have.property("status");
                 expect(res.body).to.have.property("reason");
                 expect(res.body).to.have.property("groupID");
-                //console.log(res.body.groupID);
                 gID=res.body.groupID;
                 done();
             });
@@ -60,6 +59,18 @@ describe('Backend', function() {
               if(res.body._id!=gID){
                 throw new Error("given groupID is not the same which is given back");
               }
+              done();
+            });
+    });
+
+    it('should delte the created group', function(done) {
+        supertest(backend)
+            .delete('/users/me/groups/'+gID)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function(err, res) {
+              expect(res.body).to.have.property("status");
+              expect(res.body).to.have.property("reason");
               done();
             });
     });
