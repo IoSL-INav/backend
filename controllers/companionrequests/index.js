@@ -195,69 +195,78 @@ controller.updateCompanionRequest = function(req, res, next) {
         console.log(err);
         res.status(500).end();
         return next();
-      } else {
+      }
 
-        if (req.body.deny) {
-
-          companionRequest.status = 'denied';
-          res.json({
-            status: "success",
-            reason: "companion request denied"
-          });
-        } else if (req.body.accept) {
-
-          companionRequest.status = 'accepted';
-
-          User.findById(companionRequest.from, function(err, fromUser) {
-
-            if (err) {
-              console.log("Error while locating group of companionrequest");
-              console.log(err);
-              res.status(500).json();
-              return next();
-            }
-
-            var g;
-
-            //TODO: check if already in that group
-            for (g = 0; g < fromUser.groups.length; g++) {
-
-              if (fromUser.groups[g].name == 'All friends') {
-                if (fromUser.groups[g].members.length <= 0) {
-                  var data = [req.user];
-                  fromUser.groups[g].members = data;
-                } else {
-                  fromUser.groups[g].members.push(req.user);
-                }
-              }
-            }
-
-            for (g = 0; g < req.user.groups.length; g++) {
-
-              if (req.user.groups[g].name == 'All friends') {
-                if (req.user.groups[g].members.length <= 0) {
-                  var data = [fromUser];
-                  req.user.groups[g].members = data;
-                } else {
-                  req.user.groups[g].members.push(fromUser);
-                }
-              }
-            }
-
-            req.user.save();
-            fromUser.save();
-            companionRequest.remove();
-            return next();
-          });
-
-          res.json({
-            status: "success",
-            reason: "companion request accepted"
-          });
-        }
-        companionRequest.save();
+      /* No companion request found for supplied request ID. */
+      if (companionRequest == null) {
+        res.status(400).json({
+          status: "failure",
+          reason: "no matching companion request for supplied companion request ID"
+        }).end();
         return next();
       }
+
+      if (req.body.deny) {
+
+        companionRequest.status = 'denied';
+        res.json({
+          status: "success",
+          reason: "companion request denied"
+        });
+      } else if (req.body.accept) {
+
+        companionRequest.status = 'accepted';
+
+        User.findById(companionRequest.from, function(err, fromUser) {
+
+          if (err) {
+            console.log("Error while locating group of companionrequest");
+            console.log(err);
+            res.status(500).json();
+            return next();
+          }
+
+          var g;
+
+          //TODO: check if already in that group
+          for (g = 0; g < fromUser.groups.length; g++) {
+
+            if (fromUser.groups[g].name == 'All friends') {
+              if (fromUser.groups[g].members.length <= 0) {
+                var data = [req.user];
+                fromUser.groups[g].members = data;
+              } else {
+                fromUser.groups[g].members.push(req.user);
+              }
+            }
+          }
+
+          for (g = 0; g < req.user.groups.length; g++) {
+
+            if (req.user.groups[g].name == 'All friends') {
+              if (req.user.groups[g].members.length <= 0) {
+                var data = [fromUser];
+                req.user.groups[g].members = data;
+              } else {
+                req.user.groups[g].members.push(fromUser);
+              }
+            }
+          }
+
+          req.user.save();
+          fromUser.save();
+          companionRequest.remove();
+          return next();
+        });
+
+        res.json({
+          status: "success",
+          reason: "companion request accepted"
+        });
+      }
+
+      companionRequest.save();
+      return next();
     });
   } else {
     res.status(400).end();
