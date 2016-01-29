@@ -19,7 +19,6 @@ var backend = require('../app');
 describe('Backend', function() {
 
     it('should get the login page', function(done) {
-
         supertest(backend)
             .get('/users/me')
             .set('Accept', 'application/json')
@@ -31,4 +30,37 @@ describe('Backend', function() {
                 done();
             });
     });
+
+    var gID='';
+    it('should create a group with the name "Some Groupname here"', function(done) {
+        supertest(backend)
+            .post('/users/me/groups')
+            .set('Accept', 'application/json')
+            .send({'groupName':'SomeGroupnameHere'})
+            .expect(200)
+            .end(function(err, res) {
+                expect(res.body).to.have.property("status");
+                expect(res.body).to.have.property("reason");
+                expect(res.body).to.have.property("groupID");
+                //console.log(res.body.groupID);
+                gID=res.body.groupID;
+
+
+                done();
+            });
+    });
+
+    it('should get the created group back', function(done) {
+        supertest(backend)
+            .get('/users/me/groups/'+gID)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function(err, res) {
+                expect(res.body).to.have.property("name");
+                expect(res.body).to.have.property("members");
+                done();
+            });
+    });
+
+
 });
