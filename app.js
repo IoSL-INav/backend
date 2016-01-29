@@ -68,25 +68,25 @@ var initDummyDatabase = function() {
   console.log("Adding some dummy data sets to database.");
 
   var backRightCorner = {
-    coordinates: [52.509646, 13.326402],
+    coordinates: [13.326402, 52.509646],
     building: "Mensa",
     floor: "1st",
   };
 
   var backLeftCorner = {
-    coordinates: [52.509851, 13.325760],
+    coordinates: [13.325760, 52.509851],
     building: "Mensa",
     floor: "1st",
   };
 
   var frontLeftCorner = {
-    coordinates: [52.509693, 13.325618],
+    coordinates: [13.325618, 52.509693],
     building: "Mensa",
     floor: "1st",
   };
 
   var frontRightCorner = {
-    coordinates: [52.509489, 13.326261],
+    coordinates: [13.326261, 52.509489],
     building: "Mensa",
     floor: "1st",
   };
