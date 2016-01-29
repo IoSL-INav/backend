@@ -24,8 +24,8 @@ var controller = {};
 
 
 /**
- * This function returns the user data of
- * the currently logged in user.
+ * This function returns the user information
+ * of the currently logged in user.
  */
 controller.getCurrentUser = function(req, res, next) {
 
@@ -57,6 +57,7 @@ controller.updateCurrentUser = function(req, res, next) {
 	var newUserAutoPing = req.body.userAutoPing;
 	var newUserAutoGroup = req.body.userAutoGroup;
 	var newUserAutoLocate = req.body.userAutoLocate;
+
 	var updateQuery = {};
 	var noError = true;
 
@@ -95,9 +96,18 @@ controller.updateCurrentUser = function(req, res, next) {
 
 	/* Sanity and validity tests for supplied group name. Also checks existence. */
 	if (newUserAutoGroup != undefined) {
-		newUserAutoGroup = validator.stripLow(validator.trim(newUserAutoGroup));
 
-		if (validator.isAlphanumeric(newUserAutoGroup)) {
+		/**
+		 * Sanitize supplied group name.
+		 * Remove surrounding white space and unwanted
+		 * control characters and escape special characters.
+		 * Proceed with a string.
+		 */
+		newUserAutoGroup = validator.escape(validator.stripLow(validator.trim(newUserAutoGroup)));
+		newUserAutoGroup = validator.toString(newUserAutoGroup);
+
+		/* Check if group name is (now) empty. */
+		if (newUserAutoGroup !== "") {
 
 			var g;
 			var found;
@@ -126,7 +136,7 @@ controller.updateCurrentUser = function(req, res, next) {
 			noError = false;
 			res.status(400).json({
 				status: "failure",
-				reason: "Auto ping group contained other than alphanumeric characters."
+				reason: "Auto ping group was empty."
 			});
 			return next();
 		}
@@ -157,8 +167,9 @@ controller.updateCurrentUser = function(req, res, next) {
 		}, function(err, updUser) {
 
 			if (err) {
-				console.log("\n\nUpdating modified user went wrong.\nError:", err, "\n\n");
-				res.status(500).json(err.message);
+				console.log("Updating modified user went wrong.");
+				console.log(err);
+				res.status(500).json();
 				return next();
 			}
 
@@ -542,12 +553,21 @@ controller.getGroupsForUser = function(req, res, next) {
 };
 
 
+/**
+ * Adds a new group to the currently logged in user's
+ * groups if the supplied groupName passes a field of tests.
+ *
+ * Parameters:
+ * - req.body.groupName: Name of the group to add
+ */
 controller.addGroupForUser = function(req, res, next) {
 
 	var i;
 	var groupName = req.body.groupName;
 	var foundGroup = false;
 
+
+	/* Check if no group was supplied. */
 	if (groupName == undefined) {
 
 		res.status(400).json({
@@ -557,24 +577,37 @@ controller.addGroupForUser = function(req, res, next) {
 		return next();
 	}
 
-	groupName = validator.stripLow(validator.trim(groupName));
+	/**
+	 * Sanitize supplied group name.
+	 * Remove surrounding white space and unwanted
+	 * control characters and escape special characters.
+	 * Proceed with a string.
+	 */
+	groupName = validator.escape(validator.stripLow(validator.trim(groupName)));
+	groupName = validator.toString(groupName);
 
-	if (!validator.isAlphanumeric(groupName)) {
+	console.log(groupName);
+
+	/* Check for (now) empty group name. */
+	if (groupName === "") {
 
 		res.status(400).json({
 			status: "failure",
-			reason: "group name contains unallowed characters (only alphanumeric ones allowed)"
+			reason: "groupName is empty"
 		});
 		return next();
 	}
 
+	/* Start gathering object to insert. */
 	var newGroup = {
 		name: groupName,
 		members: []
 	};
 
+	/* Check if user already has a group with supplied name. */
 	for (i = 0; i < req.user.groups.length; i++) {
 
+		/* We found a duplicate! */
 		if (req.user.groups[i].name == groupName) {
 
 			foundGroup = true;
@@ -589,6 +622,7 @@ controller.addGroupForUser = function(req, res, next) {
 		}
 	}
 
+	/* No group with same name exists and everything clear. Save. */
 	if (!foundGroup) {
 
 		req.user.groups.push(newGroup);
@@ -598,6 +632,7 @@ controller.addGroupForUser = function(req, res, next) {
 
 			if (req.user.groups[i].name == groupName) {
 
+				/* Return success and ID of newly created group. */
 				res.json({
 					status: "success",
 					reason: "group added",
@@ -607,17 +642,22 @@ controller.addGroupForUser = function(req, res, next) {
 				break;
 			}
 		}
-	}
 
-	next();
+		next();
+	}
 };
 
 
+/**
+ * This controller retrieves a specific group
+ * of the currently logged in user's groups.
+ */
 controller.getGroupForUser = function(req, res, next) {
 
 	var i;
 	var foundGroup = req.user.groups.id(req.groupID);
 
+	/* No group for supplied groupID found. */
 	if (foundGroup == null) {
 
 		res.status(404).json({
@@ -632,11 +672,22 @@ controller.getGroupForUser = function(req, res, next) {
 };
 
 
+/**
+ * Change the name of an existing group that
+ * is not the default 'All friends' group.
+ * New name needs to pass the same tests as a
+ * name in group creation needs to pass.
+ *
+ * Parameters:
+ * - req.body.newGroupName: Name to change group name to
+ */
 controller.updateGroupForUser = function(req, res, next) {
 
 	var foundGroup = req.user.groups.id(req.groupID);
 	var newGroupName = req.body.newGroupName;
 
+
+	/* No group matching supplied groupID was found. */
 	if (foundGroup == null) {
 
 		res.status(404).json({
@@ -646,6 +697,7 @@ controller.updateGroupForUser = function(req, res, next) {
 		return next();
 	}
 
+	/* The new group name was an empty field. */
 	if (newGroupName == undefined) {
 
 		res.status(400).json({
@@ -655,17 +707,28 @@ controller.updateGroupForUser = function(req, res, next) {
 		return next();
 	}
 
-	newGroupName = validator.stripLow(validator.trim(newGroupName));
+	/**
+	 * Sanitize supplied group name.
+	 * Remove surrounding white space and unwanted
+	 * control characters and escape special characters.
+	 * Proceed with a string.
+	 */
+	newGroupName = validator.escape(validator.stripLow(validator.trim(newGroupName)));
+	newGroupName = validator.toString(newGroupName);
 
-	if (!validator.isAlphanumeric(newGroupName)) {
+	console.log(newGroupName);
+
+	/* Check for (now) empty group name. */
+	if (newGroupName === "") {
 
 		res.status(400).json({
 			status: "failure",
-			reason: "group name contains unallowed characters (only alphanumeric ones allowed)"
+			reason: "new group name is empty"
 		});
 		return next();
 	}
 
+	/* Don't allow to rename default group 'All friends'. */
 	if (foundGroup.name == "All friends") {
 
 		res.status(400).json({
@@ -675,6 +738,7 @@ controller.updateGroupForUser = function(req, res, next) {
 		return next();
 	}
 
+	/* All checks passed. Save. */
 	foundGroup.name = newGroupName;
 	req.user.save(function(err) {
 
@@ -685,6 +749,7 @@ controller.updateGroupForUser = function(req, res, next) {
 			return next();
 		}
 
+		/* Return success and group information of updated group. */
 		res.json({
 			status: "success",
 			reason: "group updated",
@@ -751,6 +816,7 @@ controller.addUserToGroup = function(req, res, next) {
 	var g;
 	var companionID = req.body.userID;
 	var group = req.user.groups.id(req.groupID);
+
 
 	/* Check if group exists. */
 	if (group == null) {
