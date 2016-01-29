@@ -42,12 +42,14 @@ controller.getCurrentUser = function(req, res, next) {
 
 
 /**
- * Updates a user.
- * Possible attributes:
- * - userName: alphanumeric,
- * - userAutoPing: boolean,
- * - userAutoGroup: alphanumeric,
- * - userAutoLocate: boolean
+ * Updates all configurable attributes a logged
+ * in user can change about the user itself.
+ *
+ * Parameters:
+ * - req.body.userName: different user name to display
+ * - req.body.userAutoPing: defines if user wants to auto ping friends
+ * - req.body.userAutoGroup: specifies the group to auto ping
+ * - req.body.userAutoLocate: defines if user wants to be located automatically
  */
 controller.updateCurrentUser = function(req, res, next) {
 
@@ -58,6 +60,8 @@ controller.updateCurrentUser = function(req, res, next) {
 	var updateQuery = {};
 	var noError = true;
 
+
+	/* Sanity and validity tests for user name. */
 	if (newUserName != undefined) {
 		newUserName = validator.stripLow(validator.trim(newUserName));
 
@@ -73,6 +77,7 @@ controller.updateCurrentUser = function(req, res, next) {
 		}
 	}
 
+	/* Sanity and validity tests for the auto ping value. */
 	if (newUserAutoPing != undefined) {
 		newUserAutoPing = validator.stripLow(validator.trim(newUserAutoPing));
 
@@ -88,11 +93,35 @@ controller.updateCurrentUser = function(req, res, next) {
 		}
 	}
 
+	/* Sanity and validity tests for supplied group name. Also checks existence. */
 	if (newUserAutoGroup != undefined) {
 		newUserAutoGroup = validator.stripLow(validator.trim(newUserAutoGroup));
 
 		if (validator.isAlphanumeric(newUserAutoGroup)) {
-			updateQuery.autoPingGroup = newUserAutoGroup;
+
+			var g;
+			var found;
+
+			for (g = 0; g < req.user.groups.length; g++) {
+
+				if (req.user.groups[g].name === newUserAutoGroup) {
+
+					/* Found group that matches newUserAutoGroup name. Save it. */
+					updateQuery.autoPingGroup = req.user.groups[g];
+					found = true;
+
+					break;
+				}
+			}
+
+			if (!found) {
+				noError = false;
+				res.status(400).json({
+					status: "failure",
+					reason: "No group matching supplied name was found."
+				});
+				return next();
+			}
 		} else {
 			noError = false;
 			res.status(400).json({
@@ -103,6 +132,7 @@ controller.updateCurrentUser = function(req, res, next) {
 		}
 	}
 
+	/* Sanity and validity tests for auto location. */
 	if (newUserAutoLocate != undefined) {
 		newUserAutoLocate = validator.stripLow(validator.trim(newUserAutoLocate));
 
@@ -118,6 +148,8 @@ controller.updateCurrentUser = function(req, res, next) {
 		}
 	}
 
+
+	/* All sanity tests went well. Try to save update. */
 	if (noError) {
 
 		User.findByIdAndUpdate(req.user._id, updateQuery, {
@@ -130,6 +162,7 @@ controller.updateCurrentUser = function(req, res, next) {
 				return next();
 			}
 
+			/* Return updated user information. */
 			res.json({
 				userID: updUser._id,
 				userName: updUser.name,
@@ -166,6 +199,20 @@ controller.deleteCurrentUser = function(req, res, next) {
 };
 
 
+/**
+ * Takes whatever location information of
+ * building & floor, major & minor, latitude & longitude
+ * is available and updates the user's location with
+ * respect to which information is the most precise one.
+ *
+ * Parameters:
+ * - req.body.userBuilding: building information from MSE API
+ * - req.body.userFloor: floor information from MSE API
+ * - req.body.userMajor: beacon major value
+ * - req.body.userMinor: beacon minor value
+ * - req.body.userLat: latitude of user
+ * - req.body.userLon: longitude of user
+ */
 controller.updateLocation = function(req, res, next) {
 
 	/**
@@ -459,6 +506,10 @@ controller.updateLocation = function(req, res, next) {
 };
 
 
+/**
+ * Deletes the set location information
+ * for the currently logged in user.
+ */
 controller.deleteLocation = function(req, res, next) {
 
 	Location.findOneAndRemove({
