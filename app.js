@@ -60,7 +60,7 @@ var initDummyDatabase = function() {
   var backRightCorner = {
     coordinates: [13.326402, 52.509646],
     building: "Mensa",
-    floor: "1st",
+    floor: "2nd",
   };
 
   var backLeftCorner = {

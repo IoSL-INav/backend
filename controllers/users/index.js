@@ -759,11 +759,15 @@ controller.updateGroupForUser = function(req, res, next) {
 	});
 };
 
-
+/**
+ * Delete supplied group if found from all
+ * groups of currently logged in user.
+ */
 controller.deleteGroupForUser = function(req, res, next) {
 
 	var foundGroup = req.user.groups.id(req.groupID);
 
+	/* Check if no group was found for given group ID. */
 	if (foundGroup == null) {
 
 		res.status(404).json({
@@ -773,7 +777,10 @@ controller.deleteGroupForUser = function(req, res, next) {
 		return next();
 	}
 
+	/* If found: remove the group. */
 	foundGroup.remove();
+
+	/* Save modified user object. */
 	req.user.save(function(err) {
 
 		if (err) {
