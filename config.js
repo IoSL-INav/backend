@@ -35,7 +35,7 @@ var useMongoSessionStore = (process.env.PIAZZA_USE_MONGODB_SESSION_STORE === "tr
 /* Define log file rotation every 100k, keeping the last 28 logs. */
 var logFile = stream({
 	file: logFileLocation,
-	size: '100k',
+	size: '1m',
 	keep: 28
 });
 
