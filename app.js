@@ -60,25 +60,25 @@ var initDummyDatabase = function() {
   var backRightCorner = {
     coordinates: [13.326402, 52.509646],
     building: "Mensa",
-    floor: "2nd",
+    floor: "Mensa 2. OG",
   };
 
   var backLeftCorner = {
     coordinates: [13.325760, 52.509851],
     building: "Mensa",
-    floor: "1st",
+    floor: "Mensa 1. OG",
   };
 
   var frontLeftCorner = {
     coordinates: [13.325618, 52.509693],
     building: "Mensa",
-    floor: "1st",
+    floor: "Mensa 1. OG",
   };
 
   var frontRightCorner = {
     coordinates: [13.326261, 52.509489],
     building: "Mensa",
-    floor: "1st",
+    floor: "Mensa 1. OG",
   };
 
   var beaconShoe = {
