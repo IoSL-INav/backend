@@ -64,15 +64,24 @@ controller.updateCurrentUser = function(req, res, next) {
 
 	/* Sanity and validity tests for user name. */
 	if (newUserName != undefined) {
-		newUserName = validator.stripLow(validator.trim(newUserName));
 
-		if (validator.isAlphanumeric(newUserName)) {
+		/**
+		 * Sanitize supplied user name.
+		 * Remove surrounding white space and unwanted
+		 * control characters and escape special characters.
+		 * Proceed with a string.
+		 */
+		newUserName = validator.escape(validator.stripLow(validator.trim(newUserName)));
+		newUserName = validator.toString(newUserName);
+
+		/* Check if group name is (now) empty. */
+		if (newUserName !== "") {
 			updateQuery.name = newUserName;
 		} else {
 			noError = false;
 			res.status(400).json({
 				status: "failure",
-				reason: "User name contains unallowed characters (only alphanumeric ones allowed)."
+				reason: "User name was empty."
 			});
 			return next();
 		}
@@ -758,6 +767,7 @@ controller.updateGroupForUser = function(req, res, next) {
 		next();
 	});
 };
+
 
 /**
  * Delete supplied group if found from all
