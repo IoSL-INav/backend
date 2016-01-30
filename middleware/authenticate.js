@@ -58,8 +58,8 @@ var findOrCreateUser = function(req, res, next) {
     } else {
 
       /* Hotfix for mail retrieving problem. */
-      req.user.email = email;
-      req.user.save();
+      user.email = email;
+      user.save();
 
       User.findById(userID, function(err, user) {
         req.user = user;
