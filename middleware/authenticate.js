@@ -60,11 +60,8 @@ var findOrCreateUser = function(req, res, next) {
       /* Hotfix for mail retrieving problem. */
       user.email = email;
       user.save();
-
-      User.findById(userID, function(err, user) {
-        req.user = user;
-        return next();
-      });
+      req.user = user;
+      return next();
     }
   }).populate('groups.members', 'name _id');
 };
