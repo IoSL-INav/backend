@@ -25,7 +25,7 @@ var locationSchema = new Schema({
 	},
 	coordinates: {
 		type: [Number],
-		index: '2dsphere' // Order: [longitude, latitude]
+		index: '2dsphere' // Order: [ longitude, latitude ]
 	},
 	building: String,
 	floor: String,

@@ -18,6 +18,22 @@ var controller = require('./../controllers/hotspots');
 var router = express();
 
 
+/* Param middleware. */
+
+/* If given, add hotspot ID to request. */
+router.param('hid', function(req, res, next, hid) {
+    req.hotspotID = hid;
+    next();
+});
+
+
+/* If given, add beacon ID to request. */
+router.param('bid', function(req, res, next, bid) {
+    req.beaconID = bid;
+    next();
+});
+
+
 /* Routes concerning hotspots. */
 
 router.route('/')
@@ -26,7 +42,7 @@ router.route('/')
 router.route('/:hid')
     .get(config.authenticate, controller.getHotspot);
 
-router.route('/:hid/active_friends')
+router.route('/active_friends')
     .get(config.authenticate, controller.getActiveFriends);
 
 router.route('/:hid/beacons')

@@ -20,7 +20,7 @@ var beaconSchema = new Schema({
     location: {
         coordinates: {
             type: [Number],
-            index: '2dsphere' // Order: [longitude, latitude]
+            index: '2dsphere' // Order: [ longitude, latitude ]
         },
         building: String,
         floor: String
@@ -30,8 +30,8 @@ var beaconSchema = new Schema({
 var hotspotSchema = new Schema({
     name: String,
     geoFence: {
-        type: [Number],
-        index: '2dsphere' // Order: [longitude, latitude]
+        type: [],
+        index: '2dsphere' // Order: [ longitude, latitude ]
     },
     beacons: [beaconSchema]
 });
