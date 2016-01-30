@@ -247,7 +247,7 @@ describe('Backend', function() {
       });
   });
 
-  it('should get one specific hotspot back', function(done) {
+  it('should get one specific hotspot and there beacons back', function(done) {
     supertest(backend)
       .get('/hotspots/'+dummyHotspot._id+'/beacons')
       .set('Accept', 'application/json')
