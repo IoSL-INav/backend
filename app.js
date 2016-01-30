@@ -28,27 +28,17 @@ app.use(routes);
 
 /**
  * DEV function
- * Completely empty all collections we're using.
+ * Completely empty some collections we're using.
  */
 var dropDatabase = function() {
 
-  var User = require('./models/user');
   var Hotspot = require('./models/hotspot');
-  var CompReq = require('./models/companionrequest');
   var Location = require('./models/location');
 
-  console.log("Remove all relevant data from collections.");
-
-  User.remove({}, function(err) {
-    console.log("User collection removed.");
-  });
+  console.log("Remove some data from collections.");
 
   Hotspot.remove({}, function(err) {
     console.log("Hotspot collection removed.");
-  });
-
-  CompReq.remove({}, function(err) {
-    console.log("Companion requests collection removed.");
   });
 
   Location.remove({}, function(err) {
