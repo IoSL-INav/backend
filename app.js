@@ -35,8 +35,6 @@ var dropDatabase = function() {
   var Hotspot = require('./models/hotspot');
   var Location = require('./models/location');
 
-  console.log("Remove some data from collections.");
-
   Hotspot.remove({}, function(err) {
     console.log("Hotspot collection removed.");
   });
@@ -54,8 +52,6 @@ var dropDatabase = function() {
 var initDummyDatabase = function() {
 
   var Hotspot = require('./models/hotspot');
-
-  console.log("Adding some dummy data sets to database.");
 
   var backRightCorner = {
     coordinates: [13.326402, 52.509646],
@@ -196,7 +192,9 @@ var server = app.listen(config.port, config.host, function() {
   /* DEV ONLY BEGIN */
 
   /* Start with some default data. */
+  console.log("Remove some data from collections.");
   dropDatabase();
+  console.log("Adding some dummy data sets to database.");
   initDummyDatabase();
 
   /* DEV ONLY END */
