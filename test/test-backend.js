@@ -26,6 +26,10 @@ var dummyUser = {
   userAutoLocate: false
 }
 
+var dummyHotspot = {
+  _id: '',
+}
+
 /* Tests. */
 
 describe('Backend', function() {
@@ -63,19 +67,19 @@ describe('Backend', function() {
         expect(res.body).to.have.property("userEmail");
         expect(res.body).to.have.property("userAutoPing");
         expect(res.body).to.have.property("userAutoLocate");
-        if(res.body.userID != dummyUser.userID){
+        if (res.body.userID != dummyUser.userID) {
           throw new Error("userID is not equal");
         }
-        if(res.body.userName != dummyUser.userName){
+        if (res.body.userName != dummyUser.userName) {
           throw new Error("userName is not equal");
         }
-        if(res.body.userEmail != dummyUser.userEmail){
+        if (res.body.userEmail != dummyUser.userEmail) {
           throw new Error("userEmail is not equal");
         }
-        if(res.body.userAutoPing != dummyUser.userAutoPing){
+        if (res.body.userAutoPing != dummyUser.userAutoPing) {
           throw new Error("userAutoPing is not equal");
         }
-        if(res.body.userAutoLocate != dummyUser.userAutoLocate){
+        if (res.body.userAutoLocate != dummyUser.userAutoLocate) {
           throw new Error("userAutoLocate is not equal");
         }
         done();
@@ -164,6 +168,111 @@ describe('Backend', function() {
         done();
       });
   });
+  /* EOT - End of Test */
+
+
+  /* test hotspot functions get*/
+  it('should get hotspots back and check struct of hotspot, also inner structs', function(done) {
+    supertest(backend)
+      .get('/hotspots')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        //console.log(res)
+        expect(res.body).to.be.instanceof(Array);
+        res.body.forEach(function(hotsp){
+          if (res.body.length > 0) {
+            // same one random hotspot
+            dummyHotspot=hotsp;
+            // check inner struct of hotspot
+            expect(hotsp).to.have.property('_id');
+            expect(hotsp).to.have.property('name');
+            expect(hotsp).to.have.property('beacons');
+            expect(hotsp.beacons).to.be.instanceof(Array);
+            // check inner struct of beacon
+            if (res.body[0].beacons.length) {
+              res.body[0].beacons.forEach(function(beac) {
+                expect(beac).to.have.property('name');
+                expect(beac).to.have.property('companyUUID');
+                expect(beac).to.have.property('major');
+                expect(beac).to.have.property('minor');
+                expect(beac).to.have.property('location');
+
+                var loc = beac.location;
+                expect(loc).to.have.property('coordinates');
+                expect(loc).to.have.property('building');
+                expect(loc).to.have.property('floor');
+
+                // check if coordinates are not empty
+                expect(loc.coordinates).to.be.not.empty;
+              });
+            }
+          }
+        });
+        done();
+      });
+  });
+
+  /* test for a specific hotspot functions get*/
+  it('should get one specific hotspot back', function(done) {
+    supertest(backend)
+      .get('/hotspots/'+dummyHotspot._id)
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        expect(res.body).to.have.property('_id');
+        expect(res.body).to.have.property('name');
+        expect(res.body).to.have.property('beacons');
+        expect(res.body.beacons).to.be.instanceof(Array);
+        expect(res.body._id).to.be.equal(dummyHotspot._id);
+        expect(res.body.name).to.be.equal(dummyHotspot.name);
+
+        res.body.beacons.forEach(function(beac) {
+          expect(beac).to.have.property('name');
+          expect(beac).to.have.property('companyUUID');
+          expect(beac).to.have.property('major');
+          expect(beac).to.have.property('minor');
+          expect(beac).to.have.property('location');
+
+          var loc = beac.location;
+          expect(loc).to.have.property('coordinates');
+          expect(loc).to.have.property('building');
+          expect(loc).to.have.property('floor');
+
+          // check if coordinates are not empty
+          expect(loc.coordinates).to.be.not.empty;
+        });
+
+        done();
+      });
+  });
+
+  it('should get one specific hotspot and there beacons back', function(done) {
+    supertest(backend)
+      .get('/hotspots/'+dummyHotspot._id+'/beacons')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        expect(res.body).to.be.instanceof(Array);
+        res.body.forEach(function(beac) {
+          expect(beac).to.have.property('name');
+          expect(beac).to.have.property('companyUUID');
+          expect(beac).to.have.property('major');
+          expect(beac).to.have.property('minor');
+          expect(beac).to.have.property('location');
+
+          var loc = beac.location;
+          expect(loc).to.have.property('coordinates');
+          expect(loc).to.have.property('building');
+          expect(loc).to.have.property('floor');
+
+          // check if coordinates are not empty
+          expect(loc.coordinates).to.be.not.empty;
+        });
+        done();
+      });
+  });
+
   /* EOT - End of Test */
 
 });
