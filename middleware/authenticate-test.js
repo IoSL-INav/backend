@@ -51,8 +51,15 @@ var findOrCreateUser = function(req, res, next) {
         return next();
       });
     } else {
-      req.user = user;
-      return next();
+
+      /* Hotfix for mail retrieving problem. */
+      req.user.email = email;
+      req.user.save();
+
+      User.findById(userID, function(err, user) {
+        req.user = user;
+        return next();
+      });
     }
   }).populate('groups.members', 'name _id');
 };
