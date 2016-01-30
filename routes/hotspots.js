@@ -39,11 +39,11 @@ router.param('bid', function(req, res, next, bid) {
 router.route('/')
     .get(config.authenticate, controller.getAllHotspots);
 
-router.route('/:hid')
-    .get(config.authenticate, controller.getHotspot);
-
 router.route('/active_friends')
     .get(config.authenticate, controller.getActiveFriends);
+
+router.route('/:hid')
+    .get(config.authenticate, controller.getHotspot);
 
 router.route('/:hid/beacons')
     .get(config.authenticate, controller.getAllBeacons);
