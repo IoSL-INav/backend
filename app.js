@@ -151,19 +151,11 @@ var initDummyDatabase = function() {
 
   var hot1 = {
     name: "Mensa",
-    geoFence: {
-      type: 'Polygon',
-      coordinates: [ [ [ 13.325760, 52.509851 ], [ 13.326402, 52.509646 ], [ 13.326261, 52.509489 ], [ 13.325618, 52.509693 ] ] ]
-    },
     beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor, purpleBeacon, blueBeacon, greenBeacon]
   };
 
   var hot2 = {
     name: "BIB",
-    geoFence: {
-      type: 'Polygon',
-      coordinates: [ [ [ 13.330810, 52.510991 ], [ 13.331377, 52.510830 ], [ 13.330651, 52.509874 ], [ 13.330086, 52.510038 ] ] ]
-    },
     beacons: [beaconBed, beaconBike]
   };
 

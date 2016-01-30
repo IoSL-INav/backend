@@ -151,103 +151,73 @@ controller.getActiveFriends = function(req, res, next) {
       }
     }
 
-    /* Reverse lookup to find hotspot that includes user's location. */
-    Hotspot.findOne({
-      geoFence: {
-        $geoIntersects: {
-          $geometry: ownLoc.coordinates
-        }
-      }
-    }, function(err, ownHotspot) {
-
-      if (err) {
-        console.log("Could not determine the hotspot for given user's location.");
-        console.log(err);
-        res.status(500).end();
-        return next();
-      }
-
-      /* No hotspot for user location found. Report back to user. */
-      if (ownHotspot == null) {
-        res.status(400).json({
-          status: "failure",
-          reason: "user's location outside any hotspot's geo fence"
-        });
-        return next();
-      }
-
-      /**
-       * From all locations in database, select the ones that
-       * - belong to owners in the collected 'All friends' list and
-       * - match the hotspot geo fence or
-       * - match the same building
-       */
-      Location.find({
-          $and: [{
-            owner: {
-              $in: allFriends
-            }
+    /**
+     * From all locations in database, select the ones that
+     * - belong to owners in the collected 'All friends' list and
+     * - match the hotspot geo fence or
+     * - match the same building
+     */
+    Location.find({
+        $and: [{
+          owner: {
+            $in: allFriends
+          }
+        }, {
+          $or: [{
+            building: ownLoc.building
           }, {
-            $or: [{
-              building: ownLoc.building
-            }, {
-              coordinates: {
-                $geoWithin: {
-                  $geometry: ownHotspot.geoFence
-                }
-              }
-            }]
+            coordinates: ownLoc.coordinates
           }]
-        }, 'owner coordinates building floor accuracyIndicator') /* Select specific fields back from results. */
-        .populate('owner') /* Add owner's user information. */
-        .lean() /* Return objects as plain JavaScript, not Mongoose. */
-        .exec(function(err, foundFriends) {
+        }]
+      }, 'owner coordinates building floor accuracyIndicator') /* Select specific fields back from results. */
+      .populate('owner') /* Add owner's user information. */
+      .lean() /* Return objects as plain JavaScript, not Mongoose. */
+      .exec(function(err, foundFriends) {
 
-          if (err) {
-            console.log("Error during collecting friends at same hotspot.");
-            console.log(err);
-            res.status(500).end();
-            return next();
-          }
+        if (err) {
+          console.log("Error during collecting friends at same hotspot.");
+          console.log(err);
+          res.status(500).end();
+          return next();
+        }
 
-          /* No friends currently in same location. */
-          if (foundFriends.length === 0) {
-            res.json({
-              message: "no friends in area"
-            });
-            return next();
-          }
+        /* No friends currently in same location. */
+        if (foundFriends.length === 0) {
+          res.json({
+            message: "no friends in area"
+          });
+          return next();
+        }
 
-          var u;
-          var resFriends = {
-            friends: []
+        var u;
+        var resFriends = {
+          friends: []
+        };
+
+        /**
+         * Friends in same location were found.
+         * Build up the response object with special
+         * structure and return it.
+         */
+        for (u = 0; u < foundFriends.length; u++) {
+
+          var friend = {
+            id: foundFriends[u].owner._id,
+            name: foundFriends[u].owner.name,
+            location: {
+              coordinates: foundFriends[u].coordinates,
+              building: foundFriends[u].building,
+              floor: foundFriends[u].floor,
+              accuracyIndicator: foundFriends[u].accuracyIndicator
+            }
           };
 
-          /**
-           * Friends in same location were found.
-           * Build up the response object with special
-           * structure and return it.
-           */
-          for (u = 0; u < foundFriends.length; u++) {
+          resFriends.friends.push(friend);
+        }
 
-            var friend = {
-              id: foundFriends[u].owner._id,
-              name: foundFriends[u].owner.name,
-              location: {
-                coordinates: foundFriends[u].coordinates,
-                building: foundFriends[u].building,
-                floor: foundFriends[u].floor,
-                accuracyIndicator: foundFriends[u].accuracyIndicator
-              }
-            };
-
-            resFriends.friends.push(friend);
-          }
-
-          res.json(resFriends);
-          next();
-        });
-    });
+        res.json(resFriends);
+        next();
+      });
   });
 };
 

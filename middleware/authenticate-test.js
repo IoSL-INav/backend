@@ -61,6 +61,7 @@ var findOrCreateUser = function(req, res, next) {
   }).populate('groups.members', 'name _id');
 };
 
+
 module.exports = function(keycloak) {
   return findOrCreateUser;
 };

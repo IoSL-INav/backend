@@ -29,10 +29,6 @@ var beaconSchema = new Schema({
 
 var hotspotSchema = new Schema({
     name: String,
-    geoFence: {
-        type: [],
-        index: '2dsphere' // Order: [ longitude, latitude ]
-    },
     beacons: [beaconSchema]
 });
 
