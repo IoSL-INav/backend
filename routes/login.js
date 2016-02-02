@@ -24,5 +24,4 @@ router.route('/')
 
 
 /* Export router with described routes. */
-
 module.exports = router;

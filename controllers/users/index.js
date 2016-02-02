@@ -15,6 +15,7 @@ var async = require('async');
 var User = require('./../../models/user');
 var Hotspot = require('./../../models/hotspot');
 var Location = require('./../../models/location');
+var CompanionRequest = require('./../../models/companionrequest');
 
 var controller = {};
 
@@ -199,9 +200,24 @@ controller.updateCurrentUser = function(req, res, next) {
 
 /**
  * Completely erases a user from database.
- * Also deletes all created groups.
+ * Also deletes all created groups, all open companion
+ * requests as well as all open locations.
  */
 controller.deleteCurrentUser = function(req, res, next) {
+
+    /* Delete all open companion requests matching the user's ID. */
+    CompanionRequest.find({
+        $or: [{
+            'from': req.user._id
+        }, {
+            'to': req.user._id
+        }]
+    }).remove().exec();
+
+    /* Delete all open locations belonging to the user's ID. */
+    Location.find({
+        owner: req.user._id
+    }).remove().exec();
 
     /* Now remove the user itself. */
     User.findByIdAndRemove(req.user._id, function(err, rmUser) {

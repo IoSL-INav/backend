@@ -32,20 +32,8 @@ app.use(routes);
  */
 var dropDatabase = function() {
 
-  /* TMP */
-  var User = require('./models/user');
-  /* TMP */
-
   var Hotspot = require('./models/hotspot');
   var Location = require('./models/location');
-
-  /* TMP */
-  var CompanionRequest = require('./models/companionrequest');
-  /* TMP */
-
-  User.remove({}, function(err) {
-    console.log("User collection removed.");
-  });
 
   Hotspot.remove({}, function(err) {
     console.log("Hotspot collection removed.");
@@ -55,9 +43,18 @@ var dropDatabase = function() {
     console.log("Location collection removed.");
   });
 
+  /* TMP BEGIN */
+  var User = require('./models/user');
+  var CompanionRequest = require('./models/companionrequest');
+
+  User.remove({}, function(err) {
+    console.log("User collection removed.");
+  });
+
   CompanionRequest.remove({}, function(err) {
     console.log("CompanionRequest collection removed.");
   });
+  /* TMP END */
 }
 
 
@@ -100,25 +97,25 @@ var initDummyDatabase = function() {
   };
 
   var mensaRandom01 = {
-    coordinates: [13.3258793447518,52.5097385527189],
+    coordinates: [13.3258793447518, 52.5097385527189],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
 
   var mensaRandom02 = {
-    coordinates: [13.3261752479283,52.5095662086197],
+    coordinates: [13.3261752479283, 52.5095662086197],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
 
   var mensaRandom03 = {
-    coordinates: [13.3257126213545,52.5097032766872],
+    coordinates: [13.3257126213545, 52.5097032766872],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
 
   var mensaRandom04 = {
-    coordinates: [13.325982121455,52.5097415619205],
+    coordinates: [13.325982121455, 52.5097415619205],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
@@ -130,7 +127,7 @@ var initDummyDatabase = function() {
     major: 9386,
     minor: 56215,
     //location: backRightCorner,
-    location:mensaRandom01,
+    location: mensaRandom01,
   };
 
   var beaconCar = {
@@ -139,7 +136,7 @@ var initDummyDatabase = function() {
     major: 62242,
     minor: 28193,
     //location: backRightCorner,
-    location:mensaRandom02,
+    location: mensaRandom02,
   };
 
   var beaconFridge = {
@@ -148,7 +145,7 @@ var initDummyDatabase = function() {
     major: 62245,
     minor: 37267,
     //location: backLeftCorner,
-    location:mensaRandom03,
+    location: mensaRandom03,
   };
 
   var beaconDoor = {
@@ -157,7 +154,7 @@ var initDummyDatabase = function() {
     major: 42882,
     minor: 54653,
     //location: backLeftCorner,
-    location:mensaRandom04,
+    location: mensaRandom04,
   };
 
   var beaconBed = {

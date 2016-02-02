@@ -24,14 +24,16 @@ var router = express.Router();
 /* Support JSON bodies. */
 router.use(bodyParser.json());
 
+
+/**
+ * For each important API endpoint we have
+ * one specific controller file.
+ */
 router.use('/login', login);
 router.use('/users', users);
 router.use('/events', events);
 router.use('/hotspots', hotspots);
 router.use('/companionrequests', companionrequests);
-
-/* Do we want to redirect all left requests to authentication? */
-router.use(config.authenticate);
 
 
 module.exports = router;
