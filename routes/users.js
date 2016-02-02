@@ -65,5 +65,4 @@ router.route('/me/groups/:gid/users/:uid')
 
 
 /* Export router with described routes. */
-
 module.exports = router;

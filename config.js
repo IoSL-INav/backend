@@ -88,7 +88,7 @@ var session = new expressSession({
 });
 
 
-/* Export all funcationality */
+/* Export all funcationality. */
 module.exports = {
 	host: host,
 	port: port,

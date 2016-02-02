@@ -12,6 +12,10 @@ var supertest = require('supertest');
 var expect = require('chai').expect;
 var envFile = require('../.env.test');
 var backend = require('../app');
+
+
+/* Dummy data. */
+
 var dummyGroup = {
   _id: '',
   name: "Some Groupname Here",
@@ -29,6 +33,8 @@ var dummyUser = {
 var dummyHotspot = {
   _id: '',
 }
+
+
 
 /* Tests. */
 
@@ -180,10 +186,10 @@ describe('Backend', function() {
       .end(function(err, res) {
         //console.log(res)
         expect(res.body).to.be.instanceof(Array);
-        res.body.forEach(function(hotsp){
+        res.body.forEach(function(hotsp) {
           if (res.body.length > 0) {
             // same one random hotspot
-            dummyHotspot=hotsp;
+            dummyHotspot = hotsp;
             // check inner struct of hotspot
             expect(hotsp).to.have.property('_id');
             expect(hotsp).to.have.property('name');
@@ -216,7 +222,7 @@ describe('Backend', function() {
   /* test for a specific hotspot functions get*/
   it('should get one specific hotspot back', function(done) {
     supertest(backend)
-      .get('/hotspots/'+dummyHotspot._id)
+      .get('/hotspots/' + dummyHotspot._id)
       .set('Accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
@@ -249,7 +255,7 @@ describe('Backend', function() {
 
   it('should get one specific hotspot and there beacons back', function(done) {
     supertest(backend)
-      .get('/hotspots/'+dummyHotspot._id+'/beacons')
+      .get('/hotspots/' + dummyHotspot._id + '/beacons')
       .set('Accept', 'application/json')
       .expect(200)
       .end(function(err, res) {

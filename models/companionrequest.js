@@ -21,7 +21,7 @@ var compReqSchema = new Schema({
 		type: String,
 		ref: 'User'
 	},
-	status:  {
+	status: {
 		type: String,
 		enum: ['pending', 'accepted', 'denied']
 	}

@@ -39,6 +39,6 @@ router.route('/:cid')
     .put(controller.updateCompanionRequest)
     .delete(controller.deleteCompanionRequest);
 
-/* Export router with described routes. */
 
+/* Export router with described routes. */
 module.exports = router;

@@ -16,11 +16,11 @@ var controller = {};
 
 controller.login = function(req, res, next) {
 
-  return res.json({
-    status: "success",
-    userID: req.userID,
-    userName: req.userName
-  });
+    return res.json({
+        status: "success",
+        userID: req.userID,
+        userName: req.userName
+    });
 }
 
 

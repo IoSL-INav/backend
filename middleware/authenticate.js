@@ -20,10 +20,13 @@ var userController = require('../controllers/users');
  * system has a default group.
  */
 var findOrCreateUser = function(req, res, next) {
+
+  /* Values retrieved from federation provider. */
   var userID = req.kauth.grant.id_token.content.sub;
   var name = req.kauth.grant.id_token.content.preferred_username;
   var email = req.kauth.grant.id_token.content.email;
 
+  /* Try to find the user by supplied ID. */
   User.findById(userID, function(err, user) {
 
     if (err) {
@@ -33,6 +36,7 @@ var findOrCreateUser = function(req, res, next) {
       return next();
     }
 
+    /* No user found - create one. */
     if (user == null) {
 
       User.create({
@@ -52,6 +56,7 @@ var findOrCreateUser = function(req, res, next) {
           return next();
         }
 
+        /* Add user object to request structure. */
         req.user = user;
         return next();
       });
@@ -67,6 +72,7 @@ var findOrCreateUser = function(req, res, next) {
 };
 
 
+/* Export above function and keycloak protect mechanism. */
 module.exports = function(keycloak) {
   return [
     keycloak.protect(),

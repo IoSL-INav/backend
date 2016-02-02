@@ -53,5 +53,4 @@ router.route('/:hid/beacons/:bid')
 
 
 /* Export router with described routes. */
-
 module.exports = router;

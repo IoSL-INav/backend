@@ -35,7 +35,7 @@ controller.getPendingRequests = function(req, res, next) {
       res.json(allPendingRequest);
       return next();
     }
-  }).populate('to','_id name').populate('from','_id name');
+  }).populate('to', '_id name').populate('from', '_id name');
 };
 
 
@@ -180,7 +180,7 @@ controller.getCompanionRequest = function(req, res, next) {
       res.json(companionRequest);
       return next();
     }
-  }).populate('to','_id name').populate('from','_id name');
+  }).populate('to', '_id name').populate('from', '_id name');
 };
 
 
