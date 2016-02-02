@@ -32,8 +32,20 @@ app.use(routes);
  */
 var dropDatabase = function() {
 
+  /* TMP */
+  var User = require('./models/user');
+  /* TMP */
+
   var Hotspot = require('./models/hotspot');
   var Location = require('./models/location');
+
+  /* TMP */
+  var CompanionRequest = require('./models/companionrequest');
+  /* TMP */
+
+  User.remove({}, function(err) {
+    console.log("User collection removed.");
+  });
 
   Hotspot.remove({}, function(err) {
     console.log("Hotspot collection removed.");
@@ -41,6 +53,10 @@ var dropDatabase = function() {
 
   Location.remove({}, function(err) {
     console.log("Location collection removed.");
+  });
+
+  CompanionRequest.remove({}, function(err) {
+    console.log("CompanionRequest collection removed.");
   });
 }
 
@@ -54,7 +70,7 @@ var initDummyDatabase = function() {
   var Hotspot = require('./models/hotspot');
 
   var backRightCorner = {
-    coordinates: [13.326402, 52.509646],
+    coordinates: [13.3259560063564, 52.5095998224842],
     building: "Mensa",
     floor: "Mensa 2. OG",
   };
@@ -77,27 +93,35 @@ var initDummyDatabase = function() {
     floor: "Mensa 1. OG",
   };
 
+  var blueberryPosition = {
+    coordinates: [13.326182845182, 52.5096541896248],
+    building: "Mensa",
+    floor: "Mensa 1. OG",
+  };
+
   var mensaRandom01 = {
     coordinates: [13.3258793447518,52.5097385527189],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
+
   var mensaRandom02 = {
     coordinates: [13.3261752479283,52.5095662086197],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
+
   var mensaRandom03 = {
     coordinates: [13.3257126213545,52.5097032766872],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
+
   var mensaRandom04 = {
     coordinates: [13.325982121455,52.5097415619205],
     building: "Mensa",
     floor: "Mensa 1. OG",
   };
-
 
 
   var beaconShoe = {
@@ -160,20 +184,28 @@ var initDummyDatabase = function() {
     location: backRightCorner,
   }
 
-  var blueBeacon = {
-    name: "blueBeacon",
+  var greenBeacon = {
+    name: "greenBeacon",
     companyUUID: "b9407f30-f5f8-466e-aff9-25556b57fe6d",
     major: 1000,
     minor: 20010,
     location: frontRightCorner,
   }
 
-  var greenBeacon = {
-    name: "greenBeacon",
+  var blueBeacon = {
+    name: "blueBeacon",
     companyUUID: "b9407f30-f5f8-466e-aff9-25556b57fe6d",
     major: 1002,
     minor: 3090,
     location: frontLeftCorner,
+  }
+
+  var blueberryBeacon = {
+    name: "blueberryBeacon",
+    companyUUID: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
+    major: 15684,
+    minor: 40110,
+    location: blueberryPosition,
   }
 
   var hot1 = {

@@ -29,15 +29,15 @@ var controller = {};
  */
 controller.getCurrentUser = function(req, res, next) {
 
-	res.json({
-		userID: req.user._id,
-		userName: req.user.name,
-		userEmail: req.user.email,
-		userAutoPing: req.user.autoPingEnabled,
-		userAutoGroup: req.user.autoPingGroup,
-		userAutoLocate: req.user.autoLocateEnabled
-	});
-	next();
+    res.json({
+        userID: req.user._id,
+        userName: req.user.name,
+        userEmail: req.user.email,
+        userAutoPing: req.user.autoPingEnabled,
+        userAutoGroup: req.user.autoPingGroup,
+        userAutoLocate: req.user.autoLocateEnabled
+    });
+    next();
 };
 
 
@@ -53,147 +53,147 @@ controller.getCurrentUser = function(req, res, next) {
  */
 controller.updateCurrentUser = function(req, res, next) {
 
-	var newUserName = req.body.userName;
-	var newUserAutoPing = req.body.userAutoPing;
-	var newUserAutoGroup = req.body.userAutoGroup;
-	var newUserAutoLocate = req.body.userAutoLocate;
+    var newUserName = req.body.userName;
+    var newUserAutoPing = req.body.userAutoPing;
+    var newUserAutoGroup = req.body.userAutoGroup;
+    var newUserAutoLocate = req.body.userAutoLocate;
 
-	var updateQuery = {};
-	var noError = true;
-
-
-	/* Sanity and validity tests for user name. */
-	if (newUserName != undefined) {
-
-		/**
-		 * Sanitize supplied user name.
-		 * Remove surrounding white space and unwanted
-		 * control characters and escape special characters.
-		 * Proceed with a string.
-		 */
-		newUserName = validator.escape(validator.stripLow(validator.trim(newUserName)));
-		newUserName = validator.toString(newUserName);
-
-		/* Check if group name is (now) empty. */
-		if (newUserName !== "") {
-			updateQuery.name = newUserName;
-		} else {
-			noError = false;
-			res.status(400).json({
-				status: "failure",
-				reason: "User name was empty."
-			});
-			return next();
-		}
-	}
-
-	/* Sanity and validity tests for the auto ping value. */
-	if (newUserAutoPing != undefined) {
-		newUserAutoPing = validator.stripLow(validator.trim(newUserAutoPing));
-
-		if (validator.isBoolean(newUserAutoPing)) {
-			updateQuery.autoPingEnabled = newUserAutoPing;
-		} else {
-			noError = false;
-			res.status(400).json({
-				status: "failure",
-				reason: "Received auto ping indicator was no boolean."
-			});
-			return next();
-		}
-	}
-
-	/* Sanity and validity tests for supplied group name. Also checks existence. */
-	if (newUserAutoGroup != undefined) {
-
-		/**
-		 * Sanitize supplied group name.
-		 * Remove surrounding white space and unwanted
-		 * control characters and escape special characters.
-		 * Proceed with a string.
-		 */
-		newUserAutoGroup = validator.escape(validator.stripLow(validator.trim(newUserAutoGroup)));
-		newUserAutoGroup = validator.toString(newUserAutoGroup);
-
-		/* Check if group name is (now) empty. */
-		if (newUserAutoGroup !== "") {
-
-			var g;
-			var found;
-
-			for (g = 0; g < req.user.groups.length; g++) {
-
-				if (req.user.groups[g].name === newUserAutoGroup) {
-
-					/* Found group that matches newUserAutoGroup name. Save it. */
-					updateQuery.autoPingGroup = req.user.groups[g];
-					found = true;
-
-					break;
-				}
-			}
-
-			if (!found) {
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "No group matching supplied name was found."
-				});
-				return next();
-			}
-		} else {
-			noError = false;
-			res.status(400).json({
-				status: "failure",
-				reason: "Auto ping group was empty."
-			});
-			return next();
-		}
-	}
-
-	/* Sanity and validity tests for auto location. */
-	if (newUserAutoLocate != undefined) {
-		newUserAutoLocate = validator.stripLow(validator.trim(newUserAutoLocate));
-
-		if (validator.isBoolean(newUserAutoLocate)) {
-			updateQuery.autoLocateEnabled = newUserAutoLocate;
-		} else {
-			noError = false;
-			res.status(400).json({
-				status: "failure",
-				reason: "Received auto locate indicator was no boolean."
-			});
-			return next();
-		}
-	}
+    var updateQuery = {};
+    var noError = true;
 
 
-	/* All sanity tests went well. Try to save update. */
-	if (noError) {
+    /* Sanity and validity tests for user name. */
+    if (newUserName != undefined) {
 
-		User.findByIdAndUpdate(req.user._id, updateQuery, {
-			new: true
-		}, function(err, updUser) {
+        /**
+         * Sanitize supplied user name.
+         * Remove surrounding white space and unwanted
+         * control characters and escape special characters.
+         * Proceed with a string.
+         */
+        newUserName = validator.escape(validator.stripLow(validator.trim(newUserName)));
+        newUserName = validator.toString(newUserName);
 
-			if (err) {
-				console.log("Updating modified user went wrong.");
-				console.log(err);
-				res.status(500).json();
-				return next();
-			}
+        /* Check if group name is (now) empty. */
+        if (newUserName !== "") {
+            updateQuery.name = newUserName;
+        } else {
+            noError = false;
+            res.status(400).json({
+                status: "failure",
+                reason: "User name was empty."
+            });
+            return next();
+        }
+    }
 
-			/* Return updated user information. */
-			res.json({
-				userID: updUser._id,
-				userName: updUser.name,
-				userEmail: updUser.email,
-				userAutoPing: updUser.autoPingEnabled,
-				userAutoGroup: updUser.autoPingGroup,
-				userAutoLocate: updUser.autoLocateEnabled
-			});
-			next();
-		});
-	}
+    /* Sanity and validity tests for the auto ping value. */
+    if (newUserAutoPing != undefined) {
+        newUserAutoPing = validator.stripLow(validator.trim(newUserAutoPing));
+
+        if (validator.isBoolean(newUserAutoPing)) {
+            updateQuery.autoPingEnabled = newUserAutoPing;
+        } else {
+            noError = false;
+            res.status(400).json({
+                status: "failure",
+                reason: "Received auto ping indicator was no boolean."
+            });
+            return next();
+        }
+    }
+
+    /* Sanity and validity tests for supplied group name. Also checks existence. */
+    if (newUserAutoGroup != undefined) {
+
+        /**
+         * Sanitize supplied group name.
+         * Remove surrounding white space and unwanted
+         * control characters and escape special characters.
+         * Proceed with a string.
+         */
+        newUserAutoGroup = validator.escape(validator.stripLow(validator.trim(newUserAutoGroup)));
+        newUserAutoGroup = validator.toString(newUserAutoGroup);
+
+        /* Check if group name is (now) empty. */
+        if (newUserAutoGroup !== "") {
+
+            var g;
+            var found;
+
+            for (g = 0; g < req.user.groups.length; g++) {
+
+                if (req.user.groups[g].name === newUserAutoGroup) {
+
+                    /* Found group that matches newUserAutoGroup name. Save it. */
+                    updateQuery.autoPingGroup = req.user.groups[g];
+                    found = true;
+
+                    break;
+                }
+            }
+
+            if (!found) {
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "No group matching supplied name was found."
+                });
+                return next();
+            }
+        } else {
+            noError = false;
+            res.status(400).json({
+                status: "failure",
+                reason: "Auto ping group was empty."
+            });
+            return next();
+        }
+    }
+
+    /* Sanity and validity tests for auto location. */
+    if (newUserAutoLocate != undefined) {
+        newUserAutoLocate = validator.stripLow(validator.trim(newUserAutoLocate));
+
+        if (validator.isBoolean(newUserAutoLocate)) {
+            updateQuery.autoLocateEnabled = newUserAutoLocate;
+        } else {
+            noError = false;
+            res.status(400).json({
+                status: "failure",
+                reason: "Received auto locate indicator was no boolean."
+            });
+            return next();
+        }
+    }
+
+
+    /* All sanity tests went well. Try to save update. */
+    if (noError) {
+
+        User.findByIdAndUpdate(req.user._id, updateQuery, {
+            new: true
+        }, function(err, updUser) {
+
+            if (err) {
+                console.log("Updating modified user went wrong.");
+                console.log(err);
+                res.status(500).json();
+                return next();
+            }
+
+            /* Return updated user information. */
+            res.json({
+                userID: updUser._id,
+                userName: updUser.name,
+                userEmail: updUser.email,
+                userAutoPing: updUser.autoPingEnabled,
+                userAutoGroup: updUser.autoPingGroup,
+                userAutoLocate: updUser.autoLocateEnabled
+            });
+            next();
+        });
+    }
 };
 
 
@@ -203,19 +203,19 @@ controller.updateCurrentUser = function(req, res, next) {
  */
 controller.deleteCurrentUser = function(req, res, next) {
 
-	/* Now remove the user itself. */
-	User.findByIdAndRemove(req.user._id, function(err, rmUser) {
+    /* Now remove the user itself. */
+    User.findByIdAndRemove(req.user._id, function(err, rmUser) {
 
-		if (err) {
-			console.log("Error while removing the user itself.");
-			res.status(500).end();
-			return next();
-		}
+        if (err) {
+            console.log("Error while removing the user itself.");
+            res.status(500).end();
+            return next();
+        }
 
-		/* Log out users via "See other" redirect to /logout. */
-		res.status(303).location('/logout').end();
-		next();
-	});
+        /* Log out users via "See other" redirect to /logout. */
+        res.status(303).location('/logout').end();
+        next();
+    });
 };
 
 
@@ -235,294 +235,296 @@ controller.deleteCurrentUser = function(req, res, next) {
  */
 controller.updateLocation = function(req, res, next) {
 
-	/**
-	 * Pairs of location information.
-	 * Backend accepts either combination.
-	 */
-	var building = req.body.userBuilding;
-	var floor = req.body.userFloor;
-	var major = req.body.userMajor;
-	var minor = req.body.userMinor;
-	var lat = req.body.userLat;
-	var lon = req.body.userLon;
+    /**
+     * Pairs of location information.
+     * Backend accepts either combination.
+     */
+    var building = req.body.userBuilding;
+    var floor = req.body.userFloor;
+    var major = req.body.userMajor;
+    var minor = req.body.userMinor;
+    var lat = req.body.userLat;
+    var lon = req.body.userLon;
 
-	var newLoc = new Location();
-	var accuracyIndicator = -1;
-	var noError = true;
+    var newLoc = new Location();
+    var accuracyIndicator = -1;
+    var noError = true;
 
 
-	/* Sanity and incompleteness checks. */
+    /* Sanity and incompleteness checks. */
 
-	async.series([
+    async.series([
 
-		function(callback) {
+        function(callback) {
 
-			/* Building and floor. */
-			if ((building != undefined) && (floor != undefined)) {
+            /* Building and floor. */
+            if ((building != undefined) && (floor != undefined)) {
 
-				building = validator.trim(building);
-				floor = validator.trim(floor);
+                building = validator.trim(building);
+                floor = validator.trim(floor);
 
-				/* Check for empty. */
+                /* Check for empty. */
 
-				if (building.length === 0) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "building missing"
-					});
-					return next();
-				}
+                if (building.length === 0) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "building missing"
+                    });
+                    return next();
+                }
 
-				if (floor.length === 0) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "floor missing"
-					});
-					return next();
-				}
+                if (floor.length === 0) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "floor missing"
+                    });
+                    return next();
+                }
 
-				/* Everything fine. Save. */
+                /* Everything fine. Save. */
 
-				building = validator.stripLow(building);
-				floor = validator.stripLow(floor);
+                building = validator.stripLow(building);
+                floor = validator.stripLow(floor);
 
-				newLoc.building = building;
-				newLoc.floor = floor;
+                newLoc.building = building;
+                newLoc.floor = floor;
 
-				accuracyIndicator = 0;
-			} else if ((building != undefined) && (floor == undefined)) {
+                accuracyIndicator = 0;
+            } else if ((building != undefined) && (floor == undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "floor missing"
-				});
-				return next();
-			} else if ((building == undefined) && (floor != undefined)) {
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "floor missing"
+                });
+                return next();
+            } else if ((building == undefined) && (floor != undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "building missing"
-				});
-				return next();
-			}
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "building missing"
+                });
+                return next();
+            }
 
-			callback(null);
-		},
-		function(callback) {
+            callback(null);
+        },
+        function(callback) {
 
-			/* Major & minor (beacons). */
-			if ((major != undefined) && (minor != undefined)) {
+            /* Major & minor (beacons). */
+            if ((major != undefined) && (minor != undefined)) {
 
-				major = validator.toInt(validator.trim(major));
-				minor = validator.toInt(validator.trim(minor));
+                major = validator.toInt(validator.trim(major));
+                minor = validator.toInt(validator.trim(minor));
 
-				Hotspot.aggregate([{
-					$match: {
-						$and: [{
-							'beacons.major': major
-						}, {
-							'beacons.minor': minor
-						}]
-					}
-				}, {
-					$unwind: '$beacons'
-				}, {
-					$match: {
-						$and: [{
-							'beacons.major': major
-						}, {
-							'beacons.minor': minor
-						}]
-					}
-				}, {
-					$project: {
-						name: '$beacons.name',
-						companyUUID: '$beacons.companyUUID',
-						major: '$beacons.major',
-						minor: '$beacons.minor',
-						location: '$beacons.location'
-					}
-				}], function(err, beacons) {
+                Hotspot.aggregate([{
+                    $match: {
+                        $and: [{
+                            'beacons.major': major
+                        }, {
+                            'beacons.minor': minor
+                        }]
+                    }
+                }, {
+                    $unwind: '$beacons'
+                }, {
+                    $match: {
+                        $and: [{
+                            'beacons.major': major
+                        }, {
+                            'beacons.minor': minor
+                        }]
+                    }
+                }, {
+                    $project: {
+                        name: '$beacons.name',
+                        companyUUID: '$beacons.companyUUID',
+                        major: '$beacons.major',
+                        minor: '$beacons.minor',
+                        location: '$beacons.location'
+                    }
+                }], function(err, beacons) {
 
-					if (err) {
-						console.log("Error during retrieving matching beacons for supplied major and minor on updateLocation.");
-						console.log(err);
-						res.status(500).end();
-						return next();
-						callback(null);
-					}
+                    if (err) {
+                        console.log("Error during retrieving matching beacons for supplied major and minor on updateLocation.");
+                        console.log(err);
+                        res.status(500).end();
+                        return next();
+                        callback(null);
+                    }
 
-					if (beacons.length > 0) {
-						newLoc.coordinates = beacons[0].location.coordinates;
-						accuracyIndicator = 1;
-						callback(null);
-					} else {
-						noError = false;
-						res.status(400).json({
-							status: "failure",
-							reason: "no beacon found for supplied major and minor"
-						});
-						return next();
-						callback(null);
-					}
-				});
-			} else if ((major != undefined) && (minor == undefined)) {
+                    if (beacons.length > 0) {
+                        newLoc.coordinates = beacons[0].location.coordinates;
+                        newLoc.building = beacons[0].location.building;
+                        newLoc.floor = beacons[0].location.floor;
+                        accuracyIndicator = 1;
+                        callback(null);
+                    } else {
+                        noError = false;
+                        res.status(400).json({
+                            status: "failure",
+                            reason: "no beacon found for supplied major and minor"
+                        });
+                        return next();
+                        callback(null);
+                    }
+                });
+            } else if ((major != undefined) && (minor == undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "minor missing"
-				});
-				return next();
-				callback(null);
-			} else if ((major == undefined) && (minor != undefined)) {
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "minor missing"
+                });
+                return next();
+                callback(null);
+            } else if ((major == undefined) && (minor != undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "major missing"
-				});
-				return next();
-				callback(null);
-			} else {
-				callback(null);
-			}
-		},
-		function(callback) {
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "major missing"
+                });
+                return next();
+                callback(null);
+            } else {
+                callback(null);
+            }
+        },
+        function(callback) {
 
-			/* Latitude & longitude. */
-			if ((lat != undefined) && (lon != undefined)) {
+            /* Latitude & longitude. */
+            if ((lat != undefined) && (lon != undefined)) {
 
-				lat = validator.trim(lat);
-				lon = validator.trim(lon);
+                lat = validator.trim(lat);
+                lon = validator.trim(lon);
 
-				/* Check for empty. */
+                /* Check for empty. */
 
-				if (lat.length === 0) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "latitude missing"
-					});
-					return next();
-				}
+                if (lat.length === 0) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "latitude missing"
+                    });
+                    return next();
+                }
 
-				if (lon.length === 0) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "longitude missing"
-					});
-					return next();
-				}
+                if (lon.length === 0) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "longitude missing"
+                    });
+                    return next();
+                }
 
-				/* Check for out of bounds. */
+                /* Check for out of bounds. */
 
-				if (!validator.isFloat(lat, {
-						min: 0.0,
-						max: 90.0
-					})) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "latitude out of bounds"
-					});
-					return next();
-				}
+                if (!validator.isFloat(lat, {
+                        min: 0.0,
+                        max: 90.0
+                    })) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "latitude out of bounds"
+                    });
+                    return next();
+                }
 
-				if (!validator.isFloat(lon, {
-						min: 0.0,
-						max: 180.0
-					})) {
-					noError = false;
-					res.status(400).json({
-						status: "failure",
-						reason: "longitude out of bounds"
-					});
-					return next();
-				}
+                if (!validator.isFloat(lon, {
+                        min: 0.0,
+                        max: 180.0
+                    })) {
+                    noError = false;
+                    res.status(400).json({
+                        status: "failure",
+                        reason: "longitude out of bounds"
+                    });
+                    return next();
+                }
 
-				/* Everything fine. Save. */
+                /* Everything fine. Save. */
 
-				lat = validator.toFloat(lat);
-				lon = validator.toFloat(lon);
+                lat = validator.toFloat(lat);
+                lon = validator.toFloat(lon);
 
-				newLoc.coordinates = [lon, lat];
-				accuracyIndicator = 2;
-			} else if ((lat != undefined) && (lon == undefined)) {
+                newLoc.coordinates = [lon, lat];
+                accuracyIndicator = 2;
+            } else if ((lat != undefined) && (lon == undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "longitude missing"
-				});
-				return next();
-			} else if ((lat == undefined) && (lon != undefined)) {
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "longitude missing"
+                });
+                return next();
+            } else if ((lat == undefined) && (lon != undefined)) {
 
-				noError = false;
-				res.status(400).json({
-					status: "failure",
-					reason: "latitude missing"
-				});
-				return next();
-			}
+                noError = false;
+                res.status(400).json({
+                    status: "failure",
+                    reason: "latitude missing"
+                });
+                return next();
+            }
 
-			callback(null);
-		}
-	], function(err, results) {
+            callback(null);
+        }
+    ], function(err, results) {
 
-		if (err) {
-			console.log("Error during async series in updateLocation.");
-			console.log(err);
-			res.status(500).end();
-			return next();
-		}
+        if (err) {
+            console.log("Error during async series in updateLocation.");
+            console.log(err);
+            res.status(500).end();
+            return next();
+        }
 
-		/* Check for no data. */
-		if (accuracyIndicator == -1) {
+        /* Check for no data. */
+        if (accuracyIndicator == -1) {
 
-			res.status(400).json({
-				status: "failure",
-				reason: "no data submitted"
-			});
-			return next();
-		}
+            res.status(400).json({
+                status: "failure",
+                reason: "no data submitted"
+            });
+            return next();
+        }
 
-		if (noError) {
+        if (noError) {
 
-			newLoc.owner = req.user._id;
-			newLoc.accuracyIndicator = accuracyIndicator;
+            newLoc.owner = req.user._id;
+            newLoc.accuracyIndicator = accuracyIndicator;
 
-			Location.findOneAndRemove({
-				owner: req.user._id
-			}, function(err) {
+            Location.findOneAndRemove({
+                owner: req.user._id
+            }, function(err) {
 
-				if (err) {
-					console.log("Error during deleting the old location of a user.");
-					console.log(err);
-					res.status(500).end();
-					return next();
-				}
+                if (err) {
+                    console.log("Error during deleting the old location of a user.");
+                    console.log(err);
+                    res.status(500).end();
+                    return next();
+                }
 
-				newLoc.save(function(err) {
+                newLoc.save(function(err) {
 
-					if (err) {
-						console.log("Error during inserting the new location of a user.");
-						console.log(err);
-						res.status(500).end();
-						return next();
-					}
+                    if (err) {
+                        console.log("Error during inserting the new location of a user.");
+                        console.log(err);
+                        res.status(500).end();
+                        return next();
+                    }
 
-					res.json(newLoc);
-					next();
-				});
-			});
-		}
-	});
+                    res.json(newLoc);
+                    next();
+                });
+            });
+        }
+    });
 };
 
 
@@ -532,23 +534,23 @@ controller.updateLocation = function(req, res, next) {
  */
 controller.deleteLocation = function(req, res, next) {
 
-	Location.findOneAndRemove({
-		owner: req.user._id
-	}, function(err) {
+    Location.findOneAndRemove({
+        owner: req.user._id
+    }, function(err) {
 
-		if (err) {
-			console.log("Error during deleting the location of a user.");
-			console.log(err);
-			res.status(500).end();
-			return next();
-		}
+        if (err) {
+            console.log("Error during deleting the location of a user.");
+            console.log(err);
+            res.status(500).end();
+            return next();
+        }
 
-		res.json({
-			status: "success"
-		});
-	});
+        res.json({
+            status: "success"
+        });
+    });
 
-	next();
+    next();
 };
 
 
@@ -557,8 +559,8 @@ controller.deleteLocation = function(req, res, next) {
  * associated to the currently logged in user ID.
  */
 controller.getGroupsForUser = function(req, res, next) {
-	res.json(req.user.groups);
-	next();
+    res.json(req.user.groups);
+    next();
 };
 
 
@@ -571,89 +573,89 @@ controller.getGroupsForUser = function(req, res, next) {
  */
 controller.addGroupForUser = function(req, res, next) {
 
-	var i;
-	var groupName = req.body.groupName;
-	var foundGroup = false;
+    var i;
+    var groupName = req.body.groupName;
+    var foundGroup = false;
 
 
-	/* Check if no group was supplied. */
-	if (groupName == undefined) {
+    /* Check if no group was supplied. */
+    if (groupName == undefined) {
 
-		res.status(400).json({
-			status: "failure",
-			reason: "no groupName specified"
-		});
-		return next();
-	}
+        res.status(400).json({
+            status: "failure",
+            reason: "no groupName specified"
+        });
+        return next();
+    }
 
-	/**
-	 * Sanitize supplied group name.
-	 * Remove surrounding white space and unwanted
-	 * control characters and escape special characters.
-	 * Proceed with a string.
-	 */
-	groupName = validator.escape(validator.stripLow(validator.trim(groupName)));
-	groupName = validator.toString(groupName);
+    /**
+     * Sanitize supplied group name.
+     * Remove surrounding white space and unwanted
+     * control characters and escape special characters.
+     * Proceed with a string.
+     */
+    groupName = validator.escape(validator.stripLow(validator.trim(groupName)));
+    groupName = validator.toString(groupName);
 
-	console.log(groupName);
+    console.log(groupName);
 
-	/* Check for (now) empty group name. */
-	if (groupName === "") {
+    /* Check for (now) empty group name. */
+    if (groupName === "") {
 
-		res.status(400).json({
-			status: "failure",
-			reason: "groupName is empty"
-		});
-		return next();
-	}
+        res.status(400).json({
+            status: "failure",
+            reason: "groupName is empty"
+        });
+        return next();
+    }
 
-	/* Start gathering object to insert. */
-	var newGroup = {
-		name: groupName,
-		members: []
-	};
+    /* Start gathering object to insert. */
+    var newGroup = {
+        name: groupName,
+        members: []
+    };
 
-	/* Check if user already has a group with supplied name. */
-	for (i = 0; i < req.user.groups.length; i++) {
+    /* Check if user already has a group with supplied name. */
+    for (i = 0; i < req.user.groups.length; i++) {
 
-		/* We found a duplicate! */
-		if (req.user.groups[i].name == groupName) {
+        /* We found a duplicate! */
+        if (req.user.groups[i].name == groupName) {
 
-			foundGroup = true;
+            foundGroup = true;
 
-			res.status(400).json({
-				status: "failure",
-				reason: "group already exists",
-				groupID: req.user.groups[i].id
-			});
+            res.status(400).json({
+                status: "failure",
+                reason: "group already exists",
+                groupID: req.user.groups[i].id
+            });
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
-	/* No group with same name exists and everything clear. Save. */
-	if (!foundGroup) {
+    /* No group with same name exists and everything clear. Save. */
+    if (!foundGroup) {
 
-		req.user.groups.push(newGroup);
-		req.user.save();
+        req.user.groups.push(newGroup);
+        req.user.save();
 
-		for (i = 0; i < req.user.groups.length; i++) {
+        for (i = 0; i < req.user.groups.length; i++) {
 
-			if (req.user.groups[i].name == groupName) {
+            if (req.user.groups[i].name == groupName) {
 
-				/* Return success and ID of newly created group. */
-				res.json({
-					status: "success",
-					reason: "group added",
-					groupID: req.user.groups[i].id
-				});
+                /* Return success and ID of newly created group. */
+                res.json({
+                    status: "success",
+                    reason: "group added",
+                    groupID: req.user.groups[i].id
+                });
 
-				break;
-			}
-		}
+                break;
+            }
+        }
 
-		next();
-	}
+        next();
+    }
 };
 
 
@@ -663,21 +665,21 @@ controller.addGroupForUser = function(req, res, next) {
  */
 controller.getGroupForUser = function(req, res, next) {
 
-	var i;
-	var foundGroup = req.user.groups.id(req.groupID);
+    var i;
+    var foundGroup = req.user.groups.id(req.groupID);
 
-	/* No group for supplied groupID found. */
-	if (foundGroup == null) {
+    /* No group for supplied groupID found. */
+    if (foundGroup == null) {
 
-		res.status(404).json({
-			status: "failure",
-			reason: "group not found"
-		});
-		return next();
-	}
+        res.status(404).json({
+            status: "failure",
+            reason: "group not found"
+        });
+        return next();
+    }
 
-	res.json(foundGroup);
-	next();
+    res.json(foundGroup);
+    next();
 };
 
 
@@ -692,80 +694,80 @@ controller.getGroupForUser = function(req, res, next) {
  */
 controller.updateGroupForUser = function(req, res, next) {
 
-	var foundGroup = req.user.groups.id(req.groupID);
-	var newGroupName = req.body.newGroupName;
+    var foundGroup = req.user.groups.id(req.groupID);
+    var newGroupName = req.body.newGroupName;
 
 
-	/* No group matching supplied groupID was found. */
-	if (foundGroup == null) {
+    /* No group matching supplied groupID was found. */
+    if (foundGroup == null) {
 
-		res.status(404).json({
-			status: "failure",
-			reason: "group not found"
-		});
-		return next();
-	}
+        res.status(404).json({
+            status: "failure",
+            reason: "group not found"
+        });
+        return next();
+    }
 
-	/* The new group name was an empty field. */
-	if (newGroupName == undefined) {
+    /* The new group name was an empty field. */
+    if (newGroupName == undefined) {
 
-		res.status(400).json({
-			status: "failure",
-			reason: "no newGroupName specified"
-		});
-		return next();
-	}
+        res.status(400).json({
+            status: "failure",
+            reason: "no newGroupName specified"
+        });
+        return next();
+    }
 
-	/**
-	 * Sanitize supplied group name.
-	 * Remove surrounding white space and unwanted
-	 * control characters and escape special characters.
-	 * Proceed with a string.
-	 */
-	newGroupName = validator.escape(validator.stripLow(validator.trim(newGroupName)));
-	newGroupName = validator.toString(newGroupName);
+    /**
+     * Sanitize supplied group name.
+     * Remove surrounding white space and unwanted
+     * control characters and escape special characters.
+     * Proceed with a string.
+     */
+    newGroupName = validator.escape(validator.stripLow(validator.trim(newGroupName)));
+    newGroupName = validator.toString(newGroupName);
 
-	console.log(newGroupName);
+    console.log(newGroupName);
 
-	/* Check for (now) empty group name. */
-	if (newGroupName === "") {
+    /* Check for (now) empty group name. */
+    if (newGroupName === "") {
 
-		res.status(400).json({
-			status: "failure",
-			reason: "new group name is empty"
-		});
-		return next();
-	}
+        res.status(400).json({
+            status: "failure",
+            reason: "new group name is empty"
+        });
+        return next();
+    }
 
-	/* Don't allow to rename default group 'All friends'. */
-	if (foundGroup.name == "All friends") {
+    /* Don't allow to rename default group 'All friends'. */
+    if (foundGroup.name == "All friends") {
 
-		res.status(400).json({
-			status: "failure",
-			reason: "attempt to rename default group (not possible)"
-		});
-		return next();
-	}
+        res.status(400).json({
+            status: "failure",
+            reason: "attempt to rename default group (not possible)"
+        });
+        return next();
+    }
 
-	/* All checks passed. Save. */
-	foundGroup.name = newGroupName;
-	req.user.save(function(err) {
+    /* All checks passed. Save. */
+    foundGroup.name = newGroupName;
+    req.user.save(function(err) {
 
-		if (err) {
-			console.log("Error during updating group of user.");
-			console.log(err);
-			res.status(500).end();
-			return next();
-		}
+        if (err) {
+            console.log("Error during updating group of user.");
+            console.log(err);
+            res.status(500).end();
+            return next();
+        }
 
-		/* Return success and group information of updated group. */
-		res.json({
-			status: "success",
-			reason: "group updated",
-			group: req.user.groups.id(req.groupID)
-		});
-		next();
-	});
+        /* Return success and group information of updated group. */
+        res.json({
+            status: "success",
+            reason: "group updated",
+            group: req.user.groups.id(req.groupID)
+        });
+        next();
+    });
 };
 
 
@@ -775,37 +777,37 @@ controller.updateGroupForUser = function(req, res, next) {
  */
 controller.deleteGroupForUser = function(req, res, next) {
 
-	var foundGroup = req.user.groups.id(req.groupID);
+    var foundGroup = req.user.groups.id(req.groupID);
 
-	/* Check if no group was found for given group ID. */
-	if (foundGroup == null) {
+    /* Check if no group was found for given group ID. */
+    if (foundGroup == null) {
 
-		res.status(404).json({
-			status: "failure",
-			reason: "group not found"
-		});
-		return next();
-	}
+        res.status(404).json({
+            status: "failure",
+            reason: "group not found"
+        });
+        return next();
+    }
 
-	/* If found: remove the group. */
-	foundGroup.remove();
+    /* If found: remove the group. */
+    foundGroup.remove();
 
-	/* Save modified user object. */
-	req.user.save(function(err) {
+    /* Save modified user object. */
+    req.user.save(function(err) {
 
-		if (err) {
-			console.log("Error during removing group from user.");
-			console.log(err);
-			res.status(500).end();
-			return next();
-		}
+        if (err) {
+            console.log("Error during removing group from user.");
+            console.log(err);
+            res.status(500).end();
+            return next();
+        }
 
-		res.json({
-			status: "success",
-			reason: "group removed"
-		});
-		next();
-	});
+        res.json({
+            status: "success",
+            reason: "group removed"
+        });
+        next();
+    });
 };
 
 
@@ -820,101 +822,101 @@ controller.deleteGroupForUser = function(req, res, next) {
  */
 controller.addUserToGroup = function(req, res, next) {
 
-	/**
-	 * At this point, we assume:
-	 * Friend approval done - both parties have accepted each other
-	 * so that both parties are in the corresponding 'All friends' list.
-	 *
-	 * Query logged in user's 'All friends' list for submitted user
-	 * - if found and not already in other group: add to submitted other group
-	 * - if not found or already in other group: deny request
-	 */
+    /**
+     * At this point, we assume:
+     * Friend approval done - both parties have accepted each other
+     * so that both parties are in the corresponding 'All friends' list.
+     *
+     * Query logged in user's 'All friends' list for submitted user
+     * - if found and not already in other group: add to submitted other group
+     * - if not found or already in other group: deny request
+     */
 
-	var g;
-	var companionID = req.body.userID;
-	var group = req.user.groups.id(req.groupID);
+    var g;
+    var companionID = req.body.userID;
+    var group = req.user.groups.id(req.groupID);
 
 
-	/* Check if group exists. */
-	if (group == null) {
-		res.status(400).json({
-			status: "error",
-			reason: "no group found for supplied groupID"
-		});
-		return next();
-	}
+    /* Check if group exists. */
+    if (group == null) {
+        res.status(400).json({
+            status: "error",
+            reason: "no group found for supplied groupID"
+        });
+        return next();
+    }
 
-	for (g = 0; g < req.user.groups.length; g++) {
+    for (g = 0; g < req.user.groups.length; g++) {
 
-		if (req.user.groups[g].name == 'All friends') {
+        if (req.user.groups[g].name == 'All friends') {
 
-			/* Prevents adding friend to 'All friends' a second time. */
-			if (req.user.groups[g]._id == req.groupID) {
-				res.status(400).json({
-					status: "error",
-					reason: "supplied user already in 'All friends' list"
-				});
-				return next();
-			}
+            /* Prevents adding friend to 'All friends' a second time. */
+            if (req.user.groups[g]._id == req.groupID) {
+                res.status(400).json({
+                    status: "error",
+                    reason: "supplied user already in 'All friends' list"
+                });
+                return next();
+            }
 
-			/* Check for at least one member in 'All friends' list. */
-			if (req.user.groups[g].members.length > 0) {
+            /* Check for at least one member in 'All friends' list. */
+            if (req.user.groups[g].members.length > 0) {
 
-				var mem;
+                var mem;
 
-				for (mem = 0; mem < req.user.groups[g].members.length; mem++) {
+                for (mem = 0; mem < req.user.groups[g].members.length; mem++) {
 
-					/* We found the supplied companionID in 'All friends'. */
-					if (req.user.groups[g].members[mem]._id == companionID) {
+                    /* We found the supplied companionID in 'All friends'. */
+                    if (req.user.groups[g].members[mem]._id == companionID) {
 
-						var memNew;
+                        var memNew;
 
-						for (memNew = 0; memNew < group.members.length; memNew++) {
+                        for (memNew = 0; memNew < group.members.length; memNew++) {
 
-							/* Check if user already is in supplied group. */
-							if (group.members[memNew]._id == companionID) {
-								res.status(400).json({
-									status: "error",
-									reason: "supplied user already in supplied group"
-								});
-								return next();
-							} else {
+                            /* Check if user already is in supplied group. */
+                            if (group.members[memNew]._id == companionID) {
+                                res.status(400).json({
+                                    status: "error",
+                                    reason: "supplied user already in supplied group"
+                                });
+                                return next();
+                            } else {
 
-								/* Add user to group. */
-								if (group.members.length <= 0) {
-									var friends = [companionID];
-									group.members = friends;
-								} else {
-									group.members.push(companionID);
-								}
+                                /* Add user to group. */
+                                if (group.members.length <= 0) {
+                                    var friends = [companionID];
+                                    group.members = friends;
+                                } else {
+                                    group.members.push(companionID);
+                                }
 
-								/* And save modified user object. */
-								req.user.save();
+                                /* And save modified user object. */
+                                req.user.save();
 
-								res.json({
-									status: "success",
-									reason: "user added to group"
-								});
-								return next();
-							}
-						}
-					} else {
-						res.status(400).json({
-							status: "error",
-							reason: "supplied user not found in 'All friends' list"
-						});
-						return next();
-					}
-				}
-			} else {
-				res.status(400).json({
-					status: "error",
-					reason: "supplied user not found in 'All friends' list"
-				});
-				return next();
-			}
-		}
-	}
+                                res.json({
+                                    status: "success",
+                                    reason: "user added to group"
+                                });
+                                return next();
+                            }
+                        }
+                    } else {
+                        res.status(400).json({
+                            status: "error",
+                            reason: "supplied user not found in 'All friends' list"
+                        });
+                        return next();
+                    }
+                }
+            } else {
+                res.status(400).json({
+                    status: "error",
+                    reason: "supplied user not found in 'All friends' list"
+                });
+                return next();
+            }
+        }
+    }
 };
 
 
@@ -927,53 +929,53 @@ controller.addUserToGroup = function(req, res, next) {
  */
 controller.deleteUserFromGroup = function(req, res, next) {
 
-	var companionID = req.otherUserID;
-	var group = req.user.groups.id(req.groupID);
-	var found = false;
+    var companionID = req.otherUserID;
+    var group = req.user.groups.id(req.groupID);
+    var found = false;
 
-	/* Check if group exists. */
-	if (group == null) {
-		res.status(400).json({
-			status: "error",
-			reason: "no group found matching supplied groupID"
-		});
-		return next();
-	}
+    /* Check if group exists. */
+    if (group == null) {
+        res.status(400).json({
+            status: "error",
+            reason: "no group found matching supplied groupID"
+        });
+        return next();
+    }
 
-	/**
-	 * Filter group's members array and only include users
-	 * that do not have the companionID as _id.
-	 * Set found to true if the supplied user was found.
-	 */
-	var rmdMember = group.members.filter(function(mem) {
+    /**
+     * Filter group's members array and only include users
+     * that do not have the companionID as _id.
+     * Set found to true if the supplied user was found.
+     */
+    var rmdMember = group.members.filter(function(mem) {
 
-		var inc = (mem._id !== companionID) ? true : false;
+        var inc = (mem._id !== companionID) ? true : false;
 
-		if (!inc) {
-			found = true;
-		}
+        if (!inc) {
+            found = true;
+        }
 
-		return inc;
-	});
+        return inc;
+    });
 
-	/* If the supplied user was not found, return an error. */
-	if (!found) {
-		res.status(400).json({
-			status: "error",
-			reason: "no user found matching supplied userID"
-		});
-		return next();
-	}
+    /* If the supplied user was not found, return an error. */
+    if (!found) {
+        res.status(400).json({
+            status: "error",
+            reason: "no user found matching supplied userID"
+        });
+        return next();
+    }
 
-	/* Otherwise update the user object. */
-	group.members = rmdMember;
-	req.user.save();
+    /* Otherwise update the user object. */
+    group.members = rmdMember;
+    req.user.save();
 
-	res.json({
-		status: "success",
-		reason: "user removed from group"
-	});
-	return next();
+    res.json({
+        status: "success",
+        reason: "user removed from group"
+    });
+    return next();
 };
 
 
