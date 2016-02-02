@@ -210,7 +210,7 @@ var initDummyDatabase = function() {
 
   var hot1 = {
     name: "Mensa",
-    beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor, purpleBeacon, blueBeacon, greenBeacon]
+    beacons: [beaconShoe, beaconCar, beaconFridge, beaconDoor, purpleBeacon, blueBeacon, greenBeacon, blueberryBeacon]
   };
 
   var hot2 = {
