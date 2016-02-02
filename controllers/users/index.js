@@ -512,9 +512,11 @@ controller.updateLocation = function(req, res, next) {
 
         if (noError) {
 
+            /* As no error occurred - add owner and indicator. */
             newLoc.owner = req.user._id;
             newLoc.accuracyIndicator = accuracyIndicator;
 
+            /* Find old location and replace by new one. */
             Location.findOneAndRemove({
                 owner: req.user._id
             }, function(err) {
@@ -535,6 +537,7 @@ controller.updateLocation = function(req, res, next) {
                         return next();
                     }
 
+                    /* New location updated. Return that location. */
                     res.json(newLoc);
                     next();
                 });
@@ -613,8 +616,6 @@ controller.addGroupForUser = function(req, res, next) {
     groupName = validator.escape(validator.stripLow(validator.trim(groupName)));
     groupName = validator.toString(groupName);
 
-    console.log(groupName);
-
     /* Check for (now) empty group name. */
     if (groupName === "") {
 
@@ -652,25 +653,40 @@ controller.addGroupForUser = function(req, res, next) {
     /* No group with same name exists and everything clear. Save. */
     if (!foundGroup) {
 
-        req.user.groups.push(newGroup);
-        req.user.save();
-
-        for (i = 0; i < req.user.groups.length; i++) {
-
-            if (req.user.groups[i].name == groupName) {
-
-                /* Return success and ID of newly created group. */
-                res.json({
-                    status: "success",
-                    reason: "group added",
-                    groupID: req.user.groups[i].id
-                });
-
-                break;
+        /* Find current user and push new group to existing groups. */
+        User.findByIdAndUpdate(req.user._id, {
+            $push: {
+                "groups": newGroup
             }
-        }
+        }, {
+            new: true
+        }, function(err, updUser) {
 
-        next();
+            if (err) {
+                console.log("Error during adding a group to a user.");
+                console.log(err);
+                res.status(500).end();
+                return next();
+            }
+
+            for (i = 0; i < updUser.groups.length; i++) {
+
+                /* Found new group. */
+                if (updUser.groups[i].name === groupName) {
+
+                    /* Return success and ID of newly created group. */
+                    res.json({
+                        status: "success",
+                        reason: "group added",
+                        groupID: updUser.groups[i].id
+                    });
+
+                    break;
+                }
+            }
+
+            return next();
+        });
     }
 };
 
