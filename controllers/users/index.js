@@ -759,8 +759,6 @@ controller.updateGroupForUser = function(req, res, next) {
     newGroupName = validator.escape(validator.stripLow(validator.trim(newGroupName)));
     newGroupName = validator.toString(newGroupName);
 
-    console.log(newGroupName);
-
     /* Check for (now) empty group name. */
     if (newGroupName === "") {
 
@@ -771,8 +769,18 @@ controller.updateGroupForUser = function(req, res, next) {
         return next();
     }
 
+    /* Don't allow to name the group 'All friends'. */
+    if (newGroupName === "All friends") {
+
+        res.status(400).json({
+            status: "failure",
+            reason: "attempt to name the group after the default group 'All friends' (not possible)"
+        });
+        return next();
+    }
+
     /* Don't allow to rename default group 'All friends'. */
-    if (foundGroup.name == "All friends") {
+    if (foundGroup.name === "All friends") {
 
         res.status(400).json({
             status: "failure",
