@@ -100,3 +100,9 @@ process.env.PIAZZA_LOG_FILE = "./test-logging.log";
 process.env.PIAZZA_USE_MONGODB_SESSION_STORE = true;
 process.env.TEST_MODE = true;
 ```
+
+After this is done, you can run the provided tests with:
+
+```bash
+npm test
+```

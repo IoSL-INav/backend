@@ -909,37 +909,43 @@ controller.addUserToGroup = function(req, res, next) {
                     /* We found the supplied companionID in 'All friends'. */
                     if (req.user.groups[g].members[mem]._id == companionID) {
 
-                        var memNew;
+                        /* If group has no members - add user. */
+                        if (group.members.length <= 0) {
+                            var friends = [companionID];
+                            group.members = friends;
+                        } else {
 
-                        for (memNew = 0; memNew < group.members.length; memNew++) {
+                            var memNew;
+                            var foundUser = false;
 
-                            /* Check if user already is in supplied group. */
-                            if (group.members[memNew]._id == companionID) {
+                            for (memNew = 0; memNew < group.members.length; memNew++) {
+
+                                /* Check if user already is in supplied group. */
+                                if (group.members[memNew]._id == companionID) {
+                                    foundUser = true;
+                                }
+                            }
+
+                            if (foundUser) {
                                 res.status(400).json({
                                     status: "error",
                                     reason: "supplied user already in supplied group"
                                 });
                                 return next();
-                            } else {
-
-                                /* Add user to group. */
-                                if (group.members.length <= 0) {
-                                    var friends = [companionID];
-                                    group.members = friends;
-                                } else {
-                                    group.members.push(companionID);
-                                }
-
-                                /* And save modified user object. */
-                                req.user.save();
-
-                                res.json({
-                                    status: "success",
-                                    reason: "user added to group"
-                                });
-                                return next();
                             }
+
+                            /* Group already has members, push other user. */
+                            group.members.push(companionID);
                         }
+
+                        /* And save modified user object. */
+                        req.user.save();
+
+                        res.json({
+                            status: "success",
+                            reason: "user added to group"
+                        });
+                        return next();
                     } else {
                         res.status(400).json({
                             status: "error",
@@ -961,7 +967,10 @@ controller.addUserToGroup = function(req, res, next) {
 
 
 /**
- * Remove a user from a group.
+ * Removes a user from a group.
+ * If user is removed from 'All friends' list,
+ * treat this as an unfriend request and delete
+ * user from both respective 'All friends' groups.
  *
  * Parameters:
  * - req.otherUserID: ID of user to remove from group
@@ -997,6 +1006,79 @@ controller.deleteUserFromGroup = function(req, res, next) {
 
         return inc;
     });
+
+    /* Consider this an unfriend request. */
+    if ((group.name === "All friends") && (found)) {
+
+        /* Find the other user to edit her/his groups. */
+        User.findById(companionID, function(err, otherUser) {
+
+            var g;
+
+            if (err) {
+                console.log("Error during finding the to be removed companion.");
+                console.log(err);
+                res.status(500).end();
+                return next();
+            }
+
+            /* Loop over all groups and remove the currently logged in user. */
+            for (g = 0; g < otherUser.groups.length; g++) {
+
+                var meFound = false;
+
+                /**
+                 * Filter group's members array and only include users
+                 * that do not have the ID of the currently logged in user.
+                 * Set meFound to true if the logged in user was found.
+                 */
+                var otherUserMembers = otherUser.groups[g].members.filter(function(mem) {
+
+                    var inc = (mem._id !== req.user._id) ? true : false;
+
+                    if (!inc) {
+                        meFound = true;
+                    }
+
+                    return inc;
+                });
+
+                /* Only make a database request when user found. */
+                if (meFound) {
+                    otherUser.groups[g].members = otherUserMembers;
+                    otherUser.save();
+                }
+            }
+
+            /* Loop over all groups of current user and remove companion. */
+            for (g = 0; g < req.user.groups.length; g++) {
+
+                var otherFound = false;
+
+                /**
+                 * Filter group's members array and only include users
+                 * that do not have the companionID as _id.
+                 * Set otherFound to true if the supplied user was found.
+                 */
+                var meUserMembers = req.user.groups[g].members.filter(function(mem) {
+
+                    var inc = (mem._id !== companionID) ? true : false;
+
+                    if (!inc) {
+                        otherFound = true;
+                    }
+
+                    return inc;
+                });
+
+                /* Only make a database request when user found. */
+                if (otherFound) {
+                    req.user.groups[g].members = meUserMembers;
+                    req.user.save();
+                }
+            }
+        });
+    }
 
     /* If the supplied user was not found, return an error. */
     if (!found) {
