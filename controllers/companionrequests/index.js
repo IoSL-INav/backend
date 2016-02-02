@@ -19,7 +19,10 @@ var controller = {};
 
 /* Controllers. */
 
-
+/**
+ * This function returns the the pending companionrequests
+ * of the currently logged in user.
+ */
 controller.getPendingRequests = function(req, res, next) {
 
   CompanionRequest.find({
@@ -38,7 +41,12 @@ controller.getPendingRequests = function(req, res, next) {
   }).populate('to', '_id name').populate('from', '_id name');
 };
 
-
+/**
+ * creates a companion request
+ *
+ * Parameters:
+ * - req.body.userEmail: email of a friend which the user want to send a request
+ */
 controller.createCompanionRequest = function(req, res, next) {
 
   /* Save mail address from request body. */
@@ -67,7 +75,10 @@ controller.createCompanionRequest = function(req, res, next) {
       return next();
     } else {
 
-      /* Check if a companion request has already been made. */
+      /**
+       * Check if a companion request has already been made.
+       * Check in both directions.
+       */
       CompanionRequest.findOne({
         $or: [{
           $and: [{
@@ -124,6 +135,9 @@ controller.createCompanionRequest = function(req, res, next) {
             }
           }
 
+          /**
+           * User is already in the 'All friends list'
+           */
           if (found) {
             res.status(200).json({
               status: "success",
@@ -166,7 +180,12 @@ controller.createCompanionRequest = function(req, res, next) {
   });
 };
 
-
+/**
+ * Gives back a specific companion request.
+ *
+ * Parameters:
+ * - req.companionRequestID: the companionRequestID which should be searched for
+ */
 controller.getCompanionRequest = function(req, res, next) {
 
   CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
@@ -183,11 +202,19 @@ controller.getCompanionRequest = function(req, res, next) {
   }).populate('to', '_id name').populate('from', '_id name');
 };
 
-
+/**
+ * Updates a companion request. The companion request could be accepted or denied.
+ *
+ * Parameters:
+ * - req.companionRequestID: the companionRequestID which should be searched for
+ * - req.body.accept: accept have to be true if the request should be accepted
+ * - req.body.deny: deny have to be true if the request should be denied
+ */
 controller.updateCompanionRequest = function(req, res, next) {
 
   if (req.body.accept || req.body.deny) {
 
+    /* search for the companion request */
     CompanionRequest.findById(req.companionRequestID, function(err, companionRequest) {
 
       if (err) {
@@ -206,6 +233,11 @@ controller.updateCompanionRequest = function(req, res, next) {
         return next();
       }
 
+      /**
+       * if the companion request is denied set the status to denied
+       * else check if req.body.accept is set to true, if yes set status of
+       * companion request to accepted.
+       */
       if (req.body.deny) {
 
         companionRequest.status = 'denied';
@@ -226,9 +258,13 @@ controller.updateCompanionRequest = function(req, res, next) {
             return next();
           }
 
-          var g;
-
+          /**
+           * The companion request is accepted and now the companion should be
+           * added to the 'All friends list' of the user itself and the user
+           * should be added to the 'All friends list' of the companion.
+           */
           //TODO: check if already in that group
+          var g;
           for (g = 0; g < fromUser.groups.length; g++) {
 
             if (fromUser.groups[g].name == 'All friends') {
@@ -274,9 +310,15 @@ controller.updateCompanionRequest = function(req, res, next) {
   }
 };
 
-
+/**
+ * Delete a companion request
+ *
+ * Parameters:
+ * - req.companionRequestID: the companionRequestID which should be deleted
+ */
 controller.deleteCompanionRequest = function(req, res, next) {
 
+  /* find companion request and delete it */
   CompanionRequest.findByIdAndRemove(req.companionRequestID, function(err, companionRequest) {
 
     if (err) {
